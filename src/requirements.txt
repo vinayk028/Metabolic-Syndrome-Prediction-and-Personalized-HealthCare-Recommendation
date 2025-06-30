@@ -1,0 +1,14 @@
+numpy
+pandas
+matplotlib
+scikit-learn
+keras
+ipykernel
+pgmpy
+# seabron
+streamlit
+pgmpy
+deap
+ipywidgets
+jupyter
+# pickle

@@ -1,0 +1,226 @@
+{
+    "Men": {
+        "Low Severity": {
+            "20-40": {
+                "Diet Plan": {
+                    "Recommended": [
+                        "Whole grains (oats, brown rice, quinoa): Rich in fiber and nutrients, whole grains help stabilize blood sugar and improve insulin sensitivity.",
+                        "Lean proteins (chicken, fish, tofu)",
+                        "Healthy fats (avocado, nuts, olive oil)",
+                        "High-fibre foods (vegetables, lentils)",
+                        "Hydration (3-4L water/day)"
+                    ],
+                    "Avoid": [
+                        "Processed foods",
+                        "Excessive sugar",
+                        "Fried foods",
+                        "Alcohol"
+                    ]
+                },
+                "Exercise Plan": {
+                    "Cardio": "Brisk walking (30 min/day), jogging (3-4x/week)",
+                    "Strength Training": "Bodyweight exercises (push-ups, squats, lunges) 3x/week",
+                    "Flexibility": "Yoga (2x/week) – Sun Salutation, Cobra Pose",
+                    "Other": "Recreational sports (cycling, swimming, badminton)"
+                }
+            },
+            "40-60": {
+                "Diet Plan": {
+                    "Recommended": [
+                        "Mediterranean diet (fish, olive oil, whole grains)",
+                        "Heart-friendly foods (leafy greens, nuts, seeds)",
+                        "Omega-3-rich foods (flaxseeds, walnuts)",
+                        "Controlled carbs (quinoa, millet)",
+                        "Hydration (3L water/day)"
+                    ],
+                    "Avoid": [
+                        "High sodium foods",
+                        "Processed meats",
+                        "Alcohol",
+                        "Refined sugar"
+                    ]
+                },
+                "Exercise Plan": {
+                    "Cardio": "Walking (30-40 min/day) or light cycling",
+                    "Strength Training": "Resistance band exercises (2x/week)",
+                    "Flexibility": "Stretching (daily), yoga (gentle poses like Seated Forward Bend)",
+                    "Other": "Light hiking, tai chi"
+                }
+            }
+        },
+        "Medium Severity": {
+            "20-40": {
+                "Diet Plan": {
+                    "Recommended": [
+                        "High-fiber & protein diet",
+                        "Low-GI carbohydrates",
+                        "Anti-inflammatory foods (ginger, turmeric, green tea)",
+                        "Hydration (3-4L water/day, herbal tea)"
+                    ],
+                    "Avoid": [
+                        "High-GI foods",
+                        "High-fat dairy"
+                    ]
+                },
+                "Exercise Plan": {
+                    "Cardio": "Moderate-intensity cardio (cycling, elliptical) – 45 min/day",
+                    "Strength Training": "Dumbbell workouts (3x/week)",
+                    "Flexibility": "Yoga (Hatha Yoga, Warrior Pose) 2-3x/week",
+                    "Other": "HIIT – 2x/week"
+                }
+            },
+            "40-60": {
+                "Diet Plan": {
+                    "Recommended": [
+                        "High-fiber diet",
+                        "Reduced carbs, increased healthy fats",
+                        "Omega-3-rich foods",
+                        "Hydration (2.5L water/day)"
+                    ],
+                    "Avoid": [
+                        "Fried foods",
+                        "Excessive salt",
+                        "Alcohol"
+                    ]
+                },
+                "Exercise Plan": {
+                    "Cardio": "Walking (45 min/day) or swimming",
+                    "Strength Training": "Light weightlifting (2x/week)",
+                    "Flexibility": "Tai chi (2x/week)",
+                    "Other": "Stationary cycling or water aerobics"
+                }
+            }
+        },
+        "High Severity": {
+            "20-40": {
+                "Diet Plan": {
+                    "Recommended": [
+                        "Strict low-GI diet (legumes, whole grains, lean proteins)",
+                        "Anti-inflammatory foods (ginger, turmeric, green tea)",
+                        "Controlled calorie intake (balanced portions)",
+                        "Hydration (4L water/day)"
+                    ],
+                    "Avoid": [
+                        "Refined sugar",
+                        "Processed foods",
+                        "Saturated fats",
+                        "Excess sodium"
+                    ]
+                },
+                "Exercise Plan": {
+                    "Cardio": "Low-impact cardio (walking, swimming) – 30 min/day",
+                    "Strength Training": "Low-intensity bodyweight exercises (2x/week)",
+                    "Flexibility": "Gentle yoga (Reclining Butterfly Pose, Child’s Pose)",
+                    "Other": "Breathing exercises, meditation"
+                }
+            },
+            "40-60": {
+                "Diet Plan": {
+                    "Recommended": [
+                        "Strict low-carb, high-fiber diet",
+                        "High-antioxidant foods (berries, green tea, spinach)",
+                        "Portion-controlled meals",
+                        "Hydration (3L water/day, detox drinks)"
+                    ],
+                    "Avoid": [
+                        "High-carb foods",
+                        "Red meat",
+                        "Excess dairy"
+                    ]
+                },
+                "Exercise Plan": {
+                    "Cardio": "Walking (30 min/day), light cycling",
+                    "Strength Training": "Resistance bands (1-2x/week)",
+                    "Flexibility": "Tai chi, stretching (daily)",
+                    "Other": "Gentle yoga, breathing exercises"
+                }
+            }
+        }
+    },
+    "Women": {
+    "Low Severity": {
+      "20-40": {
+        "Diet Plan": {
+          "Recommended": ["Balanced diet", "Omega-3 & folate-rich foods", "Hydration (3L water/day)"],
+          "Avoid": ["Excess caffeine", "High-fat dairy", "Sugar"]
+        },
+        "Exercise Plan": {
+          "Cardio": "Brisk walking (30 min/day), Zumba (3x/week)",
+          "Strength Training": "Light dumbbells (2x/week)",
+          "Flexibility": "Yoga (Hatha yoga, Child’s Pose)",
+          "Other": "Pilates (2x/week), recreational sports"
+        }
+      },
+      "40-60": {
+        "Diet Plan": {
+          "Recommended": ["Bone health-focused diet", "Anti-inflammatory foods", "Low-GI diet"],
+          "Avoid": ["Processed foods", "Excess sugar", "Alcohol"]
+        },
+        "Exercise Plan": {
+          "Cardio": "Walking (30-40 min/day), low-impact aerobics",
+          "Strength Training": "Resistance bands (2x/week)",
+          "Flexibility": "Stretching (daily), tai chi (1-2x/week)",
+          "Other": "Dance therapy, yoga"
+        }
+      }
+    },
+    "Medium Severity": {
+      "20-40": {
+        "Diet Plan": {
+          "Recommended": ["High-fiber, high-protein diet", "Dairy for calcium (low-fat options)", "Anti-inflammatory foods (green tea, turmeric, berries)"],
+          "Avoid": ["High-fat dairy", "High-GI carbs"]
+        },
+        "Exercise Plan": {
+          "Cardio": "Swimming, cycling (40-45 min/day)",
+          "Strength Training": "Bodyweight training (squats, lunges, glute bridges)",
+          "Flexibility": "Yoga (Vinyasa Yoga, Warrior Pose)",
+          "Other": "HIIT (2x/week), Pilates"
+        }
+      },
+      "40-60": {
+        "Diet Plan": {
+          "Recommended": ["Low-carb, high-antioxidant diet", "Portion-controlled meals", "Hydration (2.5L water/day)"],
+          "Avoid": ["Excess sodium", "Fried foods", "Alcohol"]
+        },
+        "Exercise Plan": {
+          "Cardio": "Walking (45 min/day), aqua exercises",
+          "Strength Training": "Light weightlifting, resistance bands",
+          "Flexibility": "Tai chi (for balance), restorative yoga",
+          "Other": "Stability ball exercises"
+        }
+      }
+    },
+    "High Severity": {
+      "20-40": {
+        "Diet Plan": {
+          "Recommended": ["Strict low-GI diet, portion-controlled meals", "Anti-inflammatory diet (ginger, turmeric, green tea)"],
+          "Avoid": ["Refined sugar", "Processed foods", "Saturated fats"]
+        },
+        "Exercise Plan": {
+          "Cardio": "Low-impact (stationary bike, swimming) – 30 min/day",
+          "Strength Training": "Chair-based workouts, resistance bands",
+          "Flexibility": "Yoga (Restorative yoga, deep breathing exercises)",
+          "Other": "Mindfulness-based movement (tai chi, qi gong)"
+        }
+      },
+      "40-60": {
+        "Diet Plan": {
+          "Recommended": ["Low-carb, high-fiber diet", "High-antioxidant foods (green tea, spinach, blueberries)"],
+          "Avoid": ["High-carb foods", "Red meat", "Dairy"]
+        },
+        "Exercise Plan": {
+          "Cardio": "Light walking, chair-based exercises",
+          "Strength Training": "Resistance training (under supervision)",
+          "Flexibility": "Light stretching, yoga (Restorative poses)",
+          "Other": "Physiotherapy exercises"
+        }
+      }
+    }
+  },
+    "Yoga Poses for Metabolic Syndrome": {
+      "Low Severity": ["Sun Salutation", "Cobra Pose", "Warrior Pose", "Seated Forward Bend"],
+      "Medium Severity": ["Bridge Pose", "Triangle Pose", "Cat-Cow Stretch", "Tree Pose"],
+      "High Severity": ["Legs-Up-the-Wall Pose", "Reclining Butterfly Pose", "Deep Breathing", "Child’s Pose"]
+    }
+  }
+  
