@@ -86,6 +86,6 @@ git push origin feature/your-feature-name
 
 ```
 
-### After pushing your branch, create a Pull Request from your forked repo.
+#### After pushing your branch, create a Pull Request from your forked repo.
 
 
