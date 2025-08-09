@@ -72,7 +72,7 @@ def apply_custom_css():
     """, unsafe_allow_html=True)
 
 def load_recommendations():
-    with open("recommendations.json", "r") as file:
+    with open("plugins\HealthcareRecommendations\Healthcare_Recommendations.json", "r") as file:
         return json.load(file)
     
 def calculate_cMetS_S(gender, age, sbp, wc, fpg, tg, hdl_c):
@@ -194,14 +194,14 @@ class GeneticAlgorithmBayesianNetwork:
         
         return best_network
 
-def train_and_save_model(data, model_filename='bayesian_network_model.pkl'):
+def train_and_save_model(data, model_filename='src/Bayesian_Model/Bayesian_Prediction_Model.pkl'):
     ga_bn = GeneticAlgorithmBayesianNetwork(data)
     best_model = ga_bn.run()
     best_model.fit(data, estimator=MaximumLikelihoodEstimator)
     with open(model_filename, 'wb') as f:
         pickle.dump(best_model, f)
 
-def load_model(model_filename='bayesian_network_model.pkl'):
+def load_model(model_filename='src/Bayesian_Model/Bayesian_Prediction_Model.pkl'):
     try:
         with open(model_filename, 'rb') as f:
             return pickle.load(f)
@@ -264,7 +264,7 @@ def create_downloadable_report(user_info, results, recommendations):
     buffer.write("\n")
     
     # Add recommendations
-    buffer.write(f"## HEALTH RECOMMENDATIONS\n")
+    buffer.write(f"## PERSONALIZED HEALTH CARE RECOMMENDATIONS\n")
     
     if recommendations['diet_plan']:
         buffer.write(f"### Diet Plan Recommendations\n")
@@ -314,7 +314,7 @@ def app():
     
     # Create a sidebar for navigation
     with st.sidebar:
-        st.image('background.png', width=300)
+        st.image('plugins\Images\MetS_Logo.png', width=300)
         st.title("Navigation")
         pages = ["Home", "About Metabolic Syndrome", "Assessment Tool", "Resources"]
         page = st.radio("Go to", pages)
@@ -474,7 +474,7 @@ def app():
                     }
                     
                     # Determine if the user has metabolic syndrome based on threshold
-                    if prob_metabolic_syndrome > 0.65:
+                    if prob_metabolic_syndrome >= 0.65:
                         st.warning("⚠️ You have a high probability of Metabolic Syndrome.")
                         st.session_state.has_metabolic_syndrome = True
                         st.session_state.show_additional_inputs = True
