@@ -314,7 +314,7 @@ def app():
     
     # Create a sidebar for navigation
     with st.sidebar:
-        st.image('plugins\Images\MetS_Logo.png', width=300)
+        st.image('plugins/Images/MetS_Logo.png', width=300)
         st.title("Navigation")
         pages = ["Home", "About Metabolic Syndrome", "Assessment Tool", "Resources"]
         page = st.radio("Go to", pages)
