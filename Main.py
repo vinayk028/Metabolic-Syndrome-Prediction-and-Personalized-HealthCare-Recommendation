@@ -72,7 +72,7 @@ def apply_custom_css():
     """, unsafe_allow_html=True)
 
 def load_recommendations():
-    with open("plugins\HealthcareRecommendations\Healthcare_Recommendations.json", "r") as file:
+    with open("plugins/HealthcareRecommendations/Healthcare_Recommendations.json", "r") as file:
         return json.load(file)
     
 def calculate_cMetS_S(gender, age, sbp, wc, fpg, tg, hdl_c):
