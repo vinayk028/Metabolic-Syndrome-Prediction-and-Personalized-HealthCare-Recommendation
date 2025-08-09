@@ -22,12 +22,12 @@ To address these challenges, the proposed methodology introduces a four-phase sy
 
 Experience the **Metabolic Syndrome Prediction & Personalized Healthcare Recommendation System** right from your browser.  
 Click on Launch Demo and explore how it predicts MetS risk and provides tailored healthcare advice.
-
 <p>
-  <a href="http://localhost:8502/" target="_blank">
+  <a href="https://metabolic-syndrome.streamlit.app/" target="_blank">
     <img src="https://img.shields.io/badge/Launch%20Demo-brightgreen?style=for-the-badge" alt="Launch Demo"/>
   </a>
 </p>
+
 
 
 
