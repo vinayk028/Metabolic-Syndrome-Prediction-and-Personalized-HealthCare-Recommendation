@@ -1,0 +1,763 @@
+/* Profile Page Styles - Modern & Attractive Design */
+
+/* Background & Container */
+.profile-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #f0fdfa 0%, #f0f9ff 50%, #faf5ff 100%);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading State */
+.profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  color: #64748b;
+  gap: 1rem;
+}
+
+.profile-loading .MuiCircularProgress-root {
+  color: #00b2a7;
+}
+
+/* Profile Header Card */
+.profile-header {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  background: white;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 30px -5px rgba(0, 178, 167, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 12px -2px rgba(0, 0, 0, 0.08),
+    0 20px 40px -8px rgba(0, 178, 167, 0.18);
+}
+
+.profile-header-bg {
+  height: 160px;
+  background: linear-gradient(135deg, #00b2a7 0%, #00897b 40%, #00695c 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 40%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.profile-header-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.5), transparent);
+}
+
+.profile-header-content {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+  padding: 0 2.5rem 2rem;
+  margin-top: -70px;
+  position: relative;
+  z-index: 1;
+  flex-wrap: wrap;
+}
+
+/* Avatar Styling */
+.profile-avatar {
+  width: 130px !important;
+  height: 130px !important;
+  font-size: 2.8rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(145deg, #00b2a7 0%, #00897b 50%, #00695c 100%) !important;
+  border: 5px solid white;
+  box-shadow: 
+    0 8px 30px rgba(0, 178, 167, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 12px 40px rgba(0, 178, 167, 0.45),
+    0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Header Info */
+.profile-header-info {
+  flex: 1;
+  min-width: 220px;
+  padding-bottom: 0.5rem;
+}
+
+.profile-name {
+  font-weight: 800 !important;
+  font-size: 1.85rem !important;
+  color: #0f172a;
+  margin-bottom: 0.25rem !important;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profile-email {
+  color: #64748b !important;
+  font-size: 1rem !important;
+  margin-bottom: 0.8rem !important;
+  margin-top: 0.35rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile-role-chip {
+  background: linear-gradient(135deg, rgba(0, 178, 167, 0.12) 0%, rgba(0, 145, 136, 0.08) 100%) !important;
+  color: #00796b !important;
+  font-weight: 700 !important;
+  font-size: 0.75rem !important;
+  padding: 4px 12px !important;
+  border: 1px solid rgba(0, 178, 167, 0.2) !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Logout Button */
+.profile-logout-btn {
+  border: 2px solid #e2e8f0 !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
+  padding: 10px 20px !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+  align-self: center;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+.profile-logout-btn:hover {
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+  background: rgba(254, 226, 226, 0.6) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Main Content Card */
+.profile-content {
+  border-radius: 28px !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 178, 167, 0.08) !important;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.03),
+    0 20px 50px -12px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.profile-content:hover {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 25px 60px -15px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Tabs Styling */
+.profile-tabs {
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+  padding: 0.5rem 1rem 0;
+}
+
+.profile-tabs .MuiTab-root {
+  min-height: 68px;
+  text-transform: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #94a3b8;
+  border-radius: 16px 16px 0 0;
+  margin: 0 4px;
+  transition: all 0.3s ease;
+  gap: 8px;
+}
+
+.profile-tabs .MuiTab-root:hover {
+  color: #00897b;
+  background: rgba(0, 178, 167, 0.05);
+}
+
+.profile-tabs .MuiTab-root.Mui-selected {
+  color: #00897b;
+  background: white;
+  box-shadow: 0 -2px 10px rgba(0, 178, 167, 0.08);
+}
+
+.profile-tabs .MuiTabs-indicator {
+  background: linear-gradient(90deg, #00b2a7, #00897b);
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+}
+
+.profile-tabs .MuiTab-iconWrapper {
+  margin-bottom: 4px !important;
+}
+
+/* Tab Content Area */
+.profile-tab-content {
+  padding: 0.5rem 2.5rem 2.5rem;
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section Headers */
+.profile-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.profile-section-header h6 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.profile-section-header h6::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(to bottom, #00b2a7, #00897b);
+  border-radius: 2px;
+}
+
+/* Edit Button */
+.edit-btn {
+  color: #00897b !important;
+  font-weight: 600 !important;
+  padding: 8px 16px !important;
+  border-radius: 10px !important;
+  border: 2px solid transparent !important;
+  transition: all 0.3s ease !important;
+}
+
+.edit-btn:hover {
+  background: rgba(0, 178, 167, 0.1) !important;
+  border-color: rgba(0, 178, 167, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+/* Form Field Icons */
+.field-icon {
+  color: #00b2a7 !important;
+  opacity: 0.7;
+}
+
+/* Text Fields Enhancement */
+.profile-tab-content .MuiTextField-root {
+  transition: transform 0.2s ease;
+}
+
+.profile-tab-content .MuiTextField-root:focus-within {
+  transform: translateY(-2px);
+}
+
+.profile-tab-content .MuiOutlinedInput-root {
+  border-radius: 14px !important;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.profile-tab-content .MuiOutlinedInput-root:hover {
+  background: #f1f5f9;
+}
+
+.profile-tab-content .MuiOutlinedInput-root.Mui-focused {
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 178, 167, 0.12);
+}
+
+.profile-tab-content .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #00b2a7 !important;
+  border-width: 2px;
+}
+
+.profile-tab-content .MuiInputLabel-root.Mui-focused {
+  color: #00897b !important;
+}
+
+/* Save Button */
+.save-btn {
+  background: linear-gradient(135deg, #00b2a7 0%, #00897b 100%) !important;
+  box-shadow: 0 4px 20px rgba(0, 178, 167, 0.4) !important;
+  padding: 12px 32px !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  border-radius: 14px !important;
+  letter-spacing: 0.02em;
+  transition: all 0.3s ease !important;
+}
+
+.save-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 178, 167, 0.5) !important;
+}
+
+.save-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Account Info Section */
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 178, 167, 0.1);
+}
+
+.account-info .MuiTypography-root {
+  display: flex;
+  align-items: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Danger Zone */
+.danger-zone {
+  padding: 1.75rem;
+  border-radius: 16px;
+  border: 2px solid #fecaca;
+  background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.danger-zone::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.danger-zone h6 {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.danger-zone .MuiButton-outlined {
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  padding: 10px 20px !important;
+  transition: all 0.3s ease !important;
+}
+
+.danger-zone .MuiButton-outlined:hover {
+  background: #fef2f2 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);
+}
+
+/* Empty History State */
+.empty-history {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%);
+  border-radius: 20px;
+  border: 2px dashed #cbd5e1;
+}
+
+.empty-history .MuiSvgIcon-root {
+  font-size: 80px;
+  color: #00b2a7;
+  opacity: 0.3;
+  margin-bottom: 1rem;
+}
+
+.empty-history h6 {
+  color: #475569;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.empty-history .MuiButton-contained {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, #00b2a7 0%, #00897b 100%) !important;
+  border-radius: 12px !important;
+  padding: 12px 28px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 15px rgba(0, 178, 167, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.empty-history .MuiButton-contained:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 178, 167, 0.4) !important;
+}
+
+/* History Cards */
+.history-card {
+  border-radius: 20px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fafffe 100%) !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  overflow: hidden;
+  position: relative;
+}
+
+.history-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #00b2a7, #00897b);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.history-card:hover {
+  box-shadow: 
+    0 10px 40px rgba(0, 178, 167, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(0, 178, 167, 0.3) !important;
+}
+
+.history-card:hover::before {
+  opacity: 1;
+}
+
+.history-card .MuiCardContent-root {
+  padding: 1.5rem 1.75rem !important;
+}
+
+.history-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.history-card-header .MuiChip-root {
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+}
+
+/* History Stats */
+.history-stats {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.history-stat {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+}
+
+.history-stat:hover {
+  background: #f0fdfa;
+  transform: scale(1.02);
+}
+
+.history-stat .MuiSvgIcon-root {
+  font-size: 1.75rem;
+  padding: 8px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.history-stat h6 {
+  font-weight: 800 !important;
+  font-size: 1.35rem !important;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.history-stat .MuiTypography-caption {
+  color: #94a3b8;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Alerts Enhancement */
+.profile-content .MuiAlert-root {
+  border-radius: 14px !important;
+  font-weight: 500;
+}
+
+.profile-content .MuiAlert-standardSuccess {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  border: 1px solid #a7f3d0;
+}
+
+.profile-content .MuiAlert-standardError {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+  border: 1px solid #fecaca;
+}
+
+/* Dialog Enhancement */
+.MuiDialog-paper {
+  border-radius: 20px !important;
+  padding: 0.5rem;
+}
+
+.MuiDialogTitle-root {
+  font-weight: 700 !important;
+  color: #1e293b;
+}
+
+.MuiDialogActions-root .MuiButton-containedError {
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .profile-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .profile-header-content {
+    gap: 1.5rem;
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .profile-tab-content {
+    padding: 0.5rem 1.5rem 2rem;
+  }
+
+  .history-stats {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .profile-header {
+    border-radius: 20px;
+  }
+
+  .profile-header-bg {
+    height: 130px;
+  }
+
+  .profile-header-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 1.25rem 1.5rem;
+    margin-top: -55px;
+  }
+
+  .profile-avatar {
+    width: 110px !important;
+    height: 110px !important;
+    font-size: 2.2rem !important;
+  }
+
+  .profile-header-info {
+    padding-bottom: 0;
+    min-width: unset;
+  }
+
+  .profile-name {
+    font-size: 1.5rem !important;
+  }
+
+  .profile-logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .profile-content {
+    border-radius: 20px !important;
+  }
+
+  .profile-tab-content {
+    padding: 0.5rem 1rem 1.5rem;
+  }
+
+  .profile-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .profile-section-header h6::before {
+    height: 20px;
+  }
+
+  .history-stats {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .history-stat {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .history-card-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .empty-history {
+    padding: 3rem 1.5rem;
+  }
+
+  .danger-zone {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-tabs {
+    padding: 0.25rem 0.5rem 0;
+  }
+
+  .profile-tabs .MuiTab-root {
+    min-height: 58px;
+    font-size: 0.8rem;
+    min-width: unset;
+    padding: 8px 12px;
+    margin: 0 2px;
+  }
+
+  .profile-tabs .MuiTab-iconWrapper {
+    font-size: 1.25rem;
+  }
+
+  .profile-avatar {
+    width: 95px !important;
+    height: 95px !important;
+    font-size: 1.9rem !important;
+  }
+
+  .profile-name {
+    font-size: 1.35rem !important;
+  }
+
+  .save-btn {
+    width: 100%;
+    padding: 14px 24px !important;
+  }
+
+  .account-info {
+    padding: 1rem;
+  }
+}
+
+/* Accessibility - Focus States */
+.profile-tabs .MuiTab-root:focus-visible {
+  outline: 2px solid #00b2a7;
+  outline-offset: 2px;
+}
+
+.edit-btn:focus-visible,
+.save-btn:focus-visible,
+.profile-logout-btn:focus-visible {
+  outline: 2px solid #00b2a7;
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .profile-container,
+  .profile-tab-content,
+  .profile-header,
+  .history-card,
+  .profile-avatar {
+    animation: none;
+    transition: none;
+  }
+}
