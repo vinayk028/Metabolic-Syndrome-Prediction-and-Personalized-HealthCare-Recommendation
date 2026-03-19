@@ -9,6 +9,7 @@ import type {
     AdditionalInfo,
     AssessmentResults,
     Recommendations,
+    AssessmentInputParameters,
 } from '../data/types';
 import {
     predictMetabolicSyndrome,
@@ -16,6 +17,7 @@ import {
     getRecommendations,
     generateReport,
     downloadReport,
+    saveAssessment,
 } from '../data/api';
 
 // ============ Default Values ============
@@ -80,10 +82,33 @@ interface AssessmentState {
     predict: () => Promise<void>;
     calculateSeverity: () => Promise<void>;
     downloadReport: () => Promise<void>;
+    saveCurrentAssessment: () => Promise<void>;
 
     // Actions — Reset
     startNewAssessment: () => void;
 }
+
+// ============ Helper ============
+
+const buildInputParameters = (
+    patientInfo: PatientInfo,
+    additionalInfo: AdditionalInfo,
+    hasMetabolicSyndrome: boolean
+): AssessmentInputParameters => ({
+    age: patientInfo.age,
+    gender: patientInfo.gender,
+    fattyLiver: patientInfo.fattyLiver,
+    hypertension: patientInfo.hypertension,
+    diabetes: patientInfo.diabetes,
+    systolicBP: patientInfo.systolicBP,
+    diastolicBP: patientInfo.diastolicBP,
+    waistCircumference: patientInfo.waistCircumference,
+    ...(hasMetabolicSyndrome ? {
+        hdlCholesterol: additionalInfo.hdlCholesterol,
+        triglyceride: additionalInfo.triglyceride,
+        fpg: additionalInfo.fpg,
+    } : {}),
+});
 
 // ============ Store ============
 
@@ -124,7 +149,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     // ---- API flows ----
 
     predict: async () => {
-        const { patientInfo } = get();
+        const { patientInfo, additionalInfo } = get();
         set({ loading: true, error: null });
 
         try {
@@ -136,6 +161,20 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
             } else {
                 const recs = await getRecommendations(patientInfo.gender, 'Low Severity', patientInfo.age);
                 set({ recommendations: recs, activeStep: 1 }); // → Results (2-step flow)
+
+                // Auto-save for non-MetS results
+                try {
+                    const inputParameters = buildInputParameters(patientInfo, additionalInfo, false);
+                    await saveAssessment({
+                        probability,
+                        severity: 0,
+                        riskLevel: 'Low Severity',
+                        recommendations: recs,
+                        inputParameters,
+                    });
+                } catch (saveErr) {
+                    console.error('Failed to save assessment:', saveErr);
+                }
             }
         } catch (err) {
             console.error('Prediction error:', err);
@@ -155,6 +194,20 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
 
             const recs = await getRecommendations(patientInfo.gender, riskLevel, patientInfo.age);
             set({ recommendations: recs, activeStep: 2 }); // → Results (3-step flow)
+
+            // Auto-save for MetS results
+            try {
+                const inputParameters = buildInputParameters(patientInfo, additionalInfo, true);
+                await saveAssessment({
+                    probability: results.probability,
+                    severity,
+                    riskLevel,
+                    recommendations: recs,
+                    inputParameters,
+                });
+            } catch (saveErr) {
+                console.error('Failed to save assessment:', saveErr);
+            }
         } catch (err) {
             console.error('Severity error:', err);
             set({ error: 'Failed to calculate severity. Please try again.' });
@@ -184,6 +237,22 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
         } catch (err) {
             console.error('Report error:', err);
             set({ error: 'Failed to generate report. Please try again.' });
+        }
+    },
+
+    saveCurrentAssessment: async () => {
+        const { patientInfo, additionalInfo, results, recommendations } = get();
+        try {
+            const inputParameters = buildInputParameters(patientInfo, additionalInfo, results.hasMetabolicSyndrome);
+            await saveAssessment({
+                probability: results.probability,
+                severity: results.severity || 0,
+                riskLevel: results.riskLevel || 'Low Severity',
+                recommendations,
+                inputParameters,
+            });
+        } catch (err) {
+            console.error('Failed to save assessment:', err);
         }
     },
 

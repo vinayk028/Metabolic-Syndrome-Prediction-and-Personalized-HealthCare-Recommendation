@@ -30,7 +30,7 @@ import {
   DialogContent,
   DialogActions,
   Checkbox,
-} from '@mui/material';
+} from "@mui/material";
 import {
   CheckCircle as CheckIcon,
   Cancel as CancelIcon,
@@ -40,16 +40,24 @@ import {
   SelfImprovement as YogaIcon,
   Block as AvoidIcon,
   Warning as WarningIcon,
-} from '@mui/icons-material';
-import { useAssessmentStore } from '../stores';
-import './Assessment.css';
+} from "@mui/icons-material";
+import { useAssessmentStore } from "../stores";
+import "./Assessment.css";
 
 // Healthcare image for assessment page
-const ASSESSMENT_BANNER = 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1200&h=400&fit=crop&q=80';
+const ASSESSMENT_BANNER =
+  "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1200&h=400&fit=crop&q=80";
 
 // Steps will be dynamic based on whether user has metabolic syndrome
-const STEPS_WITH_ADDITIONAL = ['Basic Information', 'Additional Information', 'Results & Recommendations'];
-const STEPS_WITHOUT_ADDITIONAL = ['Basic Information', 'Results & Recommendations'];
+const STEPS_WITH_ADDITIONAL = [
+  "Basic Information",
+  "Additional Information",
+  "Results & Recommendations",
+];
+const STEPS_WITHOUT_ADDITIONAL = [
+  "Basic Information",
+  "Results & Recommendations",
+];
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -93,31 +101,36 @@ const Assessment = () => {
   } = useAssessmentStore();
 
   // Determine which steps to show based on metabolic syndrome status
-  const steps = results.hasMetabolicSyndrome ? STEPS_WITH_ADDITIONAL : STEPS_WITHOUT_ADDITIONAL;
+  const steps = results.hasMetabolicSyndrome
+    ? STEPS_WITH_ADDITIONAL
+    : STEPS_WITHOUT_ADDITIONAL;
 
   const getRiskColor = (probability: number) => {
-    if (probability < 0.35) return 'success';
-    if (probability < 0.65) return 'warning';
-    return 'error';
+    if (probability < 0.35) return "success";
+    if (probability < 0.65) return "warning";
+    return "error";
   };
 
   const getSeverityColor = (riskLevel?: string) => {
-    if (riskLevel === 'Low Severity') return 'success';
-    if (riskLevel === 'Medium Severity') return 'warning';
-    return 'error';
+    if (riskLevel === "Low Severity") return "success";
+    if (riskLevel === "Medium Severity") return "warning";
+    return "error";
   };
 
   // Determine if we should show results
-  const showResults = (results.hasMetabolicSyndrome && activeStep === 2) || 
-                      (!results.hasMetabolicSyndrome && activeStep === 1 && results.probability > 0);
+  const showResults =
+    (results.hasMetabolicSyndrome && activeStep === 2) ||
+    (!results.hasMetabolicSyndrome &&
+      activeStep === 1 &&
+      results.probability > 0);
 
   return (
     <Box className="assessment-page">
       {/* Healthcare Banner */}
       <Box className="assessment-banner">
-        <img 
-          src={ASSESSMENT_BANNER} 
-          alt="Medical consultation" 
+        <img
+          src={ASSESSMENT_BANNER}
+          alt="Medical consultation"
           className="assessment-banner-image"
         />
         <Box className="assessment-banner-overlay"></Box>
@@ -126,7 +139,8 @@ const Assessment = () => {
             Health Assessment
           </Typography>
           <Typography variant="h6" className="page-subtitle">
-            Complete the assessment to get your personalized health recommendations
+            Complete the assessment to get your personalized health
+            recommendations
           </Typography>
         </Box>
       </Box>
@@ -158,10 +172,14 @@ const Assessment = () => {
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Box className="form-field">
-                  <Typography gutterBottom>Age: {patientInfo.age} years</Typography>
+                  <Typography gutterBottom>
+                    Age: {patientInfo.age} years
+                  </Typography>
                   <Slider
                     value={patientInfo.age}
-                    onChange={(_, value) => setPatientInfo('age', value as number)}
+                    onChange={(_, value) =>
+                      setPatientInfo("age", value as number)
+                    }
                     min={20}
                     max={80}
                     valueLabelDisplay="auto"
@@ -174,10 +192,18 @@ const Assessment = () => {
                   <RadioGroup
                     row
                     value={patientInfo.gender}
-                    onChange={(e) => setPatientInfo('gender', e.target.value)}
+                    onChange={(e) => setPatientInfo("gender", e.target.value)}
                   >
-                    <FormControlLabel value="Men" control={<Radio />} label="Male" />
-                    <FormControlLabel value="Women" control={<Radio />} label="Female" />
+                    <FormControlLabel
+                      value="Men"
+                      control={<Radio />}
+                      label="Male"
+                    />
+                    <FormControlLabel
+                      value="Women"
+                      control={<Radio />}
+                      label="Female"
+                    />
                   </RadioGroup>
                 </FormControl>
               </Grid>
@@ -186,7 +212,9 @@ const Assessment = () => {
                   <Typography>Fatty Liver Diagnosis</Typography>
                   <Switch
                     checked={patientInfo.fattyLiver}
-                    onChange={(e) => setPatientInfo('fattyLiver', e.target.checked)}
+                    onChange={(e) =>
+                      setPatientInfo("fattyLiver", e.target.checked)
+                    }
                   />
                 </Box>
               </Grid>
@@ -195,7 +223,9 @@ const Assessment = () => {
                   <Typography>Hypertension Diagnosis</Typography>
                   <Switch
                     checked={patientInfo.hypertension}
-                    onChange={(e) => setPatientInfo('hypertension', e.target.checked)}
+                    onChange={(e) =>
+                      setPatientInfo("hypertension", e.target.checked)
+                    }
                   />
                 </Box>
               </Grid>
@@ -204,7 +234,9 @@ const Assessment = () => {
                   <Typography>Diabetes Diagnosis</Typography>
                   <Switch
                     checked={patientInfo.diabetes}
-                    onChange={(e) => setPatientInfo('diabetes', e.target.checked)}
+                    onChange={(e) =>
+                      setPatientInfo("diabetes", e.target.checked)
+                    }
                   />
                 </Box>
               </Grid>
@@ -214,7 +246,9 @@ const Assessment = () => {
                   label="Systolic Blood Pressure (mmHg)"
                   type="number"
                   value={patientInfo.systolicBP}
-                  onChange={(e) => setPatientInfo('systolicBP', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    setPatientInfo("systolicBP", parseInt(e.target.value))
+                  }
                   inputProps={{ min: 70, max: 200 }}
                 />
               </Grid>
@@ -224,7 +258,9 @@ const Assessment = () => {
                   label="Diastolic Blood Pressure (mmHg)"
                   type="number"
                   value={patientInfo.diastolicBP}
-                  onChange={(e) => setPatientInfo('diastolicBP', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    setPatientInfo("diastolicBP", parseInt(e.target.value))
+                  }
                   inputProps={{ min: 40, max: 130 }}
                 />
               </Grid>
@@ -234,7 +270,12 @@ const Assessment = () => {
                   label="Waist Circumference (cm)"
                   type="number"
                   value={patientInfo.waistCircumference}
-                  onChange={(e) => setPatientInfo('waistCircumference', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    setPatientInfo(
+                      "waistCircumference",
+                      parseInt(e.target.value)
+                    )
+                  }
                   inputProps={{ min: 50, max: 150 }}
                 />
               </Grid>
@@ -247,7 +288,7 @@ const Assessment = () => {
                 disabled={loading}
                 className="submit-button"
               >
-                {loading ? <CircularProgress size={24} /> : 'Predict Risk'}
+                {loading ? <CircularProgress size={24} /> : "Predict Risk"}
               </Button>
             </Box>
           </CardContent>
@@ -259,7 +300,8 @@ const Assessment = () => {
         <Card className="form-card">
           <CardContent>
             <Alert severity="warning" className="step-alert">
-              You have a high probability of Metabolic Syndrome. Please provide additional information for severity assessment.
+              You have a high probability of Metabolic Syndrome. Please provide
+              additional information for severity assessment.
             </Alert>
             <Typography variant="h5" className="form-title">
               Additional Information
@@ -271,7 +313,12 @@ const Assessment = () => {
                   label="HDL Cholesterol (mg/dL)"
                   type="number"
                   value={additionalInfo.hdlCholesterol}
-                  onChange={(e) => setAdditionalInfo('hdlCholesterol', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    setAdditionalInfo(
+                      "hdlCholesterol",
+                      parseInt(e.target.value)
+                    )
+                  }
                   inputProps={{ min: 20, max: 100 }}
                   helperText="Good cholesterol level"
                 />
@@ -282,7 +329,9 @@ const Assessment = () => {
                   label="Triglyceride (mg/dL)"
                   type="number"
                   value={additionalInfo.triglyceride}
-                  onChange={(e) => setAdditionalInfo('triglyceride', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    setAdditionalInfo("triglyceride", parseInt(e.target.value))
+                  }
                   inputProps={{ min: 50, max: 500 }}
                   helperText="Fat in your blood"
                 />
@@ -293,7 +342,9 @@ const Assessment = () => {
                   label="Fasting Plasma Glucose (mg/dL)"
                   type="number"
                   value={additionalInfo.fpg}
-                  onChange={(e) => setAdditionalInfo('fpg', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    setAdditionalInfo("fpg", parseInt(e.target.value))
+                  }
                   inputProps={{ min: 70, max: 200 }}
                   helperText="Blood sugar when fasting"
                 />
@@ -310,7 +361,11 @@ const Assessment = () => {
                 disabled={loading}
                 className="submit-button"
               >
-                {loading ? <CircularProgress size={24} /> : 'Calculate Severity'}
+                {loading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  "Calculate Severity"
+                )}
               </Button>
             </Box>
           </CardContent>
@@ -351,11 +406,16 @@ const Assessment = () => {
                       />
                     </Box>
                   )}
-                  <Alert 
-                    severity={results.hasMetabolicSyndrome ? getSeverityColor(results.riskLevel) : 'success'}
+                  <Alert
+                    severity={
+                      results.hasMetabolicSyndrome
+                        ? getSeverityColor(results.riskLevel)
+                        : "success"
+                    }
                     className="result-alert"
                   >
-                    {results.riskLevel || (results.hasMetabolicSyndrome ? 'High Risk' : 'Low Risk')}
+                    {results.riskLevel ||
+                      (results.hasMetabolicSyndrome ? "High Risk" : "Low Risk")}
                   </Alert>
                 </CardContent>
               </Card>
@@ -370,25 +430,33 @@ const Assessment = () => {
                     <Grid size={{ xs: 6 }}>
                       <Box className="metric-item">
                         <Typography variant="body2">Age</Typography>
-                        <Typography variant="h6">{patientInfo.age} years</Typography>
+                        <Typography variant="h6">
+                          {patientInfo.age} years
+                        </Typography>
                       </Box>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
                       <Box className="metric-item">
                         <Typography variant="body2">Gender</Typography>
-                        <Typography variant="h6">{patientInfo.gender}</Typography>
+                        <Typography variant="h6">
+                          {patientInfo.gender}
+                        </Typography>
                       </Box>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
                       <Box className="metric-item">
                         <Typography variant="body2">Blood Pressure</Typography>
-                        <Typography variant="h6">{patientInfo.systolicBP}/{patientInfo.diastolicBP}</Typography>
+                        <Typography variant="h6">
+                          {patientInfo.systolicBP}/{patientInfo.diastolicBP}
+                        </Typography>
                       </Box>
                     </Grid>
                     <Grid size={{ xs: 6 }}>
                       <Box className="metric-item">
                         <Typography variant="body2">Waist</Typography>
-                        <Typography variant="h6">{patientInfo.waistCircumference} cm</Typography>
+                        <Typography variant="h6">
+                          {patientInfo.waistCircumference} cm
+                        </Typography>
                       </Box>
                     </Grid>
                   </Grid>
@@ -427,7 +495,9 @@ const Assessment = () => {
                       </ListItem>
                     ))
                   ) : (
-                    <Typography className="no-data">No diet recommendations available</Typography>
+                    <Typography className="no-data">
+                      No diet recommendations available
+                    </Typography>
                   )}
                 </List>
               </TabPanel>
@@ -436,7 +506,10 @@ const Assessment = () => {
                 <List>
                   {recommendations.avoidList.length > 0 ? (
                     recommendations.avoidList.map((item, index) => (
-                      <ListItem key={index} className="recommendation-item avoid">
+                      <ListItem
+                        key={index}
+                        className="recommendation-item avoid"
+                      >
                         <ListItemIcon>
                           <CancelIcon className="cancel-icon" />
                         </ListItemIcon>
@@ -444,7 +517,9 @@ const Assessment = () => {
                       </ListItem>
                     ))
                   ) : (
-                    <Typography className="no-data">No items to avoid listed</Typography>
+                    <Typography className="no-data">
+                      No items to avoid listed
+                    </Typography>
                   )}
                 </List>
               </TabPanel>
@@ -461,7 +536,9 @@ const Assessment = () => {
                       </ListItem>
                     ))
                   ) : (
-                    <Typography className="no-data">No exercise recommendations available</Typography>
+                    <Typography className="no-data">
+                      No exercise recommendations available
+                    </Typography>
                   )}
                 </List>
               </TabPanel>
@@ -478,7 +555,9 @@ const Assessment = () => {
                       </ListItem>
                     ))
                   ) : (
-                    <Typography className="no-data">No yoga recommendations available</Typography>
+                    <Typography className="no-data">
+                      No yoga recommendations available
+                    </Typography>
                   )}
                 </List>
               </TabPanel>
@@ -506,17 +585,17 @@ const Assessment = () => {
       )}
 
       {/* Terms and Conditions Dialog */}
-      <Dialog 
-        open={termsOpen && !termsAccepted} 
-        onClose={() => {}} 
+      <Dialog
+        open={termsOpen && !termsAccepted}
+        onClose={() => {}}
         maxWidth="md"
         fullWidth
         className="terms-dialog"
         disableEscapeKeyDown
       >
         <DialogTitle className="terms-dialog-title">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <WarningIcon sx={{ color: '#f59e0b' }} />
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <WarningIcon sx={{ color: "#f59e0b" }} />
             <Typography variant="h5" component="span">
               Important Disclaimer & Terms of Use
             </Typography>
@@ -524,91 +603,107 @@ const Assessment = () => {
         </DialogTitle>
         <DialogContent className="terms-dialog-content">
           <Alert severity="warning" sx={{ mb: 2 }}>
-            Please read these terms carefully before using the Health Assessment Tool.
+            Please read these terms carefully before using the Health Assessment
+            Tool.
           </Alert>
-          
+
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
             1. Medical Disclaimer
           </Typography>
           <Typography paragraph>
-            This tool is designed for <strong>educational and informational purposes only</strong>. 
-            It is NOT intended to be a substitute for professional medical advice, diagnosis, or treatment. 
-            Always seek the advice of your physician or other qualified health provider with any questions 
-            you may have regarding a medical condition.
+            This tool is designed for{" "}
+            <strong>educational and informational purposes only</strong>. It is
+            NOT intended to be a substitute for professional medical advice,
+            diagnosis, or treatment. Always seek the advice of your physician or
+            other qualified health provider with any questions you may have
+            regarding a medical condition.
           </Typography>
 
           <Typography variant="h6" gutterBottom>
             2. Accuracy of Results
           </Typography>
           <Typography paragraph>
-            The predictions and recommendations provided by this tool are based on statistical models 
-            and general health guidelines. Individual results may vary, and the tool cannot account 
-            for all personal health factors. The accuracy of results depends on the accuracy of the 
-            information you provide.
+            The predictions and recommendations provided by this tool are based
+            on statistical models and general health guidelines. Individual
+            results may vary, and the tool cannot account for all personal
+            health factors. The accuracy of results depends on the accuracy of
+            the information you provide.
           </Typography>
 
           <Typography variant="h6" gutterBottom>
             3. No Doctor-Patient Relationship
           </Typography>
           <Typography paragraph>
-            Using this assessment tool does not create a doctor-patient relationship. The recommendations 
-            provided are general in nature and should be discussed with your healthcare provider before 
-            making any changes to your diet, exercise, or medication regimen.
+            Using this assessment tool does not create a doctor-patient
+            relationship. The recommendations provided are general in nature and
+            should be discussed with your healthcare provider before making any
+            changes to your diet, exercise, or medication regimen.
           </Typography>
 
           <Typography variant="h6" gutterBottom>
             4. Emergency Situations
           </Typography>
           <Typography paragraph>
-            If you are experiencing a medical emergency, please call your local emergency services 
-            immediately. Do not rely on this tool for emergency medical situations.
+            If you are experiencing a medical emergency, please call your local
+            emergency services immediately. Do not rely on this tool for
+            emergency medical situations.
           </Typography>
 
           <Typography variant="h6" gutterBottom>
             5. Data Privacy
           </Typography>
           <Typography paragraph>
-            The health information you enter is processed locally and is not stored on our servers 
-            permanently. However, we recommend not entering any personally identifiable information 
-            beyond what is necessary for the assessment.
+            The health information you enter is processed locally and is not
+            stored on our servers permanently. However, we recommend not
+            entering any personally identifiable information beyond what is
+            necessary for the assessment.
           </Typography>
 
           <Typography variant="h6" gutterBottom>
             6. Limitation of Liability
           </Typography>
           <Typography paragraph>
-            The creators and operators of this tool shall not be liable for any damages arising from 
-            the use of this assessment tool or the recommendations provided. Use this tool at your own risk.
+            The creators and operators of this tool shall not be liable for any
+            damages arising from the use of this assessment tool or the
+            recommendations provided. Use this tool at your own risk.
           </Typography>
         </DialogContent>
         <DialogActions className="terms-dialog-actions">
-          <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
             <FormControlLabel
               control={
-                <Checkbox 
-                  checked={termsCheckbox} 
+                <Checkbox
+                  checked={termsCheckbox}
                   onChange={(e) => setTermsCheckbox(e.target.checked)}
                   sx={{
-                    color: '#cbd5e1',
-                    '&.Mui-checked': {
-                      color: '#10b981',
+                    color: "#cbd5e1",
+                    "&.Mui-checked": {
+                      color: "#10b981",
                     },
-                    '& .MuiSvgIcon-root': {
-                      fontSize: '1.5rem',
+                    "& .MuiSvgIcon-root": {
+                      fontSize: "1.5rem",
                     },
-                    '&.Mui-checked .MuiSvgIcon-root': {
-                      backgroundColor: '#10b981',
-                      borderRadius: '4px',
-                      color: '#ffffff',
+                    "&.Mui-checked .MuiSvgIcon-root": {
+                      backgroundColor: "#10b981",
+                      borderRadius: "4px",
+                      color: "#ffffff",
                     },
                   }}
                 />
               }
               label={
                 <Typography>
-                  I have read, understood, and agree to these terms and conditions. I understand that 
-                  this tool is for informational purposes only and is not a substitute for professional 
-                  medical advice.
+                  I have read, understood, and agree to these terms and
+                  conditions. I understand that this tool is for informational
+                  purposes only and is not a substitute for professional medical
+                  advice.
                 </Typography>
               }
             />

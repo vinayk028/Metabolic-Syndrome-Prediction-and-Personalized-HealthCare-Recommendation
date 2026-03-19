@@ -15,6 +15,7 @@ const newsService = require('./services/newsService');
 const authRoutes = require('./routes/auth');
 const metsRoutes = require('./routes/mets');
 const newsRoutes = require('./routes/news');
+const chatRoutes = require('./routes/chat');
 
 // ==================== App Setup ====================
 
@@ -42,6 +43,7 @@ app.get('/api/health', async (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/mets', metsRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

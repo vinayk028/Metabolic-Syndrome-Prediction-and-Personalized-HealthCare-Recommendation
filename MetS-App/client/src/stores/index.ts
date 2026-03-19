@@ -5,3 +5,4 @@
 export { useAuthStore } from './authStore';
 export { useAssessmentStore } from './assessmentStore';
 export { useNewsStore } from './newsStore';
+export { useChatStore } from './chatStore';

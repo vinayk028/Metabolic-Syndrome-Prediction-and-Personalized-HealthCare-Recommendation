@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { Favorite as HeartIcon } from '@mui/icons-material';
 import Navbar from './Navbar';
+import ChatAssistant from './ChatAssistant';
 import './Layout.css';
 
 interface LayoutProps {
@@ -35,6 +36,7 @@ const Layout = ({ children }: LayoutProps) => {
           </Box>
         </Container>
       </Box>
+      <ChatAssistant />
     </Box>
   );
 };

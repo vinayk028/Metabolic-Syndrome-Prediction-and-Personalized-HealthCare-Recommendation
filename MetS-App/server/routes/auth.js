@@ -151,13 +151,27 @@ router.put('/password', protect, passwordValidation, asyncHandler(async (req, re
 
 // POST /api/auth/assessment
 router.post('/assessment', protect, asyncHandler(async (req, res) => {
-    const { probability, severity, riskLevel, recommendations } = req.body;
+    const { probability, severity, riskLevel, recommendations, inputParameters } = req.body;
 
-    const user = await User.findByIdAndUpdate(
-        req.user.id,
-        { $push: { assessmentHistory: { date: new Date(), probability, severity, riskLevel, recommendations } } },
-        { new: true }
-    );
+    const user = await User.findById(req.user.id);
+    
+    // Add new assessment
+    user.assessmentHistory.push({
+        date: new Date(),
+        probability,
+        severity,
+        riskLevel,
+        inputParameters: inputParameters || {},
+        recommendations
+    });
+    
+    // Sort by date descending and keep only the latest 7
+    user.assessmentHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+    if (user.assessmentHistory.length > 7) {
+        user.assessmentHistory = user.assessmentHistory.slice(0, 7);
+    }
+    
+    await user.save({ validateBeforeSave: false });
 
     res.json({ success: true, message: 'Assessment saved', assessmentHistory: user.assessmentHistory });
 }));
@@ -165,7 +179,11 @@ router.post('/assessment', protect, asyncHandler(async (req, res) => {
 // GET /api/auth/assessments
 router.get('/assessments', protect, asyncHandler(async (req, res) => {
     const user = await User.findById(req.user.id);
-    res.json({ success: true, assessmentHistory: user.assessmentHistory });
+    // Return only latest 7, sorted by date descending
+    const history = (user.assessmentHistory || [])
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 7);
+    res.json({ success: true, assessmentHistory: history });
 }));
 
 // DELETE /api/auth/account

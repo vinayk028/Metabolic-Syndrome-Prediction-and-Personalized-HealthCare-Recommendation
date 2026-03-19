@@ -266,6 +266,15 @@
   }
 }
 
+/* Gender Select Field Fix */
+.profile-tab-content .MuiTextField-root .MuiSelect-select {
+  display: flex;
+  align-items: center;
+  min-height: 1.4375em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Section Headers */
 .profile-section-header {
   display: flex;
@@ -759,5 +768,193 @@
   .profile-avatar {
     animation: none;
     transition: none;
+  }
+
+  .history-expanded-content {
+    animation: none;
+  }
+}
+
+/* History Summary Banner */
+.history-summary-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #f0fdfa 0%, #f0f9ff 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(0, 178, 167, 0.12);
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.history-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.history-summary-label {
+  text-transform: uppercase;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em;
+  color: #94a3b8 !important;
+  font-size: 0.65rem !important;
+}
+
+.history-summary-value {
+  font-weight: 800 !important;
+  color: #1e293b !important;
+  font-size: 1.05rem !important;
+  line-height: 1.2 !important;
+}
+
+/* Expanded History Card */
+.history-card.expanded {
+  border-color: rgba(0, 178, 167, 0.3) !important;
+  box-shadow:
+    0 10px 40px rgba(0, 178, 167, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.history-card.expanded::before {
+  opacity: 1;
+}
+
+.history-expanded-content {
+  animation: expandIn 0.3s ease-out;
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    max-height: 800px;
+    transform: translateY(0);
+  }
+}
+
+/* History Parameters Grid */
+.history-params-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+}
+
+.history-param-item {
+  padding: 0.6rem 0.75rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.history-param-item:hover {
+  background: #f0fdfa;
+  border-color: rgba(0, 178, 167, 0.15);
+  transform: translateY(-1px);
+}
+
+.history-param-item .MuiTypography-caption {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  font-size: 0.6rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* History Recommendations Summary */
+.history-recs-summary {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.history-rec-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 14px;
+  min-width: 80px;
+  transition: all 0.3s ease;
+}
+
+.history-rec-badge:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.history-rec-badge .MuiTypography-caption {
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.history-rec-badge.diet {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 1px solid #a7f3d0;
+  color: #059669;
+}
+
+.history-rec-badge.avoid {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fcd34d;
+  color: #d97706;
+}
+
+.history-rec-badge.exercise {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border: 1px solid #7dd3fc;
+  color: #0284c7;
+}
+
+.history-rec-badge.yoga {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  border: 1px solid #c4b5fd;
+  color: #7c3aed;
+}
+
+/* Responsive enhancements for history */
+@media (max-width: 768px) {
+  .history-summary-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .history-summary-banner .MuiDivider-root {
+    display: none;
+  }
+
+  .history-params-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .history-recs-summary {
+    gap: 0.5rem;
+  }
+
+  .history-rec-badge {
+    padding: 0.6rem 1rem;
+    min-width: 70px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .history-expanded-content {
+    animation: none;
   }
 }

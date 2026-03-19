@@ -74,6 +74,19 @@ const userSchema = new mongoose.Schema({
         probability: Number,
         severity: Number,
         riskLevel: String,
+        inputParameters: {
+            age: Number,
+            gender: String,
+            fattyLiver: Boolean,
+            hypertension: Boolean,
+            diabetes: Boolean,
+            systolicBP: Number,
+            diastolicBP: Number,
+            waistCircumference: Number,
+            hdlCholesterol: Number,
+            triglyceride: Number,
+            fpg: Number
+        },
         recommendations: {
             dietPlan: [String],
             avoidList: [String],
@@ -83,6 +96,16 @@ const userSchema = new mongoose.Schema({
     }]
 }, {
     timestamps: true
+});
+
+// Keep only the latest 7 assessments
+userSchema.pre('save', function(next) {
+    if (this.assessmentHistory && this.assessmentHistory.length > 7) {
+        // Sort by date descending, keep only latest 7
+        this.assessmentHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+        this.assessmentHistory = this.assessmentHistory.slice(0, 7);
+    }
+    next();
 });
 
 // Hash password before saving

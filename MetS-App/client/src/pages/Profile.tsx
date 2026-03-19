@@ -43,6 +43,16 @@ import {
   Assessment as AssessmentIcon,
   CalendarToday as CalendarIcon,
   TrendingUp as TrendingUpIcon,
+  Dashboard as DashboardIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+  CheckCircle as CheckCircleIcon,
+  Warning as WarningIcon,
+  Restaurant as DietIcon,
+  FitnessCenter as ExerciseIcon,
+  SelfImprovement as YogaIcon,
+  Block as AvoidIcon,
+  Speed as SpeedIcon,
 } from '@mui/icons-material';
 import { useAuthStore } from '../stores';
 import { updateProfile, updatePassword, deleteAccount, getAssessmentHistory } from '../data/api';
@@ -82,6 +92,7 @@ const Profile: React.FC = () => {
   const [assessmentHistory, setAssessmentHistory] = useState<AssessmentHistoryItem[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const [profileData, setProfileData] = useState<UpdateProfileData>({
     firstName: '',
@@ -235,6 +246,10 @@ const Profile: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const toggleExpand = (id: string) => {
+    setExpandedCard(prev => prev === id ? null : id);
   };
 
   const formatDate = (dateString: string) => {
@@ -454,9 +469,7 @@ const Profile: React.FC = () => {
                     value={profileData.gender || ''}
                     onChange={handleProfileChange}
                     disabled={!isEditing}
-                    SelectProps={{
-                      displayEmpty: true,
-                    }}
+                    InputLabelProps={{ shrink: true }}
                   >
                     <MenuItem value="">
                       <em>Select Gender</em>
@@ -652,7 +665,57 @@ const Profile: React.FC = () => {
         {/* History Tab */}
         <TabPanel value={tabValue} index={2}>
           <Box className="profile-tab-content">
-            <Typography variant="h6" sx={{ mb: 3 }}>Assessment History</Typography>
+            <Box className="profile-section-header">
+              <Typography variant="h6">Assessment History</Typography>
+              {assessmentHistory.length > 0 && (
+                <Button
+                  startIcon={<DashboardIcon />}
+                  onClick={() => navigate('/dashboard')}
+                  className="edit-btn"
+                >
+                  View Dashboard
+                </Button>
+              )}
+            </Box>
+
+            {assessmentHistory.length > 0 && (
+              <Box className="history-summary-banner">
+                <Box className="history-summary-item">
+                  <SpeedIcon sx={{ color: '#00b2a7' }} />
+                  <Box>
+                    <Typography variant="caption" className="history-summary-label">Total Assessments</Typography>
+                    <Typography variant="h6" className="history-summary-value">{assessmentHistory.length} / 7</Typography>
+                  </Box>
+                </Box>
+                <Divider orientation="vertical" flexItem />
+                <Box className="history-summary-item">
+                  <TrendingUpIcon sx={{ color: '#00b2a7' }} />
+                  <Box>
+                    <Typography variant="caption" className="history-summary-label">Latest Probability</Typography>
+                    <Typography variant="h6" className="history-summary-value">
+                      {(assessmentHistory[0]?.probability * 100).toFixed(1)}%
+                    </Typography>
+                  </Box>
+                </Box>
+                <Divider orientation="vertical" flexItem />
+                <Box className="history-summary-item">
+                  <AssessmentIcon sx={{ color: getRiskColor(assessmentHistory[0]?.riskLevel) }} />
+                  <Box>
+                    <Typography variant="caption" className="history-summary-label">Latest Risk</Typography>
+                    <Chip
+                      label={assessmentHistory[0]?.riskLevel}
+                      size="small"
+                      sx={{
+                        backgroundColor: `${getRiskColor(assessmentHistory[0]?.riskLevel)}18`,
+                        color: getRiskColor(assessmentHistory[0]?.riskLevel),
+                        fontWeight: 700,
+                        fontSize: '0.7rem',
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+            )}
 
             {historyLoading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -676,55 +739,225 @@ const Profile: React.FC = () => {
               </Box>
             ) : (
               <Grid container spacing={2}>
-                {assessmentHistory.slice().reverse().map((assessment, index) => (
-                  <Grid size={{ xs: 12 }} key={assessment._id || index}>
-                    <Card className="history-card">
-                      <CardContent>
-                        <Box className="history-card-header">
-                          <Box>
-                            <Typography variant="subtitle2" color="textSecondary">
-                              {formatDate(assessment.date)}
-                            </Typography>
-                            <Chip
-                              label={assessment.riskLevel}
-                              size="small"
-                              sx={{
-                                mt: 0.5,
-                                backgroundColor: `${getRiskColor(assessment.riskLevel)}20`,
-                                color: getRiskColor(assessment.riskLevel),
-                                fontWeight: 600,
-                              }}
-                            />
-                          </Box>
-                          <Box className="history-stats">
-                            <Box className="history-stat">
-                              <TrendingUpIcon sx={{ color: '#00b2a7' }} />
-                              <Box>
-                                <Typography variant="caption" color="textSecondary">
-                                  Probability
-                                </Typography>
-                                <Typography variant="h6">
-                                  {(assessment.probability * 100).toFixed(1)}%
+                {assessmentHistory.slice().reverse().map((assessment, index) => {
+                  const cardId = assessment._id || String(index);
+                  const isExpanded = expandedCard === cardId;
+                  return (
+                    <Grid size={{ xs: 12 }} key={cardId}>
+                      <Card className={`history-card ${isExpanded ? 'expanded' : ''}`}>
+                        <CardContent>
+                          <Box className="history-card-header">
+                            <Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                <Chip
+                                  label={`#${assessmentHistory.length - index}`}
+                                  size="small"
+                                  sx={{ 
+                                    fontWeight: 800, 
+                                    backgroundColor: '#f1f5f9', 
+                                    color: '#475569',
+                                    fontSize: '0.7rem',
+                                  }}
+                                />
+                                <Typography variant="subtitle2" color="textSecondary">
+                                  {formatDate(assessment.date)}
                                 </Typography>
                               </Box>
+                              <Chip
+                                label={assessment.riskLevel}
+                                size="small"
+                                sx={{
+                                  mt: 0.5,
+                                  backgroundColor: `${getRiskColor(assessment.riskLevel)}20`,
+                                  color: getRiskColor(assessment.riskLevel),
+                                  fontWeight: 600,
+                                }}
+                              />
                             </Box>
-                            <Box className="history-stat">
-                              <AssessmentIcon sx={{ color: getRiskColor(assessment.riskLevel) }} />
-                              <Box>
-                                <Typography variant="caption" color="textSecondary">
-                                  Severity
-                                </Typography>
-                                <Typography variant="h6">
-                                  {(assessment.severity * 100).toFixed(1)}%
-                                </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                              <Box className="history-stats">
+                                <Box className="history-stat">
+                                  <TrendingUpIcon sx={{ color: '#00b2a7' }} />
+                                  <Box>
+                                    <Typography variant="caption" color="textSecondary">
+                                      Probability
+                                    </Typography>
+                                    <Typography variant="h6">
+                                      {(assessment.probability * 100).toFixed(1)}%
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                                <Box className="history-stat">
+                                  <AssessmentIcon sx={{ color: getRiskColor(assessment.riskLevel) }} />
+                                  <Box>
+                                    <Typography variant="caption" color="textSecondary">
+                                      Severity
+                                    </Typography>
+                                    <Typography variant="h6">
+                                      {(assessment.severity * 100).toFixed(1)}%
+                                    </Typography>
+                                  </Box>
+                                </Box>
                               </Box>
+                              <IconButton
+                                onClick={() => toggleExpand(cardId)}
+                                size="small"
+                                sx={{
+                                  backgroundColor: '#f1f5f9',
+                                  transition: 'all 0.3s ease',
+                                  '&:hover': { backgroundColor: '#e2e8f0' },
+                                }}
+                              >
+                                {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                              </IconButton>
                             </Box>
                           </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+
+                          {/* Expanded Details */}
+                          {isExpanded && (
+                            <Box className="history-expanded-content">
+                              <Divider sx={{ my: 2 }} />
+
+                              {/* Input Parameters */}
+                              {assessment.inputParameters && (
+                                <>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, color: '#1e293b' }}>
+                                    Health Parameters
+                                  </Typography>
+                                  <Box className="history-params-grid">
+                                    <Box className="history-param-item">
+                                      <Typography variant="caption">Age</Typography>
+                                      <Typography variant="body2" fontWeight={700}>{assessment.inputParameters.age} yrs</Typography>
+                                    </Box>
+                                    <Box className="history-param-item">
+                                      <Typography variant="caption">Gender</Typography>
+                                      <Typography variant="body2" fontWeight={700}>
+                                        {assessment.inputParameters.gender === 'Men' ? 'Male' : 'Female'}
+                                      </Typography>
+                                    </Box>
+                                    <Box className="history-param-item">
+                                      <Typography variant="caption">Systolic BP</Typography>
+                                      <Typography variant="body2" fontWeight={700}>{assessment.inputParameters.systolicBP} mmHg</Typography>
+                                    </Box>
+                                    <Box className="history-param-item">
+                                      <Typography variant="caption">Diastolic BP</Typography>
+                                      <Typography variant="body2" fontWeight={700}>{assessment.inputParameters.diastolicBP} mmHg</Typography>
+                                    </Box>
+                                    <Box className="history-param-item">
+                                      <Typography variant="caption">Waist</Typography>
+                                      <Typography variant="body2" fontWeight={700}>{assessment.inputParameters.waistCircumference} cm</Typography>
+                                    </Box>
+                                    {assessment.inputParameters.hdlCholesterol && (
+                                      <Box className="history-param-item">
+                                        <Typography variant="caption">HDL</Typography>
+                                        <Typography variant="body2" fontWeight={700}>{assessment.inputParameters.hdlCholesterol} mg/dL</Typography>
+                                      </Box>
+                                    )}
+                                    {assessment.inputParameters.triglyceride && (
+                                      <Box className="history-param-item">
+                                        <Typography variant="caption">Triglyceride</Typography>
+                                        <Typography variant="body2" fontWeight={700}>{assessment.inputParameters.triglyceride} mg/dL</Typography>
+                                      </Box>
+                                    )}
+                                    {assessment.inputParameters.fpg && (
+                                      <Box className="history-param-item">
+                                        <Typography variant="caption">Glucose</Typography>
+                                        <Typography variant="body2" fontWeight={700}>{assessment.inputParameters.fpg} mg/dL</Typography>
+                                      </Box>
+                                    )}
+                                  </Box>
+
+                                  {/* Conditions */}
+                                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 1.5 }}>
+                                    <Chip
+                                      icon={assessment.inputParameters.fattyLiver ? <WarningIcon /> : <CheckCircleIcon />}
+                                      label={`Fatty Liver: ${assessment.inputParameters.fattyLiver ? 'Yes' : 'No'}`}
+                                      size="small"
+                                      sx={{
+                                        fontWeight: 600,
+                                        borderRadius: '10px',
+                                        backgroundColor: assessment.inputParameters.fattyLiver ? '#fef2f2' : '#ecfdf5',
+                                        color: assessment.inputParameters.fattyLiver ? '#dc2626' : '#059669',
+                                        border: `1px solid ${assessment.inputParameters.fattyLiver ? '#fecaca' : '#a7f3d0'}`,
+                                        '& svg': { color: assessment.inputParameters.fattyLiver ? '#ef4444' : '#10b981' },
+                                      }}
+                                    />
+                                    <Chip
+                                      icon={assessment.inputParameters.hypertension ? <WarningIcon /> : <CheckCircleIcon />}
+                                      label={`Hypertension: ${assessment.inputParameters.hypertension ? 'Yes' : 'No'}`}
+                                      size="small"
+                                      sx={{
+                                        fontWeight: 600,
+                                        borderRadius: '10px',
+                                        backgroundColor: assessment.inputParameters.hypertension ? '#fef2f2' : '#ecfdf5',
+                                        color: assessment.inputParameters.hypertension ? '#dc2626' : '#059669',
+                                        border: `1px solid ${assessment.inputParameters.hypertension ? '#fecaca' : '#a7f3d0'}`,
+                                        '& svg': { color: assessment.inputParameters.hypertension ? '#ef4444' : '#10b981' },
+                                      }}
+                                    />
+                                    <Chip
+                                      icon={assessment.inputParameters.diabetes ? <WarningIcon /> : <CheckCircleIcon />}
+                                      label={`Diabetes: ${assessment.inputParameters.diabetes ? 'Yes' : 'No'}`}
+                                      size="small"
+                                      sx={{
+                                        fontWeight: 600,
+                                        borderRadius: '10px',
+                                        backgroundColor: assessment.inputParameters.diabetes ? '#fef2f2' : '#ecfdf5',
+                                        color: assessment.inputParameters.diabetes ? '#dc2626' : '#059669',
+                                        border: `1px solid ${assessment.inputParameters.diabetes ? '#fecaca' : '#a7f3d0'}`,
+                                        '& svg': { color: assessment.inputParameters.diabetes ? '#ef4444' : '#10b981' },
+                                      }}
+                                    />
+                                  </Box>
+                                </>
+                              )}
+
+                              {/* Recommendations Summary */}
+                              {assessment.recommendations && (
+                                <>
+                                  <Divider sx={{ my: 2 }} />
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, color: '#1e293b' }}>
+                                    Recommendations Summary
+                                  </Typography>
+                                  <Box className="history-recs-summary">
+                                    <Box className="history-rec-badge diet">
+                                      <DietIcon fontSize="small" />
+                                      <Typography variant="body2" fontWeight={700}>
+                                        {assessment.recommendations.dietPlan?.length || 0}
+                                      </Typography>
+                                      <Typography variant="caption">Diet</Typography>
+                                    </Box>
+                                    <Box className="history-rec-badge avoid">
+                                      <AvoidIcon fontSize="small" />
+                                      <Typography variant="body2" fontWeight={700}>
+                                        {assessment.recommendations.avoidList?.length || 0}
+                                      </Typography>
+                                      <Typography variant="caption">Avoid</Typography>
+                                    </Box>
+                                    <Box className="history-rec-badge exercise">
+                                      <ExerciseIcon fontSize="small" />
+                                      <Typography variant="body2" fontWeight={700}>
+                                        {assessment.recommendations.exercisePlan?.length || 0}
+                                      </Typography>
+                                      <Typography variant="caption">Exercise</Typography>
+                                    </Box>
+                                    <Box className="history-rec-badge yoga">
+                                      <YogaIcon fontSize="small" />
+                                      <Typography variant="body2" fontWeight={700}>
+                                        {assessment.recommendations.yogaPoses?.length || 0}
+                                      </Typography>
+                                      <Typography variant="caption">Yoga</Typography>
+                                    </Box>
+                                  </Box>
+                                </>
+                              )}
+                            </Box>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  );
+                })}
               </Grid>
             )}
           </Box>

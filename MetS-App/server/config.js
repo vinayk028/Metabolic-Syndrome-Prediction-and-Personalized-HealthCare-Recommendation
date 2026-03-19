@@ -34,6 +34,11 @@ const config = {
 
     // Paths (resolved from project root)
     recommendationsPath: path.resolve(__dirname, '..', '..', 'MetS-App', 'plugins', 'HealthcareRecommendations', 'Healthcare_Recommendations.json'),
+
+    // LLM Chat Assistant
+    llmProvider: process.env.LLM_PROVIDER || 'gemini',          // 'gemini' or 'claude'
+    llmApiKey: process.env.LLM_API_KEY || '',
+    llmModel: process.env.LLM_MODEL || '',                      // optional: override default model
 };
 
 // ==================== Database Connection ====================

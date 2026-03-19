@@ -18,6 +18,8 @@ import type {
     User,
     NewsResponse,
     AssessmentHistoryItem,
+    AssessmentInputParameters,
+    ChatResponse,
 } from './types';
 
 // API Base URL
@@ -134,6 +136,7 @@ export const saveAssessment = async (data: {
     severity: number;
     riskLevel: string;
     recommendations: Recommendations;
+    inputParameters?: AssessmentInputParameters;
 }): Promise<{ success: boolean; message: string }> => {
     const response = await api.post('/auth/assessment', data);
     return response.data;
@@ -151,6 +154,16 @@ export const getAssessmentHistory = async (): Promise<{
 
 export const getMetabolicSyndromeNews = async (limit: number = 15, skip: number = 0): Promise<NewsResponse> => {
     const response = await api.get(`/news?limit=${limit}&skip=${skip}`);
+    return response.data;
+};
+
+// ============ Chat APIs ============
+
+export const sendChatMessage = async (
+    message: string,
+    history: { role: string; content: string }[]
+): Promise<ChatResponse> => {
+    const response = await api.post('/chat', { message, history });
     return response.data;
 };
 

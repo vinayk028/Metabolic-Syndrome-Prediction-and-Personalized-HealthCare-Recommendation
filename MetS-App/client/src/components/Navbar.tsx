@@ -27,6 +27,7 @@ import {
   Person as PersonIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
+  Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 import { useAuthStore } from '../stores';
 import './Navbar.css';
@@ -40,6 +41,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
   { label: 'Assessment', path: '/assessment', icon: <AssessmentIcon /> },
+  { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
   { label: 'Resources', path: '/resources', icon: <ResourcesIcon /> },
   { label: 'About', path: '/about', icon: <InfoIcon /> },
 ];

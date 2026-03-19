@@ -51,6 +51,20 @@ export interface ReportData {
     recommendations: Recommendations;
 }
 
+export interface AssessmentInputParameters {
+    age: number;
+    gender: string;
+    fattyLiver: boolean;
+    hypertension: boolean;
+    diabetes: boolean;
+    systolicBP: number;
+    diastolicBP: number;
+    waistCircumference: number;
+    hdlCholesterol?: number;
+    triglyceride?: number;
+    fpg?: number;
+}
+
 // ============ User & Auth Types ============
 
 export interface User {
@@ -75,6 +89,7 @@ export interface AssessmentHistoryItem {
     probability: number;
     severity: number;
     riskLevel: string;
+    inputParameters?: AssessmentInputParameters;
     recommendations: Recommendations;
 }
 
@@ -131,5 +146,20 @@ export interface NewsResponse {
     success: boolean;
     count: number;
     articles: NewsArticle[];
+    message?: string;
+}
+
+// ============ Chat Types ============
+
+export interface ChatMessage {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp: Date;
+}
+
+export interface ChatResponse {
+    success: boolean;
+    response: string;
     message?: string;
 }
