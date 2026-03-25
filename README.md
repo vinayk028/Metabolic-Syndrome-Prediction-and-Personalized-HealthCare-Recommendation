@@ -380,7 +380,7 @@ GUARDIAN_API_KEY=your_guardian_api_key  # Optional, for news
 > **Note:** The app works without the Guardian API key — only the news feature will be disabled.
 
 ---
-
+<!-- 
 ## 📱 Standalone Streamlit App
 
 A standalone version using Streamlit is also available:
@@ -395,7 +395,7 @@ streamlit run app.py
 # Opens at http://localhost:8501
 ```
 
----
+--- -->
 
 ## 🤝 Contributing
 
@@ -408,12 +408,12 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ---
-
+<!-- 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+--- -->
 
 ## 🙏 Acknowledgments
 
@@ -424,7 +424,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Clinical research on cMetS_S scoring methodology
 
 ---
-
+<!-- 
 ## 📞 Support
 
 If you have any questions or need help, please:
@@ -433,7 +433,7 @@ If you have any questions or need help, please:
 2. Review the [ARCHITECTURE.md](ARCHITECTURE.md) for technical details
 3. Open an issue on GitHub
 
----
+--- -->
 
 <p align="center">
   Made with ❤️ for better health outcomes
