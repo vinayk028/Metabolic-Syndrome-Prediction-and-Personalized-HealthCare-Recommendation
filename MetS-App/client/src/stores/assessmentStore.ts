@@ -149,7 +149,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     // ---- API flows ----
 
     predict: async () => {
-        const { patientInfo, additionalInfo } = get();
+        const { patientInfo } = get();
         set({ loading: true, error: null });
 
         try {
@@ -161,20 +161,6 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
             } else {
                 const recs = await getRecommendations(patientInfo.gender, 'Low Severity', patientInfo.age);
                 set({ recommendations: recs, activeStep: 1 }); // → Results (2-step flow)
-
-                // Auto-save for non-MetS results
-                try {
-                    const inputParameters = buildInputParameters(patientInfo, additionalInfo, false);
-                    await saveAssessment({
-                        probability,
-                        severity: 0,
-                        riskLevel: 'Low Severity',
-                        recommendations: recs,
-                        inputParameters,
-                    });
-                } catch (saveErr) {
-                    console.error('Failed to save assessment:', saveErr);
-                }
             }
         } catch (err) {
             console.error('Prediction error:', err);
@@ -194,20 +180,6 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
 
             const recs = await getRecommendations(patientInfo.gender, riskLevel, patientInfo.age);
             set({ recommendations: recs, activeStep: 2 }); // → Results (3-step flow)
-
-            // Auto-save for MetS results
-            try {
-                const inputParameters = buildInputParameters(patientInfo, additionalInfo, true);
-                await saveAssessment({
-                    probability: results.probability,
-                    severity,
-                    riskLevel,
-                    recommendations: recs,
-                    inputParameters,
-                });
-            } catch (saveErr) {
-                console.error('Failed to save assessment:', saveErr);
-            }
         } catch (err) {
             console.error('Severity error:', err);
             set({ error: 'Failed to calculate severity. Please try again.' });
@@ -251,8 +223,13 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
                 recommendations,
                 inputParameters,
             });
+            set({ error: null });
         } catch (err) {
             console.error('Failed to save assessment:', err);
+            // The API interceptor will handle 401 redirect to login
+            if ((err as any).response?.status !== 401) {
+                set({ error: 'Failed to save assessment. Please try again.' });
+            }
         }
     },
 
