@@ -1,1 +1,1 @@
-web: gunicorn prediction_service:app
+web: pip install -r requirements-pred.txt && gunicorn prediction_service:app --bind 0.0.0.0:$PORT
