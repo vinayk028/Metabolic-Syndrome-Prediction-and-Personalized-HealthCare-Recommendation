@@ -4,3 +4,4 @@ setuptools
 pgmpy>=0.1.23
 numpy==1.26.4
 pandas
+gunicorn==21.2.0
