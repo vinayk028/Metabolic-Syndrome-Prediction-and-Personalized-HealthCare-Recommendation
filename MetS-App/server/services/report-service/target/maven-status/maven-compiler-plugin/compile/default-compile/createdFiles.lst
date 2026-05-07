@@ -1,0 +1,7 @@
+com\mets\reportservice\config\CorsConfig.class
+com\mets\reportservice\model\ReportRequest.class
+com\mets\reportservice\ReportServiceApplication.class
+com\mets\reportservice\service\PdfReportService.class
+com\mets\reportservice\controller\ReportController.class
+com\mets\reportservice\model\AssessmentResults.class
+com\mets\reportservice\model\Recommendations.class

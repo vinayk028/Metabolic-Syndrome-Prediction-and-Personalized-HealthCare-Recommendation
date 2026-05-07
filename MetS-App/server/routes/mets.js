@@ -74,7 +74,7 @@ router.post('/recommendations', asyncHandler(async (req, res) => {
     res.json(recommendations);
 }));
 
-// Download report (returns PDF as base64)
+// Download report as PDF (returns base64-encoded PDF in JSON)
 router.post('/report', asyncHandler(async (req, res) => {
     const { userInfo, results, recommendations } = req.body;
 
@@ -82,9 +82,14 @@ router.post('/report', asyncHandler(async (req, res) => {
         return res.status(400).json({ error: 'userInfo and results are required' });
     }
 
-    const pdfBuffer = await reportService.generateHealthReportPDF(userInfo, results, recommendations || {});
-    const base64PDF = pdfBuffer.toString('base64');
-    res.json({ report: base64PDF });
+    try {
+        const base64Pdf = await reportService.generatePdfReport(userInfo, results, recommendations || {});
+        // Return JSON with base64-encoded PDF (client will decode and download)
+        res.json({ report: base64Pdf });
+    } catch (error) {
+        console.error('Report generation failed:', error);
+        res.status(500).json({ error: 'Failed to generate report. Please ensure the Spring Boot report service is running on port 8081.' });
+    }
 }));
 
 module.exports = router;
