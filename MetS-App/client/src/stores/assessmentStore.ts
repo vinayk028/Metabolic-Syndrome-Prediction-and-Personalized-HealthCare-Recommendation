@@ -204,8 +204,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
             };
 
             const { report } = await generateReport({ userInfo, results, recommendations });
-            const date = new Date().toISOString().split('T')[0];
-            downloadReport(report, `metabolic_syndrome_health_plan_${date}.md`);
+            downloadReport(report, 'MetS-Report.pdf');
         } catch (err) {
             console.error('Report error:', err);
             set({ error: 'Failed to generate report. Please try again.' });

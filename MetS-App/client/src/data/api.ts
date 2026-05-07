@@ -170,11 +170,19 @@ export const sendChatMessage = async (
 // ============ Helpers ============
 
 export const downloadReport = (report: string, filename: string): void => {
-    const blob = new Blob([report], { type: 'text/markdown' });
+    // Decode base64 PDF to binary
+    const binaryString = window.atob(report);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    
+    // Create blob from binary data
+    const blob = new Blob([bytes], { type: 'application/pdf' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename;
+    link.download = filename.replace('.md', '.pdf');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

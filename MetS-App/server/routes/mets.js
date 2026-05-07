@@ -74,7 +74,7 @@ router.post('/recommendations', asyncHandler(async (req, res) => {
     res.json(recommendations);
 }));
 
-// Download report
+// Download report (returns PDF as base64)
 router.post('/report', asyncHandler(async (req, res) => {
     const { userInfo, results, recommendations } = req.body;
 
@@ -82,8 +82,9 @@ router.post('/report', asyncHandler(async (req, res) => {
         return res.status(400).json({ error: 'userInfo and results are required' });
     }
 
-    const report = reportService.generateHealthReport(userInfo, results, recommendations || {});
-    res.json({ report });
+    const pdfBuffer = await reportService.generateHealthReportPDF(userInfo, results, recommendations || {});
+    const base64PDF = pdfBuffer.toString('base64');
+    res.json({ report: base64PDF });
 }));
 
 module.exports = router;
