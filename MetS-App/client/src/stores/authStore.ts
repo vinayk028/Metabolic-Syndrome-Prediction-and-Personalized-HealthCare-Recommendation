@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>((set) => ({
                 const response = await getCurrentUser();
                 if (response.success && response.user) {
                     localStorage.setItem('user', JSON.stringify(response.user));
-                    set({ user: response.user });
+                    set({ user: response.user }); 
                 }
             } catch {
                 localStorage.removeItem('token');
