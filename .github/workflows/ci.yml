@@ -1,0 +1,45 @@
+name: Client CI Workflow
+on:
+  push:
+    branches:
+      - main
+      - master
+      - dev/ci-workflow
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+        # Checkout the Source code from the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+        # Setup Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+        # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install client dependencies
+        working-directory: MetS-App/client
+        run: npm install
+
+      - name: Build client
+        working-directory: MetS-App/client
+        run: npm run build
+
+      - name: Install server dependencies
+        working-directory: MetS-App/server
+        run: npm install
+
+
+
+        
