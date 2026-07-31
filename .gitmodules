@@ -1,0 +1,4 @@
+[submodule "PredictionModel"]
+	path = PredictionModel
+	url = https://github.com/vinayk028/MetS-Prediction-Model.git
+	branch = main
