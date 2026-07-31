@@ -35,7 +35,7 @@ BASE_DIR = os.path.abspath(
 
 MODEL_PATH = os.path.join(
     BASE_DIR,
-    "MetS-Prediction-Model",
+    "PredictionModel",
     "src",
     "Bayesian_Model",
     "Bayesian_Prediction_Model.pkl"
