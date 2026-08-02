@@ -7,18 +7,18 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme/theme';
 import { useAuthStore } from './stores';
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Pages
-import Home from './pages/Home';
-import About from './pages/About';
-import Assessment from './pages/Assessment';
-import Resources from './pages/Resources';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Profile from './pages/Profile';
-import Dashboard from './pages/Dashboard';
+import Home from './pages/home/Home';
+import About from './pages/about/About';
+import Assessment from './pages/assessment/Assessment';
+import Resources from './pages/resources/Resources';
+import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
+import Profile from './pages/profile/Profile';
+import Dashboard from './pages/dashboard/Dashboard';
 
 // Styles
 import './styles/global.css';

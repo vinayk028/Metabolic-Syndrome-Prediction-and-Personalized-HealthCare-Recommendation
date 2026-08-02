@@ -29,7 +29,7 @@ import {
   Logout as LogoutIcon,
   Dashboard as DashboardIcon,
 } from '@mui/icons-material';
-import { useAuthStore } from '../stores';
+import { useAuthStore } from '../../stores';
 import './Navbar.css';
 
 interface NavItem {

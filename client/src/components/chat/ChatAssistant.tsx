@@ -25,7 +25,7 @@ import {
     DeleteOutline as ClearIcon,
     HealthAndSafety as AssistantIcon,
 } from '@mui/icons-material';
-import { useChatStore, QUICK_ACTIONS } from '../stores/chatStore';
+import { useChatStore, QUICK_ACTIONS } from '../../stores/chatStore';
 import './ChatAssistant.css';
 
 // ============ Markdown Renderer ============

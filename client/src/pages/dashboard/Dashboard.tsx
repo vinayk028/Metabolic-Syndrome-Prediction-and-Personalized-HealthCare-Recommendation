@@ -56,9 +56,9 @@ import {
   Legend,
   Cell,
 } from 'recharts';
-import { useAuthStore } from '../stores';
-import { getAssessmentHistory } from '../data/api';
-import type { AssessmentHistoryItem } from '../data/types';
+import { useAuthStore } from '../../stores';
+import { getAssessmentHistory } from '../../services/api';
+import type { AssessmentHistoryItem } from '../../types/types';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {

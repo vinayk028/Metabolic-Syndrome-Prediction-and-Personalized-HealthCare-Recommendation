@@ -41,12 +41,9 @@ import {
   Block as AvoidIcon,
   Warning as WarningIcon,
 } from "@mui/icons-material";
-import { useAssessmentStore } from "../stores";
+import { useAssessmentStore } from "../../stores/assessmentStore";
+import ASSESSMENT_BANNER from '../../assets/assessment_banner.jpg';
 import "./Assessment.css";
-
-// Healthcare image for assessment page
-const ASSESSMENT_BANNER =
-  "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1200&h=400&fit=crop&q=80";
 
 // Steps will be dynamic based on whether user has metabolic syndrome
 const STEPS_WITH_ADDITIONAL = [

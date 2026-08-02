@@ -24,8 +24,8 @@ import {
     Login as LoginIcon,
     Favorite as HeartIcon,
 } from '@mui/icons-material';
-import { useAuthStore } from '../stores';
-import { login as loginApi } from '../data/api';
+import { useAuthStore } from '../../stores';
+import { login as loginApi } from '../../services/api';
 import './Auth.css';
 
 const Login: React.FC = () => {

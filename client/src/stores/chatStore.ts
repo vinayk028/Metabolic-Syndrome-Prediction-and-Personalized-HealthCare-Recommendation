@@ -4,8 +4,8 @@
  */
 
 import { create } from 'zustand';
-import type { ChatMessage } from '../data/types';
-import { sendChatMessage } from '../data/api';
+import type { ChatMessage } from '../types/types';
+import { sendChatMessage } from '../services/api';
 
 // ============ Quick Actions ============
 

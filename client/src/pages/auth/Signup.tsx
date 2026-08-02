@@ -26,8 +26,8 @@ import {
     PersonAdd as PersonAddIcon,
     Favorite as HeartIcon,
 } from '@mui/icons-material';
-import { useAuthStore } from '../stores';
-import { signup as signupApi } from '../data/api';
+import { useAuthStore } from '../../stores';
+import { signup as signupApi } from '../../services/api';
 import './Auth.css';
 
 const Signup: React.FC = () => {

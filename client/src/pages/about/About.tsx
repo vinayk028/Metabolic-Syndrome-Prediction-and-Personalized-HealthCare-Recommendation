@@ -19,12 +19,10 @@ import {
   Speed as SpeedIcon,
   LocalDrink as DrinkIcon,
 } from '@mui/icons-material';
+import ABOUT_HERO_IMAGE from '../../assets/about_hero.jpg';
+import DOCTOR_IMAGE from '../../assets/doctor.jpg';
+import HEALTH_CHECK_IMAGE from '../../assets/health_check.jpg';
 import './About.css';
-
-// Healthcare images from Unsplash (free to use)
-const ABOUT_HERO_IMAGE = 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&h=550&fit=crop&q=80'; // Medical team collaboration
-const DOCTOR_IMAGE = 'https://images.unsplash.com/photo-1638202993928-7267aad84c31?w=600&h=400&fit=crop&q=80'; // Doctor with patient
-const HEALTH_CHECK_IMAGE = 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=400&fit=crop&q=80'; // Health checkup
 
 const conditions = [
   {

@@ -36,7 +36,7 @@ import {
     AccessTime as TimeIcon,
     Science as ScienceIcon,
 } from '@mui/icons-material';
-import { useNewsStore } from '../stores';
+import { useNewsStore } from '../../stores';
 import './Resources.css';
 
 // ==================== Helper Functions ====================

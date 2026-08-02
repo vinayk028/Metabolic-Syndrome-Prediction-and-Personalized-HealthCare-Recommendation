@@ -4,8 +4,8 @@
  */
 
 import { create } from 'zustand';
-import type { User } from '../data/types';
-import { getCurrentUser } from '../data/api';
+import type { User } from '../types/types';
+import { getCurrentUser } from '../services/api';
 
 interface AuthState {
     user: User | null;

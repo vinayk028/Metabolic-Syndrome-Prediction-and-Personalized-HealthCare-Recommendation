@@ -4,10 +4,9 @@
  */
 
 import { create } from 'zustand';
-import type { NewsArticle } from '../data/types';
-import { getMetabolicSyndromeNews } from '../data/api';
-
-const DEFAULT_NEWS_IMAGE = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&q=100';
+import type { NewsArticle } from '../types/types';
+import { getMetabolicSyndromeNews } from '../services/api';
+import DEFAULT_NEWS_IMAGE from '../assets/news.png';
 
 interface NewsState {
     // Home slideshow (articles 16–20 from DB)

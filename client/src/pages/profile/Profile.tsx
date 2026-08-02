@@ -54,9 +54,9 @@ import {
   Block as AvoidIcon,
   Speed as SpeedIcon,
 } from '@mui/icons-material';
-import { useAuthStore } from '../stores';
-import { updateProfile, updatePassword, deleteAccount, getAssessmentHistory } from '../data/api';
-import type { UpdateProfileData, AssessmentHistoryItem } from '../data/types';
+import { useAuthStore } from '../../stores';
+import { updateProfile, updatePassword, deleteAccount, getAssessmentHistory } from '../../services/api';
+import type { UpdateProfileData, AssessmentHistoryItem } from '../../types/types';
 import './Profile.css';
 
 interface TabPanelProps {

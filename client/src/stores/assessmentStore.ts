@@ -10,7 +10,7 @@ import type {
     AssessmentResults,
     Recommendations,
     AssessmentInputParameters,
-} from '../data/types';
+} from '../types/types';
 import {
     predictMetabolicSyndrome,
     calculateSeverity,
@@ -18,7 +18,7 @@ import {
     generateReport,
     downloadReport,
     saveAssessment,
-} from '../data/api';
+} from '../services/api';
 
 // ============ Default Values ============
 

@@ -21,14 +21,12 @@ import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
-import { useNewsStore } from '../stores';
+import { useNewsStore } from '../../stores';
+import HERO_IMAGE from '../../assets/hero.jpg';
+import INFO_IMAGE from '../../assets/info.jpg';
+import CTA_IMAGE from '../../assets/CTA.jpg';
+import DEFAULT_NEWS_IMAGE from '../../assets/news.png';
 import './Home.css';
-
-// Healthcare images from Unsplash (free to use)
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=600&h=600&fit=crop&q=80'; // Medical professional
-const INFO_IMAGE = 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&h=500&fit=crop&q=80'; // Healthcare and monitoring
-const CTA_IMAGE = 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&q=80'; // Fitness and wellness
-const DEFAULT_NEWS_IMAGE = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&q=100';
 
 const features = [
   {
