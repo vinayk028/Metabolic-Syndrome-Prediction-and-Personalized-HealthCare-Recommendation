@@ -161,6 +161,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
             } else {
                 const recs = await getRecommendations(patientInfo.gender, 'Low Severity', patientInfo.age);
                 set({ recommendations: recs, activeStep: 1 }); // → Results (2-step flow)
+                await get().saveCurrentAssessment();
             }
         } catch (err) {
             console.error('Prediction error:', err);
@@ -180,6 +181,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
 
             const recs = await getRecommendations(patientInfo.gender, riskLevel, patientInfo.age);
             set({ recommendations: recs, activeStep: 2 }); // → Results (3-step flow)
+            await get().saveCurrentAssessment();
         } catch (err) {
             console.error('Severity error:', err);
             set({ error: 'Failed to calculate severity. Please try again.' });
