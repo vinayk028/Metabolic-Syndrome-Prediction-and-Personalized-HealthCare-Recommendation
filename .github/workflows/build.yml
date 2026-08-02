@@ -88,7 +88,7 @@ jobs:
         run: npm ci
 
       - name: Validate Node.js server
-        working-directory: server
+        working-directory: server/src
         run: node --check index.js
 
 
