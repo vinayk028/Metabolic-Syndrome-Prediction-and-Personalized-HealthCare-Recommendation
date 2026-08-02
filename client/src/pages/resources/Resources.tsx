@@ -191,7 +191,7 @@ const Resources = () => {
                             startIcon={<RefreshIcon />}
                             onClick={fetchNews}
                             disabled={newsLoading}
-                            className="refresh-btn"
+                            className="resources-refresh-btn"
                             size="small"
                         >
                             Refresh

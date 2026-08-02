@@ -215,14 +215,14 @@
   gap: 1rem;
 }
 
-.refresh-btn {
+.resources-refresh-btn {
   color: #00b2a7 !important;
   border-color: #00b2a7 !important;
   text-transform: none !important;
   font-weight: 500 !important;
 }
 
-.refresh-btn:hover {
+.resources-refresh-btn:hover {
   background: rgba(0, 178, 167, 0.08) !important;
 }
 
