@@ -24,8 +24,15 @@ try:
 except ImportError:
     DiscreteBayesianNetwork = None
 
-app = Flask(__name__)
-CORS(app)
+# ==================== App Setup ====================
+
+def create_app():
+    app = Flask(__name__)
+    CORS(app)
+    return app
+
+
+app = create_app()
 
 # ==================== Globals ====================
 
@@ -33,13 +40,15 @@ BASE_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../")
 )
 
-MODEL_PATH = os.path.join(
+DEFAULT_MODEL_PATH = os.path.join(
     BASE_DIR,
     "PredictionModel",
     "src",
     "Bayesian_Model",
     "Bayesian_Prediction_Model.pkl"
 )
+
+MODEL_PATH = os.getenv("MODEL_PATH", DEFAULT_MODEL_PATH)
 
 model = None
 valid_states = {}  # valid CPD states per variable (for mapping user input)
@@ -85,6 +94,12 @@ def load_model():
         print(f"❌ Error loading model: {e}")
         traceback.print_exc()
         return False
+
+# Load the model when the module is imported
+if not load_model():
+    print("❌ Failed to load Bayesian model.")
+else:
+    print("✅ Bayesian model loaded successfully.")
 
 # ==================== Helpers ====================
 
@@ -182,19 +197,25 @@ def predict():
 
 # ==================== Startup ====================
 
-if __name__ == '__main__':
-    print('=' * 50)
-    print('🐍 MetS Bayesian Network Prediction Service')
-    print('=' * 50)
+# if __name__ == '__main__':
+#     print('=' * 50)
+#     print('🐍 MetS Bayesian Network Prediction Service')
+#     print('=' * 50)
 
-    load_model()
+#     load_model()
 
-    print(f'   GET  /health')
-    print(f'   POST /predict')
-    print('=' * 50)
+#     print(f'   GET  /health')
+#     print(f'   POST /predict')
+#     print('=' * 50)
 
-    port = int(os.environ.get('PORT', 5001))
+#     port = int(os.environ.get('PORT', 5001))
 
-    print(f"🚀 Starting server on port {port}...")
+#     print(f"🚀 Starting server on port {port}...")
 
-    app.run(host='0.0.0.0', port=port)
+#     app.run(host='0.0.0.0', port=port)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5001))
+    debug = os.getenv("FLASK_ENV", "development").lower() == "development"
+    print(f"🚀 Starting Prediction Service on port {port} (debug={debug})...")
+    app.run(host="0.0.0.0", port=port, debug=debug)

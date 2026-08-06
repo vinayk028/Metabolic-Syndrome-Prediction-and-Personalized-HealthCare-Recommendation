@@ -2,9 +2,17 @@
  * Configuration & Database Connection
  */
 
-require('dotenv').config();
+const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
+
+const envCandidates = [
+    path.resolve(__dirname, '..', '.env'),
+    path.resolve(__dirname, '..', '..', '.env'),
+    path.resolve(process.cwd(), '.env')
+];
+const resolvedEnvPath = envCandidates.find(candidate => fs.existsSync(candidate)) || envCandidates[envCandidates.length - 1];
+require('dotenv').config({ path: resolvedEnvPath });
 
 // ==================== Configuration ====================
 

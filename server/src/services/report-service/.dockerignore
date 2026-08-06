@@ -1,0 +1,17 @@
+#Maven Build Output
+target/
+
+#Maven Wrapper
+.mvn/
+
+# Git
+.git
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# OS
+.DS_Store
