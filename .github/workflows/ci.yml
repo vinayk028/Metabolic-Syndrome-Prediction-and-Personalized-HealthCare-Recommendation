@@ -27,7 +27,7 @@ jobs:
 
             # Client
             - name: Build and push Client Docker image
-              uses: docker/build-push-action@v5
+              uses: docker/build-push-action@v6
               with:
                   context: ./client
                   file: ./client/Dockerfile
@@ -36,7 +36,7 @@ jobs:
 
             # Server
             - name: Build and push Server Docker image
-              uses: docker/build-push-action@v5
+              uses: docker/build-push-action@v6
               with:
                     context: ./server
                     file: ./server/Dockerfile
@@ -45,7 +45,7 @@ jobs:
 
             # Prediction Service
             - name: Build and push Prediction Service Docker image
-              uses: docker/build-push-action@v5
+              uses: docker/build-push-action@v6
               with:
                   context: ./server/src/services/prediction
                   file: ./server/src/services/prediction/Dockerfile
@@ -54,7 +54,7 @@ jobs:
 
             # Report Service
             - name: Build and push Report Service Docker image
-              uses: docker/build-push-action@v5
+              uses: docker/build-push-action@v6
               with:
                   context: ./server/src/services/report-service
                   file: ./server/src/services/report-service/Dockerfile
