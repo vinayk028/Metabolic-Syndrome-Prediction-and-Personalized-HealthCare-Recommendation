@@ -1,63 +1,64 @@
-name : CI Workflow
+name: CI Workflow
 on:
-    workflow_run:
-        workflows: ["Build Workflow"]
-        types:
-            - completed
+  workflow_run:
+    workflows: ["Build Workflow"]
+    types:
+      - completed
+
 jobs:
-    docker-build:
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        runs-on: ubuntu-latest
+  docker-build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
 
-        permissions:
-            contents: read
+    permissions:
+      contents: read
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-            - name: Log in to DockerHub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            # Client
-            - name: Build and push Client Docker image
-              uses: docker/build-push-action@v6
-              with:
-                  context: ./client
-                  file: ./client/Dockerfile
-                  push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-client:latest
+      # Client
+      - name: Build and push Client Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./client
+          file: ./client/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-client:latest
 
-            # Server
-            - name: Build and push Server Docker image
-              uses: docker/build-push-action@v6
-              with:
-                    context: ./server
-                    file: ./server/Dockerfile
-                    push: true
-                    tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-server:latest
+      # Server
+      - name: Build and push Server Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-server:latest
 
-            # Prediction Service
-            - name: Build and push Prediction Service Docker image
-              uses: docker/build-push-action@v6
-              with:
-                  context: ./server/src/services/prediction
-                  file: ./server/src/services/prediction/Dockerfile
-                  push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-prediction-service:latest
+      # Prediction Service
+      - name: Build and push Prediction Service Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server/src/services/prediction
+          file: ./server/src/services/prediction/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-prediction-service:latest
 
-            # Report Service
-            - name: Build and push Report Service Docker image
-              uses: docker/build-push-action@v6
-              with:
-                  context: ./server/src/services/report-service
-                  file: ./server/src/services/report-service/Dockerfile
-                  push: true
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-report-service:latest
+      # Report Service
+      - name: Build and push Report Service Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server/src/services/report-service
+          file: ./server/src/services/report-service/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-report-service:latest
 
