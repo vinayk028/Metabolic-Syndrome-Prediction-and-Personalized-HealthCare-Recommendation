@@ -31,17 +31,11 @@ __pycache__/
 .Python
 
 # Package managers
-package-lock.json
 yarn.lock
 poetry.lock
 
 # Documentation (local versions)
 MetS-App/README.md
 MetS-App/SETUP.md
-new.md
 
-
-requirements.txt
-SYSTEM_ARCHITECTURE.md
-CHAT_FLOW_DETAILED.md
-README_NEW.md
+docs/

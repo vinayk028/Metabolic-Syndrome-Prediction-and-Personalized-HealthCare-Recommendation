@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Git
+.git
+.gitignore
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# IDEs
+.vscode
+
+# Other
+.railwayignore
+
+# Misc
+.env
+.env.*
+.idea
+Thumbs.db
+coverage
+npm-debug.log*
