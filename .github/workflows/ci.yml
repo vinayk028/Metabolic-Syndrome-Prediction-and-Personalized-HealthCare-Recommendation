@@ -4,8 +4,6 @@ on:
     workflows: ["Build Workflow"]
     types:
       - completed
-    branches:
-      - main
 
 jobs:
   docker-build:
