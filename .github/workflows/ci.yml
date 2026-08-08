@@ -36,7 +36,7 @@ jobs:
           context: ./client
           file: ./client/Dockerfile
           push: true
-          tags: mets/client:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-client:latest
 
       # Server
       - name: Build and push Server Docker image
@@ -45,7 +45,7 @@ jobs:
           context: ./server
           file: ./server/Dockerfile
           push: true
-          tags: mets/server:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-server:latest
 
       # Prediction Service
       - name: Build and push Prediction Service Docker image
@@ -54,7 +54,7 @@ jobs:
           context: .
           file: ./server/src/services/prediction/Dockerfile
           push: true
-          tags: mets/prediction-service:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-prediction-service:latest
 
       # Report Service
       - name: Build and push Report Service Docker image
@@ -63,5 +63,5 @@ jobs:
           context: ./server/src/services/report-service
           file: ./server/src/services/report-service/Dockerfile
           push: true
-          tags: mets/report-service:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mets-report-service:latest
 

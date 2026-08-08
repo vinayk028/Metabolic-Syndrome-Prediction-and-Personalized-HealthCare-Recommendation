@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
 
   prediction-service:
-    image: mets/prediction-service:latest
+    image: ${DOCKERHUB_USERNAME}/mets-prediction-service:latest
     build:
       context: .
       dockerfile: ./server/src/services/prediction/Dockerfile
@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
 
   report-service:
-    image: mets/report-service:latest
+    image: ${DOCKERHUB_USERNAME}/mets-report-service:latest
     build:
       context: ./server/src/services/report-service
     container_name: mets-report-service
@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
 
   server:
-    image: mets/server:latest
+    image: ${DOCKERHUB_USERNAME}/mets-server:latest
     build:
       context: ./server
     container_name: mets-server
@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
 
   client:
-    image: mets/client:latest
+    image: ${DOCKERHUB_USERNAME}/mets-client:latest
     build:
       context: ./client
     container_name: mets-client
