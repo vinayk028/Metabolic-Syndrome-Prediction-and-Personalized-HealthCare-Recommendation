@@ -5,15 +5,20 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy the requirements file and install dependencies
-COPY requirements.txt .
+COPY server/src/services/prediction/requirements.txt ./requirements.txt
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
-COPY . .
+# Copy prediction service
+COPY server/src/services/prediction/prediction_service.py ./prediction_service.py
 
-# Expose the port the app runs on
+# Copy PredictionModel submodule
+COPY PredictionModel ./PredictionModel
+
+# Model location inside container
+ENV MODEL_PATH=/app/PredictionModel/src/Bayesian_Model/Bayesian_Prediction_Model.pkl
+
 EXPOSE 5001
 
 # Start the application

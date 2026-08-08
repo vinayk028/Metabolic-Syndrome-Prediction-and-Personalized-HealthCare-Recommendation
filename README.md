@@ -1,5 +1,10 @@
 # Metabolic-Syndrome-Prediction-Personalized-HealthCare-Recommendation
 
+<p align="center">
+  <strong>AI-Powered Health Risk Assessment & Personalized Recommendations</strong>
+</p>
+
+
 ## Design (Architecture)
 
 <img width="768" height="846" alt="Screenshot 2025-07-03 215445" src="https://github.com/user-attachments/assets/65471888-1dd8-468e-85c4-a82319055a02" />
@@ -9,14 +14,6 @@
  2. Early detection and personalized intervention
  3. Personalized healthcare and lifestyle recommendations
  4. User-friendly web application for patients and doctors
-
-
-
-<h1 align="center">🏥 MetS Health - Metabolic Syndrome Predictor</h1>
-
-<p align="center">
-  <strong>AI-Powered Health Risk Assessment & Personalized Recommendations</strong>
-</p>
 
 <p align="center">
   <a href="#-about">About</a> •
@@ -50,7 +47,7 @@
 
 ## 📖 About
 
-**MetS Health** is a full-stack healthcare web application engineered to **predict Metabolic Syndrome risk** using advanced **Bayesian Network machine learning** and provide **personalized health recommendations** with **professional PDF report generation**.
+**MetS Health** is a Platform Engineered to **predict Metabolic Syndrome risk** using advanced **Bayesian Network machine learning** and provide **personalized health recommendations** with **professional PDF report generation**.
 
 ### 🎓 What is Metabolic Syndrome?
 
@@ -75,7 +72,7 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 
 ---
 
-## ✨ Features
+## ✨ Stages of Evaluations
 
 ### 🔮 Dual-Stage Prediction Engine
 - **Stage 1:** Bayesian Network inference → Probability estimation
@@ -90,19 +87,8 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 - ✅ Trend analysis comparing previous assessments
 - ✅ Risk progression visualization over time
 
-### 📄 PDF Report Generation ⭐ NEW
-- **Spring Boot Microservice** — Dedicated report generation service (Port 8081)
-- **Professional Format** — Patient info, assessment results, personalized recommendations
-- **One-Click Download** — Instant PDF generation and download  
-- **Metadata** — Generated date, risk level, severity score, health parameters
-- **Secure Transmission** — Base64 encoded for safe transmission
 
-### 🥗 Personalized Recommendations Engine
-- **Gender & Age-Specific** diet plans with meal guidelines
-- **Foods to Avoid** list with health reasoning
-- **Exercise Routines** tailored to severity level
-- **Yoga Poses** for stress reduction & cardiovascular health
-- **Dynamic Recommendations** based on risk classification
+## Our App Contains
 
 ### 👤 User Management & Authentication
 - **JWT Authentication** — Secure token-based login/signup
@@ -133,9 +119,9 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 
 ---
 
-## 💻 Tech Stack
+## 💻 Tech Behind this Platform
 
-### Frontend
+### UI/UX
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | **React** | 19.x | UI framework with hooks |
@@ -147,7 +133,7 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 | **Zustand** | 5.x | Lightweight state management |
 | **React Router** | 7.x | Client-side routing |
 
-### Backend Services
+### Server
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | **Node.js** | 18+ | JavaScript runtime |
@@ -159,7 +145,7 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 | **CORS** | 2.8 | Cross-origin resource sharing |
 | **node-cron** | 3.0 | Task scheduling |
 
-### ML & Report Generation
+### Ultimate Prediction Model
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | **Python** | 3.8+ | ML environment |
@@ -172,7 +158,7 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗️ Application Architecture Overview
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -218,7 +204,7 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 
 ---
 
-## 🎯 Assessment Flow
+## 🎯 Sample Assessment Flow Procedure
 
 ```
 ┌─────────────────────────┐
@@ -296,7 +282,7 @@ Together, these conditions increase risk of **heart disease**, **stroke**, and *
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start & Setup
 
 ### Prerequisites
 
@@ -349,7 +335,7 @@ mvn spring-boot:run
 # ✅ Runs on http://localhost:8081
 ```
 
-#### Step 4: Node.js Backend
+#### Step 4: Server
 
 ```bash
 cd MetS-App/server
@@ -358,16 +344,8 @@ cd MetS-App/server
 npm install
 
 # Create .env file
-cat > .env << EOF
-NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/mets-app
-JWT_SECRET=your_jwt_secret_key_here_min_32_chars
-REPORT_SERVICE_URL=http://localhost:8081
-PYTHON_SERVICE_URL=http://localhost:5001
-GEMINI_API_KEY=your_gemini_api_key_here
-ANTHROPIC_API_KEY=your_anthropic_api_key_here
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-EOF
+
+create .env file and plugin the Necessary LLM API Keys and URLS
 
 # Start backend
 npm start
@@ -381,11 +359,6 @@ cd MetS-App/client
 
 # Install dependencies
 npm install
-
-# Create .env file
-cat > .env << EOF
-VITE_API_URL=http://localhost:5000/api
-EOF
 
 # Start dev server
 npm run dev
@@ -403,6 +376,7 @@ npm run dev
 | **Python ML** | 5001 | `python prediction_service.py` | http://localhost:5001/health |
 | **Report Service** | 8081 | `mvn spring-boot:run` | http://localhost:8081/api/reports/health |
 | **MongoDB** | 27017 | `mongod` | Local database |
+
 
 ### ✅ Startup Order (Recommended)
 
@@ -441,46 +415,28 @@ Open browser: **http://localhost:5173**
 
 ---
 
-## 📡 API Endpoints
 
-### Authentication (`/api/auth`)
-```
-POST   /signup              Create new account
-POST   /login               User login
-GET    /me                  Get current user
-PUT    /profile             Update profile
-PUT    /password            Change password
-DELETE /account             Delete account
-```
+## ▶️ Run the Application
 
-### Metabolic Syndrome (`/api/mets`)
-```
-POST   /predict             Get MetS probability (needs Python service)
-POST   /severity            Calculate severity score
-POST   /recommendations     Get personalized recommendations
-POST   /report              Generate & download PDF report
-```
+### Run with Docker Compose
 
-### Chat (`/api/chat`)
-```
-POST   /                    Send chat message (AI-powered)
-```
+1. Copy the environment template to `.env` and fill in the required secrets:
 
-### News (`/api/news`)
-```
-GET    /                    Get metabolic syndrome news
-```
+  ```bash
+  cp .env.sample .env
+  ```
 
-### Assessment (`/api/auth/assessments`)
-```
-POST   /assessments         Save assessment
-GET    /assessments         Retrieve assessment history
-```
+  On Windows PowerShell, use `Copy-Item .env.sample .env`.
 
-### Health (`/api/health`)
-```
-GET    /                    Server health status
-```
+2. Start all services from the repository root:
+
+  ```bash
+  docker compose up --build
+  ```
+
+3. Open the application at `http://localhost:3000`.
+
+  The Compose setup starts MongoDB, the Python prediction service, the Spring Boot report service, the Node.js API, and the frontend. Stop the services with `docker compose down`.
 
 ---
 
@@ -556,71 +512,37 @@ echo $ANTHROPIC_API_KEY
 ```
 ---
 
-## 🔧 Environment Variables
 
-### Frontend (`.env` in `MetS-App/client/`)
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+## 🤝 Contribution Workflow
 
-### Backend (`.env` in `MetS-App/server/`)
-```env
-NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/mets-app
-JWT_SECRET=your_jwt_secret_key_here_min_32_characters
-REPORT_SERVICE_URL=http://localhost:8081
-PYTHON_SERVICE_URL=http://localhost:5001
-GEMINI_API_KEY=your_gemini_api_key
-ANTHROPIC_API_KEY=your_anthropic_api_key
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-PORT=5000
-```
+1. Fork the repository and clone your fork:
 
----
+  ```bash
+  git clone https://github.com/<your-username>/<repository-name>.git
+  cd Metabolic-Syndrome-Prediction-and-Personalized-HealthCare-Recommendation
+  ```
 
-## 🚀 Deployment
+2. Add the upstream repository and create a feature branch:
 
-### Frontend (Vercel / Netlify)
-```bash
-cd MetS-App/client
-npm run build
-# Deploy 'dist' folder
-```
+  ```bash
+  git remote add upstream https://github.com/<organization>/<repository-name>.git
+  git checkout -b feature/short-description
+  ```
 
-### Backend (Railway / Render / Heroku)
-```bash
-cd MetS-App/server
-# Set environment variables on platform
-npm install
-npm start
-```
+3. Make focused changes and validate the affected services. For frontend changes, run `npm run lint` and `npm run build` from `client`. For backend changes, run `npm start` or the relevant service checks.
 
-### Python Service (Railway / Render)
-```bash
-cd MetS-App/server/services/prediction
-pip install -r requirements.txt
-python prediction_service.py
-```
+4. Commit and push the feature branch:
 
-### Spring Boot (Railway / AWS / Azure)
-```bash
-cd MetS-App/server/services/report-service
-mvn clean install
-java -jar target/report-service-1.0.0.jar
-```
+  ```bash
+  git add .
+  git commit -m "feat: describe the change"
+  git push origin feature/short-description
+  ```
 
----
+5. Open a Pull Request from your feature branch to the repository's default branch. Include the purpose of the change, the services affected, setup details, and validation performed.
 
-## 👥 Contributing
+6. Address review feedback with additional commits, keep the branch up to date, and wait for the required checks and approvals before merging.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-### Development Guidelines
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 ---
 
 <p align="center">
