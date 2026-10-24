@@ -30,7 +30,10 @@ const config = {
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
 
     // CORS
-    corsOrigins: ['http://localhost:5173', 'http://localhost:3000'],
+    // Comma-separated list in CORS_ORIGINS, e.g. "https://mets-client-production.up.railway.app"
+    corsOrigins: process.env.CORS_ORIGINS
+        ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim()).filter(Boolean)
+        : ['http://localhost:5173', 'http://localhost:3000'],
 
     // Python Service
     pythonServiceUrl: process.env.PYTHON_SERVICE_URL || 'http://localhost:5001',
