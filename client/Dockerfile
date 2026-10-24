@@ -13,6 +13,10 @@ RUN npm ci
 # Copy working directory
 COPY . .
 
+# API URL, baked in at build time
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Build the application
 RUN npm run build
 

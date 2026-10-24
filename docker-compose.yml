@@ -65,6 +65,8 @@ services:
     image: ${DOCKERHUB_USERNAME}/mets-client:latest
     build:
       context: ./client
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000/api}
     container_name: mets-client
     depends_on:
       server:
@@ -74,7 +76,6 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${CLIENT_PORT:-3000}
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:5000/api}
     restart: unless-stopped
 
 volumes:
