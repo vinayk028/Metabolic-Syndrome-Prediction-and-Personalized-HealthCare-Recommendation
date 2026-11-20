@@ -24,9 +24,17 @@ const Layout = ({ children }: LayoutProps) => {
   const { pathname, hash } = useLocation();
   const fullBleed = FULL_BLEED_ROUTES.includes(pathname);
 
-  // Scroll to top on route change (but respect in-page anchors)
+  // Route change → top of page; "/#section" links → scroll to that section once rendered
   useEffect(() => {
-    if (!hash) window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    if (!hash) {
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      return;
+    }
+    const id = decodeURIComponent(hash.slice(1));
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname, hash]);
 
   return (

@@ -318,7 +318,7 @@ const Dashboard: React.FC = () => {
                     <HeartIcon />
                   </Box>
                   <Box className="kpi-text">
-                    <Typography variant="caption" className="kpi-label">Severity Score</Typography>
+                    <Typography variant="caption" className="kpi-label">Severity</Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Typography variant="h5" className="kpi-value">
                         {(latestAssessment!.severity * 100).toFixed(1)}%
@@ -550,7 +550,7 @@ const Dashboard: React.FC = () => {
                     </Box>
                     <Box className="detail-progress-item">
                       <Box className="detail-progress-label">
-                        <Typography variant="body2" fontWeight={600}>Severity Score</Typography>
+                        <Typography variant="body2" fontWeight={600}>Severity</Typography>
                         <Typography variant="body2" fontWeight={700} sx={{ color: getRiskColor(latestAssessment!.riskLevel) }}>
                           {(latestAssessment!.severity * 100).toFixed(1)}%
                         </Typography>

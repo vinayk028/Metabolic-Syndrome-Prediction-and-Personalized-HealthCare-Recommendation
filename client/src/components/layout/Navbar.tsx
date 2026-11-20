@@ -17,7 +17,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores';
 import BrandLogo from '../ui/BrandLogo';
-import { NAV_ITEMS, PROFILE_ITEM, isPathActive } from './navConfig';
+import { DARK_HERO_ROUTES, NAV_ITEMS, PROFILE_ITEM, isPathActive } from './navConfig';
 import './Navbar.css';
 
 const initials = (first?: string, last?: string) => `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`.toUpperCase() || '?';
@@ -63,14 +63,21 @@ const Navbar = () => {
   const loggedIn = isAuthenticated && !!user;
   const userInitials = initials(user?.firstName, user?.lastName);
   const menuItems = [...NAV_ITEMS, ...(loggedIn ? [PROFILE_ITEM] : [])];
+  const solid = scrolled || menuOpen;
+  // Light text while floating over a dark hero (pages that start dark)
+  const onDark = !solid && DARK_HERO_ROUTES.includes(pathname);
 
   return (
     <>
-      <AppBar position="fixed" className={`vb-nav${scrolled || menuOpen ? ' is-scrolled' : ''}`} component="header">
+      <AppBar
+        position="fixed"
+        className={`vb-nav${solid ? ' is-scrolled' : ''}${onDark ? ' is-on-dark' : ''}`}
+        component="header"
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters className="vb-nav__bar">
             <Link to="/" className="vb-nav__logo" aria-label="MetS Health home">
-              <BrandLogo size={36} />
+              <BrandLogo size={36} inverted={onDark} />
             </Link>
 
             {/* Inline links (wide screens) */}

@@ -37,9 +37,12 @@ export const PROFILE_ITEM: NavItem = {
 
 /**
  * Routes that render edge-to-edge (no page container). Pages listed here own
- * their own width/padding — the landing page joins this list in Phase 3.
+ * their own width/padding.
  */
-export const FULL_BLEED_ROUTES: string[] = [];
+export const FULL_BLEED_ROUTES: string[] = ['/'];
+
+/** Routes whose first section is dark — the navbar uses light text over them until scrolled. (None right now.) */
+export const DARK_HERO_ROUTES: string[] = [];
 
 export const isPathActive = (current: string, path: string) =>
   path === '/' ? current === '/' : current === path || current.startsWith(`${path}/`);

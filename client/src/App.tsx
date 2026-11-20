@@ -12,7 +12,7 @@ import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Pages
-import Home from './pages/home/Home';
+import Landing from './pages/landing/Landing';
 import About from './pages/about/About';
 import Assessment from './pages/assessment/Assessment';
 import Resources from './pages/resources/Resources';
@@ -38,7 +38,7 @@ function App() {
                 <Router>
                     <Layout>
                         <Routes>
-                            <Route path="/" element={<Home />} />
+                            <Route path="/" element={<Landing />} />
                             <Route path="/about" element={<About />} />
                             <Route path="/assessment" element={<Assessment />} />
                             <Route path="/resources" element={<Resources />} />

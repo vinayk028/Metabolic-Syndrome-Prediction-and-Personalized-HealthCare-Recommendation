@@ -73,7 +73,7 @@
   --vb-space-10: 2.5rem;
   --vb-space-12: 3rem;
   --vb-space-16: 4rem;
-  --vb-space-section: clamp(3.5rem, 2rem + 6vw, 8rem);
+  --vb-space-section: clamp(3rem, 2rem + 4vw, 6rem);
   --vb-gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
 
   /* ── Elevation ── */
@@ -100,6 +100,8 @@
   /* ── Type ── */
   --vb-font-display: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --vb-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --vb-font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --vb-ink: #0b1220;
 
   color-scheme: light;
 }

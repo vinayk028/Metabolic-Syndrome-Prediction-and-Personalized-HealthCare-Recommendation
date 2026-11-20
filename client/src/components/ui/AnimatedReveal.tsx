@@ -2,7 +2,7 @@
  * AnimatedReveal — fades/slides content in when it scrolls into view.
  * Automatically disabled for users who prefer reduced motion.
  */
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { motion as tokens } from '../../theme/tokens';
 
@@ -17,6 +17,8 @@ interface AnimatedRevealProps {
   distance?: number;
   once?: boolean;
   className?: string;
+  /** Inline style (e.g. CSS custom properties) */
+  style?: CSSProperties;
   as?: 'div' | 'section' | 'li' | 'article';
 }
 
@@ -42,18 +44,22 @@ const AnimatedReveal = ({
   distance = 24,
   once = true,
   className,
+  style,
   as = 'div',
 }: AnimatedRevealProps) => {
   const reduce = useReducedMotion();
   const MotionTag = motion[as];
 
   if (reduce) {
-    return <MotionTag className={className}>{children}</MotionTag>;
+    return <MotionTag className={className} style={style}>
+        {children}
+      </MotionTag>;
   }
 
   return (
     <MotionTag
       className={className}
+      style={style}
       initial={{ opacity: 0, ...offset(direction, distance) }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once, margin: '0px 0px -10% 0px' }}

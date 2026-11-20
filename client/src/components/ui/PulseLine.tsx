@@ -18,6 +18,7 @@ interface PulseLineProps {
   /** Fade the line out at both ends. */
   fadeEdges?: boolean;
   sx?: SxProps<Theme>;
+  className?: string;
   'aria-label'?: string;
 }
 
@@ -34,6 +35,7 @@ const PulseLine = ({
   duration = 2.2,
   fadeEdges = true,
   sx,
+  className,
   ...rest
 }: PulseLineProps) => {
   const reduce = useReducedMotion();
@@ -41,6 +43,7 @@ const PulseLine = ({
 
   return (
     <Box
+      className={className}
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}

@@ -10,6 +10,7 @@ export { default as MetabolicRing } from './MetabolicRing';
 export { default as PageHeader } from './PageHeader';
 export { default as PulseLine } from './PulseLine';
 export { default as PulseLoader } from './PulseLoader';
+export { default as RangeBar } from './RangeBar';
 export { default as RiskBadge } from './RiskBadge';
 export { default as RiskGauge } from './RiskGauge';
 export { default as SectionHeader } from './SectionHeader';

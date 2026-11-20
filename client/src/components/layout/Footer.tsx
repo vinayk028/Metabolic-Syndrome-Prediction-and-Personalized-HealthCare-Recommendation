@@ -33,8 +33,7 @@ const Footer = () => {
       title: 'Learn',
       links: [
         { label: 'About MetS Health', to: '/about' },
-        { label: 'What is metabolic syndrome?', to: '/about' },
-        { label: 'Latest health news', to: '/resources' },
+        { label: 'Frequently asked questions', to: '/#faq' },
       ],
     },
     {
@@ -65,8 +64,8 @@ const Footer = () => {
           <Grid size={{ xs: 12, md: 4 }}>
             <BrandLogo size={36} showTagline />
             <Typography variant="body2" className="vb-footer__blurb">
-              Bayesian-network risk prediction and personalised lifestyle plans across the five markers of metabolic
-              syndrome.
+              Metabolic syndrome risk prediction and personalised lifestyle plans, built around five key health
+              markers.
             </Typography>
             <Stack direction="row" spacing={1} className="vb-footer__factors" aria-label="The five risk factors">
               {FACTOR_ORDER.map((k) => {

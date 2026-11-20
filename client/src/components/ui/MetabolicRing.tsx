@@ -27,6 +27,10 @@ interface MetabolicRingProps {
   showLegend?: boolean;
   /** Animate segments drawing in */
   animate?: boolean;
+  /** Highlight one factor (others dim) — used by interactive explainers */
+  activeFactor?: FactorKey | null;
+  /** Makes segments clickable */
+  onFactorSelect?: (factor: FactorKey) => void;
 }
 
 const STATUS_LABEL: Record<FactorStatus, string> = {
@@ -60,6 +64,8 @@ const MetabolicRing = ({
   children,
   showLegend = false,
   animate = true,
+  activeFactor = null,
+  onFactorSelect,
 }: MetabolicRingProps) => {
   const reduce = useReducedMotion();
   const r = C - thickness / 2 - 4;
@@ -88,15 +94,25 @@ const MetabolicRing = ({
             const start = -90 + i * SEGMENT + GAP / 2;
             const end = start + SEGMENT - GAP;
             const d = arcPath(r, start, end);
+            const dimmed = activeFactor !== null && activeFactor !== k;
+            const isActive = activeFactor === k;
             return (
-              <g key={k}>
+              <g
+                key={k}
+                onClick={onFactorSelect ? () => onFactorSelect(k) : undefined}
+                style={{
+                  cursor: onFactorSelect ? 'pointer' : undefined,
+                  opacity: dimmed ? 0.22 : 1,
+                  transition: 'opacity 250ms cubic-bezier(0.4,0,0.2,1)',
+                }}
+              >
                 <path d={d} fill="none" strokeWidth={thickness} strokeLinecap="round" style={{ stroke: 'var(--vb-surface-sunken)' }} />
                 <motion.path
                   d={d}
                   fill="none"
-                  strokeWidth={thickness}
+                  strokeWidth={isActive ? thickness + 6 : thickness}
                   strokeLinecap="round"
-                  style={{ stroke: segmentColor(k) }}
+                  style={{ stroke: segmentColor(k), transition: 'stroke-width 250ms cubic-bezier(0.4,0,0.2,1)' }}
                   initial={animate && !reduce ? { pathLength: 0 } : false}
                   animate={{ pathLength: 1 }}
                   transition={{ duration: 0.8, delay: 0.15 + i * 0.12, ease: [0.2, 0, 0, 1] }}

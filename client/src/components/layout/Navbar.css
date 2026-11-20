@@ -345,3 +345,28 @@
     min-height: 52px;
   }
 }
+
+/* ── Over a dark hero (transparent state only) ─────────────────────────── */
+
+.vb-nav.is-on-dark .vb-nav__link {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.vb-nav.is-on-dark .vb-nav__link:hover,
+.vb-nav.is-on-dark .vb-nav__link.is-active {
+  color: #fff;
+}
+
+.vb-nav.is-on-dark .vb-nav__pill {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.vb-nav.is-on-dark .vb-nav__signin.MuiButton-root {
+  color: #fff;
+}
+
+.vb-nav.is-on-dark .vb-nav__menu-btn.MuiIconButton-root {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
