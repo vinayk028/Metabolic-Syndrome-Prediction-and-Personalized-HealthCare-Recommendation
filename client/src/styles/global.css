@@ -62,19 +62,19 @@
   --vb-radius-xl: 28px;
   --vb-radius-pill: 999px;
 
-  /* ── Spacing (4px grid) ── */
-  --vb-space-1: 4px;
-  --vb-space-2: 8px;
-  --vb-space-3: 12px;
-  --vb-space-4: 16px;
-  --vb-space-5: 20px;
-  --vb-space-6: 24px;
-  --vb-space-8: 32px;
-  --vb-space-10: 40px;
-  --vb-space-12: 48px;
-  --vb-space-16: 64px;
-  --vb-space-section: clamp(56px, 4rem + 4vw, 128px);
-  --vb-gutter: clamp(16px, 2vw + 8px, 32px);
+  /* ── Spacing (rem-based → scales with the fluid root size) ── */
+  --vb-space-1: 0.25rem;
+  --vb-space-2: 0.5rem;
+  --vb-space-3: 0.75rem;
+  --vb-space-4: 1rem;
+  --vb-space-5: 1.25rem;
+  --vb-space-6: 1.5rem;
+  --vb-space-8: 2rem;
+  --vb-space-10: 2.5rem;
+  --vb-space-12: 3rem;
+  --vb-space-16: 4rem;
+  --vb-space-section: clamp(3.5rem, 2rem + 6vw, 8rem);
+  --vb-gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
 
   /* ── Elevation ── */
   --vb-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
@@ -94,7 +94,6 @@
 
   /* ── Layout ── */
   --vb-navbar-h: 64px;
-  --vb-bottomnav-h: 64px;
   --vb-safe-top: env(safe-area-inset-top, 0px);
   --vb-safe-bottom: env(safe-area-inset-bottom, 0px);
 
@@ -103,6 +102,12 @@
   --vb-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   color-scheme: light;
+}
+
+@media (min-width: 900px) {
+  :root {
+    --vb-navbar-h: 72px;
+  }
 }
 
 [data-theme='dark'] {
@@ -130,7 +135,14 @@
   padding: 0;
 }
 
+/*
+ * Fluid root size — the single knob that makes the whole UI scale.
+ * Every rem-based size (MUI typography & spacing, page CSS, tokens) follows it:
+ *   320px phone → 15px · 768px tablet → ~15.7px · 1280px laptop → ~16.8px · ≥1440px → 17px
+ * Respects the user's browser font-size preference because it is rem/% based.
+ */
 html {
+  font-size: clamp(93.75%, 88.75% + 0.2vw, 106.25%);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   scroll-behavior: smooth;
@@ -175,11 +187,13 @@ h5,
 h6 {
   font-family: var(--vb-font-display);
   letter-spacing: -0.02em;
-  text-wrap: balance;
+  /* Longhand on purpose: the `text-wrap` shorthand would also reset
+     wrap-mode and break inherited `white-space: nowrap`. */
+  text-wrap-style: balance;
 }
 
 p {
-  text-wrap: pretty;
+  text-wrap-style: pretty;
 }
 
 a {
@@ -299,6 +313,43 @@ input:disabled {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+/* ==========================================================================
+   Responsive safety net — applies to every page
+   Nothing may push the page wider than the screen, on any device.
+   ========================================================================== */
+
+.vb-main {
+  overflow-x: clip;
+}
+
+/* Long words / URLs / emails wrap instead of overflowing */
+.vb-main :where(h1, h2, h3, h4, h5, h6, p, li, a, span, td, th, label) {
+  overflow-wrap: break-word;
+}
+
+/* Flex & grid children may shrink below their content width */
+.vb-main :where(.MuiGrid-root, .MuiStack-root, .MuiCardContent-root) > * {
+  min-width: 0;
+}
+
+/* Media never exceeds its container */
+.vb-main :where(img, video, iframe, canvas, svg:not(.MuiSvgIcon-root)) {
+  max-width: 100%;
+}
+
+/* Wide content scrolls inside itself instead of stretching the page
+   (wrap tables in MUI <TableContainer> for the same effect) */
+.vb-main :where(pre) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Recharts: let charts shrink with their card */
+.vb-main .recharts-responsive-container,
+.vb-main .recharts-wrapper {
+  max-width: 100%;
 }
 
 /* ==========================================================================

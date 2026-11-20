@@ -96,6 +96,22 @@ const ChatAssistant = () => {
         }
     }, [isOpen]);
 
+    // Escape closes the panel; lock page scroll while the full-screen sheet is open on phones
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKey = (e: globalThis.KeyboardEvent) => {
+            if (e.key === 'Escape') toggleChat();
+        };
+        const isPhone = window.matchMedia('(max-width: 599.95px)').matches;
+        const prevOverflow = document.body.style.overflow;
+        if (isPhone) document.body.style.overflow = 'hidden';
+        window.addEventListener('keydown', onKey);
+        return () => {
+            window.removeEventListener('keydown', onKey);
+            document.body.style.overflow = prevOverflow;
+        };
+    }, [isOpen, toggleChat]);
+
     const handleSend = () => {
         const trimmed = input.trim();
         if (!trimmed || loading) return;
@@ -122,7 +138,13 @@ const ChatAssistant = () => {
         <>
             {/* ===== Chat Panel ===== */}
             {isOpen && (
-                <Paper className="chat-panel" elevation={0}>
+                <Paper
+                    className="chat-panel"
+                    elevation={0}
+                    id="vb-chat-panel"
+                    role="dialog"
+                    aria-label="MetS Health Assistant"
+                >
                     {/* Header */}
                     <Box className="chat-header">
                         <Box className="chat-header-info">
@@ -143,12 +165,12 @@ const ChatAssistant = () => {
                         </Box>
                         <Box className="chat-header-actions">
                             <Tooltip title="Clear conversation" arrow>
-                                <IconButton size="small" onClick={clearChat}>
+                                <IconButton size="small" onClick={clearChat} aria-label="Clear conversation">
                                     <ClearIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Close" arrow>
-                                <IconButton size="small" onClick={toggleChat}>
+                                <IconButton size="small" onClick={toggleChat} aria-label="Close chat">
                                     <CloseIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
@@ -156,7 +178,7 @@ const ChatAssistant = () => {
                     </Box>
 
                     {/* Messages */}
-                    <Box className="chat-messages">
+                    <Box className="chat-messages" role="log" aria-live="polite">
                         {messages.map((msg) => (
                             <Box key={msg.id} className={`chat-message ${msg.role}`}>
                                 <Box>
@@ -215,6 +237,7 @@ const ChatAssistant = () => {
                             className="chat-send-btn"
                             onClick={handleSend}
                             disabled={!input.trim() || loading}
+                            aria-label="Send message"
                         >
                             <SendIcon fontSize="small" />
                         </Button>
@@ -226,7 +249,9 @@ const ChatAssistant = () => {
             <Fab
                 className={`chat-fab ${isOpen ? 'chat-fab-open' : ''}`}
                 onClick={toggleChat}
-                aria-label="Chat assistant"
+                aria-label={isOpen ? 'Close chat assistant' : 'Open chat assistant'}
+                aria-expanded={isOpen}
+                aria-controls={isOpen ? 'vb-chat-panel' : undefined}
             >
                 {isOpen ? (
                     <CloseIcon className="chat-fab-icon" />

@@ -2,6 +2,7 @@
  * Vital Balance UI kit — shared building blocks for every page.
  */
 export { default as AnimatedReveal } from './AnimatedReveal';
+export { default as BrandLogo, BrandMark } from './BrandLogo';
 export { default as EmptyState } from './EmptyState';
 export { default as FactorBadge } from './FactorBadge';
 export { default as GlassCard } from './GlassCard';

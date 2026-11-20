@@ -17,7 +17,7 @@
 .page-title {
   font-weight: 700;
   margin-bottom: 0.75rem;
-  font-size: 2.5rem;
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
   background: linear-gradient(135deg, #1e293b 0%, #00b2a7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -38,11 +38,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 3rem;
-  padding: 2rem 0;
+  gap: clamp(1.5rem, 1rem + 3vw, 3rem);
   background: linear-gradient(135deg, rgba(0, 178, 167, 0.08) 0%, rgba(0, 145, 136, 0.05) 100%);
-  border-radius: 24px;
-  padding: 3rem 2rem;
+  border-radius: clamp(16px, 1rem + 1vw, 24px);
+  padding: clamp(1.75rem, 1rem + 3vw, 3rem) clamp(1.25rem, 0.5rem + 3vw, 2rem);
 }
 
 .hero-content {
@@ -51,7 +50,7 @@
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 1.3rem + 3.2vw, 3.5rem);
   font-weight: 800;
   color: #1e293b;
   line-height: 1.1;
@@ -111,8 +110,9 @@
 
 .hero-illustration {
   position: relative;
-  width: 350px;
-  height: 350px;
+  flex-shrink: 0;
+  width: clamp(200px, 120px + 22vw, 350px);
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,8 +120,8 @@
 
 .hero-image-container {
   position: absolute;
-  width: 280px;
-  height: 280px;
+  width: 80%;
+  height: 80%;
   border-radius: 50%;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 178, 167, 0.3);
@@ -151,8 +151,8 @@
 
 .pulse-circle {
   position: absolute;
-  width: 320px;
-  height: 320px;
+  width: 91%;
+  height: 91%;
   border-radius: 50%;
   background: rgba(0, 178, 167, 0.15);
   animation: pulse-animation 2s ease-in-out infinite;
@@ -174,7 +174,7 @@
   position: absolute;
   bottom: 10px;
   right: 10px;
-  font-size: 3rem !important;
+  font-size: clamp(2rem, 1.5rem + 1.6vw, 3rem) !important;
   color: #e11d48;
   filter: drop-shadow(0 5px 15px rgba(225, 29, 72, 0.4));
   animation: heartbeat 1.5s ease-in-out infinite;
@@ -201,7 +201,7 @@
 
 /* Info Section */
 .info-section {
-  margin: 0 -1rem;
+  margin: 0;
 }
 
 .info-card {
@@ -237,8 +237,8 @@
 
 .info-image-container {
   flex-shrink: 0;
-  width: 300px;
-  height: 200px;
+  width: min(300px, 100%);
+  aspect-ratio: 3 / 2;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 178, 167, 0.2);
@@ -282,7 +282,7 @@
 }
 
 .stat-number {
-  font-size: 2.5rem;
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
   font-weight: 800;
   background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
   -webkit-background-clip: text;
@@ -606,7 +606,7 @@
 .news-slide-viewmore-title {
   color: #1e293b !important;
   font-weight: 800 !important;
-  font-size: 2rem !important;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem) !important;
   margin-bottom: 0.75rem !important;
 }
 
@@ -723,31 +723,11 @@
     text-align: center;
   }
 
-  .hero-title {
-    font-size: 2.5rem;
-  }
-
   .hero-buttons {
     justify-content: center;
   }
 
-  .hero-illustration {
-    width: 250px;
-    height: 250px;
-  }
-
-  .hero-image-container {
-    width: 200px;
-    height: 200px;
-  }
-
-  .pulse-circle {
-    width: 230px;
-    height: 230px;
-  }
-
   .hero-heart-icon {
-    font-size: 2rem !important;
     bottom: 5px;
     right: 5px;
     padding: 6px;
@@ -761,7 +741,6 @@
   .info-image-container {
     width: 100%;
     max-width: 350px;
-    height: 180px;
   }
 
   .info-text-content .info-title,
@@ -817,10 +796,6 @@
 }
 
 @media (max-width: 600px) {
-  .hero-title {
-    font-size: 2rem;
-  }
-
   .hero-buttons {
     flex-direction: column;
     width: 100%;
@@ -829,21 +804,6 @@
   .primary-button,
   .secondary-button {
     width: 100%;
-  }
-
-  .hero-illustration {
-    width: 200px;
-    height: 200px;
-  }
-
-  .hero-image-container {
-    width: 160px;
-    height: 160px;
-  }
-
-  .pulse-circle {
-    width: 180px;
-    height: 180px;
   }
 
   .news-slideshow-card {

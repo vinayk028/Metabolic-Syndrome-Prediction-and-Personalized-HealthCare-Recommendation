@@ -105,6 +105,10 @@ const theme: Theme = createTheme({
 
   breakpoints: { values: breakpoints },
 
+  // rem-based spacing: theme.spacing(1) = 0.5rem, so every sx margin/padding
+  // scales with the fluid root font-size (see styles/global.css).
+  spacing: (factor: number) => `${0.5 * factor}rem`,
+
   shape: { borderRadius: radius.md },
 
   zIndex: {
@@ -170,11 +174,11 @@ const theme: Theme = createTheme({
     MuiContainer: {
       defaultProps: { maxWidth: 'lg' },
       styleOverrides: {
+        // Fluid side gutter (16px on phones → 40px on large screens), no breakpoint jumps
         root: ({ theme }) => ({
-          paddingLeft: 16,
-          paddingRight: 16,
-          [theme.breakpoints.up('sm')]: { paddingLeft: 24, paddingRight: 24 },
-          [theme.breakpoints.up('lg')]: { paddingLeft: 32, paddingRight: 32 },
+          paddingLeft: 'var(--vb-gutter)',
+          paddingRight: 'var(--vb-gutter)',
+          [theme.breakpoints.up('sm')]: { paddingLeft: 'var(--vb-gutter)', paddingRight: 'var(--vb-gutter)' },
         }),
       },
     },
@@ -248,11 +252,11 @@ const theme: Theme = createTheme({
     },
     MuiCardContent: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          padding: 20,
-          '&:last-child': { paddingBottom: 20 },
-          [theme.breakpoints.up('md')]: { padding: 28, '&:last-child': { paddingBottom: 28 } },
-        }),
+        // Fluid card padding (≈18px phone → 28px desktop)
+        root: {
+          padding: 'clamp(1.125rem, 0.8rem + 1.2vw, 1.75rem)',
+          '&:last-child': { paddingBottom: 'clamp(1.125rem, 0.8rem + 1.2vw, 1.75rem)' },
+        },
       },
     },
 
