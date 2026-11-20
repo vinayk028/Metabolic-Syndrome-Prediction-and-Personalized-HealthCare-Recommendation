@@ -106,7 +106,7 @@
 }
 
 .empty-icon {
-  font-size: 80px !important;
+  font-size: clamp(3.5rem, 2.5rem + 4vw, 5rem) !important;
   color: #00b2a7;
   opacity: 0.3;
   margin-bottom: 1.5rem;
@@ -422,7 +422,7 @@
 }
 
 .rec-summary-card .rec-icon {
-  font-size: 2rem !important;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem) !important;
   margin-bottom: 0.5rem;
 }
 

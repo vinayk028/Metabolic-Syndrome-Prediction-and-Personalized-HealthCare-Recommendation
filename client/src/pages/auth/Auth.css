@@ -1,6 +1,6 @@
 /* Auth Pages Styles */
 .auth-container {
-  min-height: calc(100vh - 70px);
+  min-height: calc(100dvh - var(--vb-navbar-h) - 8rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,8 +26,8 @@
 }
 
 .auth-shape-1 {
-  width: 400px;
-  height: 400px;
+  width: clamp(220px, 35vw, 400px);
+  height: clamp(220px, 35vw, 400px);
   background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
   top: -100px;
   right: -100px;
@@ -35,8 +35,8 @@
 }
 
 .auth-shape-2 {
-  width: 300px;
-  height: 300px;
+  width: clamp(160px, 26vw, 300px);
+  height: clamp(160px, 26vw, 300px);
   background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
   bottom: -50px;
   left: -50px;
@@ -104,7 +104,7 @@
 }
 
 .auth-logo svg {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
 }
 
 .auth-title {

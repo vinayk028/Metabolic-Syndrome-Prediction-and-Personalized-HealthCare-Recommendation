@@ -12,7 +12,7 @@
 }
 
 .about-title {
-  font-size: 2.75rem;
+  font-size: clamp(1.875rem, 1.35rem + 2.4vw, 2.75rem);
   font-weight: 800;
   margin-bottom: 1rem;
   background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
@@ -37,7 +37,7 @@
 .page-title {
   font-weight: 700;
   margin-bottom: 0.75rem;
-  font-size: 2.5rem;
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
   background: linear-gradient(135deg, #1e293b 0%, #00b2a7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -82,7 +82,7 @@
 }
 
 .overview-icon-wrapper svg {
-  font-size: 3rem;
+  font-size: clamp(2.25rem, 1.8rem + 2vw, 3rem);
   color: #ffffff;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 0.75rem;
@@ -238,7 +238,7 @@
 }
 
 .checkup-header svg {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
   color: #00b2a7;
 }
 
@@ -322,7 +322,7 @@
 }
 
 .info-icon svg {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
   color: #00b2a7;
 }
 
@@ -381,8 +381,8 @@
 
 .intro-image-container {
   flex-shrink: 0;
-  width: 320px;
-  height: 220px;
+  width: min(320px, 100%);
+  aspect-ratio: 16 / 11;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 15px 50px rgba(0, 178, 167, 0.25);
@@ -416,7 +416,7 @@
 }
 
 .intro-icon svg {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
   color: #ffffff;
 }
 
@@ -439,7 +439,7 @@
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
   font-weight: 700;
   color: #1e293b;
   text-align: center;
@@ -649,7 +649,7 @@
 }
 
 .importance-number {
-  font-size: 3.5rem;
+  font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
   font-weight: 800;
   background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
   -webkit-background-clip: text;
