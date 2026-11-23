@@ -1,75 +1,156 @@
+/**
+ * Assessment — guided check of the five metabolic-syndrome markers.
+ *
+ * Flow (unchanged, driven by assessmentStore):
+ *   0 Basic information → predict
+ *   1 Additional information (only when MetS is likely) → calculate severity
+ *   last  Results & recommendations
+ */
+import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Stepper,
-  Step,
-  StepLabel,
-  Button,
-  TextField,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Slider,
-  Switch,
-  Grid,
   Alert,
-  LinearProgress,
-  Tabs,
-  Tab,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  Button,
+  Checkbox,
   CircularProgress,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
-  Checkbox,
-} from "@mui/material";
-import {
-  CheckCircle as CheckIcon,
-  Cancel as CancelIcon,
-  Download as DownloadIcon,
-  Restaurant as DietIcon,
-  FitnessCenter as ExerciseIcon,
-  SelfImprovement as YogaIcon,
-  Block as AvoidIcon,
-  Warning as WarningIcon,
-} from "@mui/icons-material";
-import { useAssessmentStore } from "../../stores/assessmentStore";
-import ASSESSMENT_BANNER from '../../assets/assessment_banner.jpg';
-import "./Assessment.css";
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  InputAdornment,
+  Slider,
+  Switch,
+  Tab,
+  Tabs,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
+import RestaurantRoundedIcon from '@mui/icons-material/RestaurantRounded';
+import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
+import DirectionsRunRoundedIcon from '@mui/icons-material/DirectionsRunRounded';
+import SelfImprovementRoundedIcon from '@mui/icons-material/SelfImprovementRounded';
+import GppMaybeRoundedIcon from '@mui/icons-material/GppMaybeRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import MedicalInformationRoundedIcon from '@mui/icons-material/MedicalInformationRounded';
+import ScienceRoundedIcon from '@mui/icons-material/ScienceRounded';
+import { useAssessmentStore, useAuthStore } from '../../stores';
+import { RangeBar, RiskBadge, RiskGauge } from '../../components/ui';
+import { FACTORS, toRiskKey } from '../../theme/factors';
+import { factorVar } from '../../theme/cssVars';
+import type { FactorKey } from '../../theme/tokens';
+import { STATUS_LABEL, buildMarkerRows } from './markers';
+import './Assessment.css';
 
-// Steps will be dynamic based on whether user has metabolic syndrome
-const STEPS_WITH_ADDITIONAL = [
-  "Basic Information",
-  "Additional Information",
-  "Results & Recommendations",
-];
-const STEPS_WITHOUT_ADDITIONAL = [
-  "Basic Information",
-  "Results & Recommendations",
-];
+const STEPS_WITH_ADDITIONAL = ['Basic information', 'Blood tests', 'Your results'];
+const STEPS_WITHOUT_ADDITIONAL = ['Basic information', 'Your results'];
+
+const SEVERITY_LABEL: Record<string, string> = { low: 'Low', medium: 'Moderate', high: 'High' };
+
+/* ── Small building blocks ─────────────────────────────────────────────── */
 
 interface TabPanelProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   index: number;
   value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+const TabPanel = ({ children, value, index }: TabPanelProps) => (
+  <div role="tabpanel" hidden={value !== index} id={`as-plan-${index}`} aria-labelledby={`as-plan-tab-${index}`}>
+    {value === index && <div className="as-plan__panel">{children}</div>}
+  </div>
+);
+
+const Section = ({ icon, title, hint, children }: { icon: ReactNode; title: string; hint?: string; children: ReactNode }) => (
+  <section className="as-section">
+    <header className="as-section__head">
+      <span className="as-section__icon" aria-hidden>
+        {icon}
+      </span>
+      <div>
+        <Typography component="h3" className="as-section__title">
+          {title}
+        </Typography>
+        {hint && <p className="as-section__hint">{hint}</p>}
+      </div>
+    </header>
+    {children}
+  </section>
+);
+
+interface MeasureFieldProps {
+  factor: FactorKey;
+  label: string;
+  unit: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (v: number) => void;
+}
+
+/** Keys that would let a non-integer into a number field (e, +, -, .) */
+const BLOCKED_KEYS = new Set(['e', 'E', '+', '-', '.', ',']);
+
+/**
+ * Whole-number field restricted to [min, max]: only digits can be typed,
+ * length is capped to max's digit count, and the value is clamped on blur.
+ */
+const MeasureField = ({ factor, label, unit, value, min, max, onChange }: MeasureFieldProps) => {
+  const Icon = FACTORS[factor].icon;
+  const maxDigits = String(max).length;
+  const id = `as-field-${label.toLowerCase().replace(/[^a-z]+/g, '-')}`;
   return (
-    <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box className="tab-panel">{children}</Box>}
+    <div className="as-measure" style={{ ['--f' as string]: factorVar(factor) }}>
+      <label htmlFor={id} className="as-label as-measure__label">
+        {label}
+      </label>
+      <TextField
+        fullWidth
+        id={id}
+        type="number"
+        value={Number.isFinite(value) ? value : ''}
+        onKeyDown={(e) => {
+          if (BLOCKED_KEYS.has(e.key)) e.preventDefault();
+        }}
+        onChange={(e) => onChange(parseInt(e.target.value.replace(/\D/g, '').slice(0, maxDigits)))}
+        onBlur={() => {
+          if (Number.isFinite(value)) onChange(Math.min(max, Math.max(min, value)));
+        }}
+        helperText={`Value range: ${min}–${max} ${unit}`}
+        slotProps={{
+          htmlInput: { min, max, step: 1, inputMode: 'numeric', pattern: '[0-9]*' },
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <span className="as-measure__icon" aria-hidden>
+                  <Icon />
+                </span>
+              </InputAdornment>
+            ),
+            endAdornment: <InputAdornment position="end">{unit}</InputAdornment>,
+          },
+        }}
+      />
     </div>
   );
-}
+};
+
+const DiagnosisToggle = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) => (
+  <label className={`as-toggle${checked ? ' is-on' : ''}`}>
+    <span className="as-toggle__label">{label}</span>
+    <Switch checked={checked} onChange={(e) => onChange(e.target.checked)} />
+  </label>
+);
+
+/* ── Page ───────────────────────────────────────────────────────────────── */
 
 const Assessment = () => {
   const {
@@ -96,628 +177,475 @@ const Assessment = () => {
     downloadReport: handleDownloadReport,
     startNewAssessment,
   } = useAssessmentStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
-  // Determine which steps to show based on metabolic syndrome status
-  const steps = results.hasMetabolicSyndrome
-    ? STEPS_WITH_ADDITIONAL
-    : STEPS_WITHOUT_ADDITIONAL;
+  const steps = results.hasMetabolicSyndrome ? STEPS_WITH_ADDITIONAL : STEPS_WITHOUT_ADDITIONAL;
 
-  const getRiskColor = (probability: number) => {
-    if (probability < 0.35) return "success";
-    if (probability < 0.65) return "warning";
-    return "error";
-  };
-
-  const getSeverityColor = (riskLevel?: string) => {
-    if (riskLevel === "Low Severity") return "success";
-    if (riskLevel === "Medium Severity") return "warning";
-    return "error";
-  };
-
-  // Determine if we should show results
   const showResults =
     (results.hasMetabolicSyndrome && activeStep === 2) ||
-    (!results.hasMetabolicSyndrome &&
-      activeStep === 1 &&
-      results.probability > 0);
+    (!results.hasMetabolicSyndrome && activeStep === 1 && results.probability > 0);
+
+  const sex = patientInfo.gender;
+
+  const severityKey = toRiskKey(results.riskLevel);
+  const markerRows = buildMarkerRows({
+    gender: sex,
+    systolicBP: patientInfo.systolicBP,
+    diastolicBP: patientInfo.diastolicBP,
+    waistCircumference: patientInfo.waistCircumference,
+    ...(results.hasMetabolicSyndrome
+      ? { hdlCholesterol: additionalInfo.hdlCholesterol, triglyceride: additionalInfo.triglyceride, fpg: additionalInfo.fpg }
+      : {}),
+  });
+
+  const plan = [
+    { label: 'Diet plan', icon: <RestaurantRoundedIcon />, items: recommendations.dietPlan, empty: 'No diet recommendations available.' },
+    { label: 'Foods to limit', icon: <BlockRoundedIcon />, items: recommendations.avoidList, empty: 'No foods to limit listed.', avoid: true },
+    { label: 'Exercise', icon: <DirectionsRunRoundedIcon />, items: recommendations.exercisePlan, empty: 'No exercise recommendations available.' },
+    { label: 'Yoga', icon: <SelfImprovementRoundedIcon />, items: recommendations.yogaPoses, empty: 'No yoga recommendations available.' },
+  ];
 
   return (
-    <Box className="assessment-page">
-      {/* Healthcare Banner */}
-      <Box className="assessment-banner">
-        <img
-          src={ASSESSMENT_BANNER}
-          alt="Medical consultation"
-          className="assessment-banner-image"
-        />
-        <Box className="assessment-banner-overlay"></Box>
-        <Box className="assessment-banner-content">
-          <Typography variant="h2" className="page-title">
-            Health Assessment
+    <div className="as">
+      {/* ── Header + progress ─────────────────────────────────────────── */}
+      <header className="as-head">
+        <div className="as-head__copy">
+          <span className="as-eyebrow">Health assessment</span>
+          <Typography variant="h2" component="h1" className="as-head__title">
+            Check your <em className="as-serif">metabolic risk</em>
           </Typography>
-          <Typography variant="h6" className="page-subtitle">
-            Complete the assessment to get your personalized health
-            recommendations
+          <Typography className="as-head__sub">
+            Takes about two minutes. Keep your latest check-up or blood-test numbers handy.
           </Typography>
-        </Box>
-      </Box>
+        </div>
 
-      <Card className="stepper-card">
-        <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-      </Card>
+        <ol className="as-steps" aria-label="Progress">
+          {steps.map((label, i) => {
+            const state = i < activeStep || (showResults && i === steps.length - 1) ? 'done' : i === activeStep ? 'current' : 'todo';
+            return (
+              <li key={label} className={`as-steps__item is-${state}`} aria-current={state === 'current' ? 'step' : undefined}>
+                <span className="as-steps__dot" aria-hidden>
+                  {state === 'done' ? <CheckRoundedIcon /> : i + 1}
+                </span>
+                <span className="as-steps__label">{label}</span>
+              </li>
+            );
+          })}
+        </ol>
+      </header>
 
-      {/* Error Alert */}
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+        <Alert severity="error" className="as-alert" onClose={() => setError(null)}>
           {error}
         </Alert>
       )}
 
-      {/* Step 1: Basic Information */}
+      {/* ── Step 1: basic information ─────────────────────────────────── */}
       {activeStep === 0 && (
-        <Card className="form-card">
-          <CardContent>
-            <Typography variant="h5" className="form-title">
-              Patient Information
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Box className="form-field">
-                  <Typography gutterBottom>
-                    Age: {patientInfo.age} years
-                  </Typography>
-                  <Slider
-                    value={patientInfo.age}
-                    onChange={(_, value) =>
-                      setPatientInfo("age", value as number)
-                    }
-                    min={20}
-                    max={80}
-                    valueLabelDisplay="auto"
-                  />
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl component="fieldset">
-                  <FormLabel>Gender</FormLabel>
-                  <RadioGroup
-                    row
-                    value={patientInfo.gender}
-                    onChange={(e) => setPatientInfo("gender", e.target.value)}
-                  >
-                    <FormControlLabel
-                      value="Men"
-                      control={<Radio />}
-                      label="Male"
-                    />
-                    <FormControlLabel
-                      value="Women"
-                      control={<Radio />}
-                      label="Female"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <Box className="switch-field">
-                  <Typography>Fatty Liver Diagnosis</Typography>
-                  <Switch
-                    checked={patientInfo.fattyLiver}
-                    onChange={(e) =>
-                      setPatientInfo("fattyLiver", e.target.checked)
-                    }
-                  />
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <Box className="switch-field">
-                  <Typography>Hypertension Diagnosis</Typography>
-                  <Switch
-                    checked={patientInfo.hypertension}
-                    onChange={(e) =>
-                      setPatientInfo("hypertension", e.target.checked)
-                    }
-                  />
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <Box className="switch-field">
-                  <Typography>Diabetes Diagnosis</Typography>
-                  <Switch
-                    checked={patientInfo.diabetes}
-                    onChange={(e) =>
-                      setPatientInfo("diabetes", e.target.checked)
-                    }
-                  />
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Systolic Blood Pressure (mmHg)"
-                  type="number"
-                  value={patientInfo.systolicBP}
-                  onChange={(e) =>
-                    setPatientInfo("systolicBP", parseInt(e.target.value))
-                  }
-                  inputProps={{ min: 70, max: 200 }}
+        <div className="as-card">
+          <Section icon={<PersonRoundedIcon />} title="About you">
+            <div className="as-grid as-grid--2">
+              <div className="as-age">
+                <div className="as-age__head">
+                  <span className="as-label" id="as-age-label">
+                    Age
+                  </span>
+                  <span className="as-age__value">
+                    {patientInfo.age}
+                    <small> years</small>
+                  </span>
+                </div>
+                <Slider
+                  aria-labelledby="as-age-label"
+                  value={patientInfo.age}
+                  onChange={(_, value) => setPatientInfo('age', value as number)}
+                  min={20}
+                  max={80}
+                  valueLabelDisplay="auto"
                 />
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
+                <div className="as-age__scale" aria-hidden>
+                  <span>20</span>
+                  <span>80</span>
+                </div>
+              </div>
+
+              <div>
+                <span className="as-label" id="as-sex-label">
+                  Sex
+                </span>
+                <ToggleButtonGroup
+                  exclusive
                   fullWidth
-                  label="Diastolic Blood Pressure (mmHg)"
-                  type="number"
-                  value={patientInfo.diastolicBP}
-                  onChange={(e) =>
-                    setPatientInfo("diastolicBP", parseInt(e.target.value))
-                  }
-                  inputProps={{ min: 40, max: 130 }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Waist Circumference (cm)"
-                  type="number"
-                  value={patientInfo.waistCircumference}
-                  onChange={(e) =>
-                    setPatientInfo(
-                      "waistCircumference",
-                      parseInt(e.target.value)
-                    )
-                  }
-                  inputProps={{ min: 50, max: 150 }}
-                />
-              </Grid>
-            </Grid>
-            <Box className="form-actions">
-              <Button
-                variant="contained"
-                size="large"
-                onClick={predict}
-                disabled={loading}
-                className="submit-button"
-              >
-                {loading ? <CircularProgress size={24} /> : "Predict Risk"}
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Step 2: Additional Information - Only shown if user has metabolic syndrome */}
-      {results.hasMetabolicSyndrome && activeStep === 1 && (
-        <Card className="form-card">
-          <CardContent>
-            <Alert severity="warning" className="step-alert">
-              You have a high probability of Metabolic Syndrome. Please provide
-              additional information for severity assessment.
-            </Alert>
-            <Typography variant="h5" className="form-title">
-              Additional Information
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="HDL Cholesterol (mg/dL)"
-                  type="number"
-                  value={additionalInfo.hdlCholesterol}
-                  onChange={(e) =>
-                    setAdditionalInfo(
-                      "hdlCholesterol",
-                      parseInt(e.target.value)
-                    )
-                  }
-                  inputProps={{ min: 20, max: 100 }}
-                  helperText="Good cholesterol level"
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Triglyceride (mg/dL)"
-                  type="number"
-                  value={additionalInfo.triglyceride}
-                  onChange={(e) =>
-                    setAdditionalInfo("triglyceride", parseInt(e.target.value))
-                  }
-                  inputProps={{ min: 50, max: 500 }}
-                  helperText="Fat in your blood"
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Fasting Plasma Glucose (mg/dL)"
-                  type="number"
-                  value={additionalInfo.fpg}
-                  onChange={(e) =>
-                    setAdditionalInfo("fpg", parseInt(e.target.value))
-                  }
-                  inputProps={{ min: 70, max: 200 }}
-                  helperText="Blood sugar when fasting"
-                />
-              </Grid>
-            </Grid>
-            <Box className="form-actions">
-              <Button variant="outlined" onClick={() => setActiveStep(0)}>
-                Back
-              </Button>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleSeverityCalculation}
-                disabled={loading}
-                className="submit-button"
-              >
-                {loading ? (
-                  <CircularProgress size={24} />
-                ) : (
-                  "Calculate Severity"
-                )}
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Results & Recommendations - Shown at the final step */}
-      {showResults && (
-        <Box className="results-section">
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Card className="result-card">
-                <CardContent>
-                  <Typography variant="h5" className="result-title">
-                    Risk Assessment
-                  </Typography>
-                  <Box className="progress-container">
-                    <Typography variant="body2" className="progress-label">
-                      Probability: {(results.probability * 100).toFixed(1)}%
-                    </Typography>
-                    <LinearProgress
-                      variant="determinate"
-                      value={results.probability * 100}
-                      color={getRiskColor(results.probability)}
-                      className="risk-progress"
-                    />
-                  </Box>
-                  {results.severity !== undefined && (
-                    <Box className="progress-container">
-                      <Typography variant="body2" className="progress-label">
-                        Severity: {(results.severity * 100).toFixed(1)}%
-                      </Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={results.severity * 100}
-                        color={getSeverityColor(results.riskLevel)}
-                        className="risk-progress"
-                      />
-                    </Box>
-                  )}
-                  <Alert
-                    severity={
-                      results.hasMetabolicSyndrome
-                        ? getSeverityColor(results.riskLevel)
-                        : "success"
-                    }
-                    className="result-alert"
-                  >
-                    {results.riskLevel ||
-                      (results.hasMetabolicSyndrome ? "High Risk" : "Low Risk")}
-                  </Alert>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Card className="metrics-card">
-                <CardContent>
-                  <Typography variant="h5" className="result-title">
-                    Your Health Metrics
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid size={{ xs: 6 }}>
-                      <Box className="metric-item">
-                        <Typography variant="body2">Age</Typography>
-                        <Typography variant="h6">
-                          {patientInfo.age} years
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid size={{ xs: 6 }}>
-                      <Box className="metric-item">
-                        <Typography variant="body2">Gender</Typography>
-                        <Typography variant="h6">
-                          {patientInfo.gender}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid size={{ xs: 6 }}>
-                      <Box className="metric-item">
-                        <Typography variant="body2">Blood Pressure</Typography>
-                        <Typography variant="h6">
-                          {patientInfo.systolicBP}/{patientInfo.diastolicBP}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid size={{ xs: 6 }}>
-                      <Box className="metric-item">
-                        <Typography variant="body2">Waist</Typography>
-                        <Typography variant="h6">
-                          {patientInfo.waistCircumference} cm
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-
-          <Card className="recommendations-card">
-            <CardContent>
-              <Typography variant="h5" className="recommendations-title">
-                Health Recommendations
-              </Typography>
-              <Tabs
-                value={tabValue}
-                onChange={(_, newValue) => setTabValue(newValue)}
-                className="recommendations-tabs"
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                <Tab icon={<DietIcon />} label="Diet Plan" />
-                <Tab icon={<AvoidIcon />} label="Foods to Avoid" />
-                <Tab icon={<ExerciseIcon />} label="Exercise Plan" />
-                <Tab icon={<YogaIcon />} label="Yoga Poses" />
-              </Tabs>
-
-              <TabPanel value={tabValue} index={0}>
-                <List>
-                  {recommendations.dietPlan.length > 0 ? (
-                    recommendations.dietPlan.map((item, index) => (
-                      <ListItem key={index} className="recommendation-item">
-                        <ListItemIcon>
-                          <CheckIcon className="check-icon" />
-                        </ListItemIcon>
-                        <ListItemText primary={item} />
-                      </ListItem>
-                    ))
-                  ) : (
-                    <Typography className="no-data">
-                      No diet recommendations available
-                    </Typography>
-                  )}
-                </List>
-              </TabPanel>
-
-              <TabPanel value={tabValue} index={1}>
-                <List>
-                  {recommendations.avoidList.length > 0 ? (
-                    recommendations.avoidList.map((item, index) => (
-                      <ListItem
-                        key={index}
-                        className="recommendation-item avoid"
-                      >
-                        <ListItemIcon>
-                          <CancelIcon className="cancel-icon" />
-                        </ListItemIcon>
-                        <ListItemText primary={item} />
-                      </ListItem>
-                    ))
-                  ) : (
-                    <Typography className="no-data">
-                      No items to avoid listed
-                    </Typography>
-                  )}
-                </List>
-              </TabPanel>
-
-              <TabPanel value={tabValue} index={2}>
-                <List>
-                  {recommendations.exercisePlan.length > 0 ? (
-                    recommendations.exercisePlan.map((item, index) => (
-                      <ListItem key={index} className="recommendation-item">
-                        <ListItemIcon>
-                          <CheckIcon className="check-icon" />
-                        </ListItemIcon>
-                        <ListItemText primary={item} />
-                      </ListItem>
-                    ))
-                  ) : (
-                    <Typography className="no-data">
-                      No exercise recommendations available
-                    </Typography>
-                  )}
-                </List>
-              </TabPanel>
-
-              <TabPanel value={tabValue} index={3}>
-                <List>
-                  {recommendations.yogaPoses.length > 0 ? (
-                    recommendations.yogaPoses.map((item, index) => (
-                      <ListItem key={index} className="recommendation-item">
-                        <ListItemIcon>
-                          <CheckIcon className="check-icon" />
-                        </ListItemIcon>
-                        <ListItemText primary={item} />
-                      </ListItem>
-                    ))
-                  ) : (
-                    <Typography className="no-data">
-                      No yoga recommendations available
-                    </Typography>
-                  )}
-                </List>
-              </TabPanel>
-
-              <Box className="download-section">
-                <Button
-                  variant="contained"
-                  size="large"
-                  startIcon={<DownloadIcon />}
-                  onClick={handleDownloadReport}
-                  className="download-button"
+                  aria-labelledby="as-sex-label"
+                  value={patientInfo.gender}
+                  onChange={(_, v) => v && setPatientInfo('gender', v)}
+                  className="as-segment"
                 >
-                  Download Health Plan
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
+                  <ToggleButton value="Men">Male</ToggleButton>
+                  <ToggleButton value="Women">Female</ToggleButton>
+                </ToggleButtonGroup>
+                <p className="as-note">Thresholds for waist and HDL differ by sex.</p>
+              </div>
+            </div>
+          </Section>
 
-          <Box className="restart-section">
-            <Button variant="outlined" onClick={startNewAssessment}>
-              Start New Assessment
+          <Section icon={<MedicalInformationRoundedIcon />} title="Existing diagnoses" hint="Turn on anything a doctor has diagnosed.">
+            <div className="as-grid as-grid--3">
+              <DiagnosisToggle label="Fatty liver" checked={patientInfo.fattyLiver} onChange={(v) => setPatientInfo('fattyLiver', v)} />
+              <DiagnosisToggle label="Hypertension" checked={patientInfo.hypertension} onChange={(v) => setPatientInfo('hypertension', v)} />
+              <DiagnosisToggle label="Diabetes" checked={patientInfo.diabetes} onChange={(v) => setPatientInfo('diabetes', v)} />
+            </div>
+          </Section>
+
+          <Section icon={<ScienceRoundedIcon />} title="Measurements" hint="From your most recent check-up.">
+            <div className="as-grid as-grid--3">
+              <MeasureField
+                factor="bloodPressure"
+                label="Systolic blood pressure"
+                unit="mmHg"
+                value={patientInfo.systolicBP}
+                min={70}
+                max={200}
+                onChange={(v) => setPatientInfo('systolicBP', v)}
+              />
+              <MeasureField
+                factor="bloodPressure"
+                label="Diastolic blood pressure"
+                unit="mmHg"
+                value={patientInfo.diastolicBP}
+                min={40}
+                max={130}
+                onChange={(v) => setPatientInfo('diastolicBP', v)}
+              />
+              <MeasureField
+                factor="waist"
+                label="Waist circumference"
+                unit="cm"
+                value={patientInfo.waistCircumference}
+                min={50}
+                max={150}
+                onChange={(v) => setPatientInfo('waistCircumference', v)}
+              />
+            </div>
+          </Section>
+
+          <div className="as-actions">
+            <Button
+              variant="gradient"
+              size="large"
+              onClick={predict}
+              disabled={loading}
+              endIcon={loading ? undefined : <ArrowForwardRoundedIcon />}
+              className="as-primary"
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Predict my risk'}
             </Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
       )}
 
-      {/* Terms and Conditions Dialog */}
+      {/* ── Step 2: blood tests (only when MetS is likely) ────────────── */}
+      {results.hasMetabolicSyndrome && activeStep === 1 && (
+        <div className="as-card">
+          <div className="as-callout" role="status">
+            <GppMaybeRoundedIcon aria-hidden />
+            <div>
+              <strong>Your result suggests a higher chance of metabolic syndrome.</strong>
+              <p>Add three values from a fasting blood test so we can work out how severe it is and tailor your plan.</p>
+            </div>
+          </div>
+
+          <Section icon={<ScienceRoundedIcon />} title="Blood tests" hint="Use fasting results if you have them.">
+            <div className="as-grid as-grid--3">
+              <MeasureField
+                factor="hdl"
+                label="HDL cholesterol"
+                unit="mg/dL"
+                value={additionalInfo.hdlCholesterol}
+                min={20}
+                max={100}
+                onChange={(v) => setAdditionalInfo('hdlCholesterol', v)}
+              />
+              <MeasureField
+                factor="triglycerides"
+                label="Triglycerides"
+                unit="mg/dL"
+                value={additionalInfo.triglyceride}
+                min={50}
+                max={500}
+                onChange={(v) => setAdditionalInfo('triglyceride', v)}
+              />
+              <MeasureField
+                factor="glucose"
+                label="Fasting glucose"
+                unit="mg/dL"
+                value={additionalInfo.fpg}
+                min={70}
+                max={200}
+                onChange={(v) => setAdditionalInfo('fpg', v)}
+              />
+            </div>
+          </Section>
+
+          <div className="as-actions">
+            <Button variant="outlined" size="large" onClick={() => setActiveStep(0)} startIcon={<ArrowBackRoundedIcon />}>
+              Back
+            </Button>
+            <Button
+              variant="gradient"
+              size="large"
+              onClick={handleSeverityCalculation}
+              disabled={loading}
+              endIcon={loading ? undefined : <ArrowForwardRoundedIcon />}
+              className="as-primary"
+            >
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Calculate severity'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Results & recommendations ─────────────────────────────────── */}
+      {showResults && (
+        <div className="as-results">
+          {!isAuthenticated && (
+            <div className="as-save">
+              <p>
+                <strong>Want to keep this result?</strong> Create a free account to save assessments and track your
+                progress on your dashboard.
+              </p>
+              <div className="as-save__actions">
+                <Button component={Link} to="/signup" variant="contained" size="small">
+                  Create free account
+                </Button>
+                <Button component={Link} to="/login" size="small">
+                  Sign in
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="as-results__top">
+            <section className="as-card as-score" aria-labelledby="as-score-title">
+              <Typography id="as-score-title" component="h2" className="as-card__title">
+                Your result
+              </Typography>
+              <RiskGauge
+                value={results.probability}
+                risk={results.hasMetabolicSyndrome ? results.riskLevel : 'low'}
+                label="Chance of metabolic syndrome"
+                showBadge={false}
+              />
+              <dl className="as-score__facts">
+                <div>
+                  <dt>Outlook</dt>
+                  <dd>
+                    <RiskBadge
+                      level={results.hasMetabolicSyndrome ? 'high' : 'low'}
+                      label={results.hasMetabolicSyndrome ? 'Metabolic syndrome likely' : 'Unlikely'}
+                      size="small"
+                    />
+                  </dd>
+                </div>
+                {severityKey && (
+                  <div>
+                    <dt>Severity</dt>
+                    <dd>
+                      <RiskBadge level={severityKey} label={SEVERITY_LABEL[severityKey]} size="small" />
+                    </dd>
+                  </div>
+                )}
+              </dl>
+              <p className="as-score__text">
+                {results.hasMetabolicSyndrome
+                  ? 'Your markers point to metabolic syndrome. The plan below is matched to your result — share the report with your doctor.'
+                  : 'Good news — your markers point to a low chance of metabolic syndrome. The plan below helps you keep it that way.'}
+              </p>
+            </section>
+
+            <section className="as-card as-markers" aria-labelledby="as-markers-title">
+              <div className="as-card__head">
+                <Typography id="as-markers-title" component="h2" className="as-card__title">
+                  Your markers
+                </Typography>
+                <span className="as-card__meta">
+                  {sex === 'Women' ? 'Female' : 'Male'} · {patientInfo.age} years
+                </span>
+              </div>
+              <ul className="as-markers__list">
+                {markerRows.map((m) => {
+                  const F = FACTORS[m.key];
+                  const Icon = F.icon;
+                  return (
+                    <li key={m.key} className="as-marker" style={{ ['--f' as string]: factorVar(m.key) }}>
+                      <span className="as-marker__icon" aria-hidden>
+                        <Icon />
+                      </span>
+                      <div className="as-marker__body">
+                        <div className="as-marker__row">
+                          <span className="as-marker__name">{F.label}</span>
+                          <span className="as-marker__value">
+                            {m.display} <small>{m.unit}</small>
+                          </span>
+                        </div>
+                        <RangeBar
+                          min={m.min}
+                          max={m.max}
+                          zones={m.zones}
+                          value={m.value}
+                          thickness={6}
+                          label={`${F.label} ${m.display} ${m.unit}, ${STATUS_LABEL[m.status]}`}
+                        />
+                      </div>
+                      <RiskBadge level={m.risk} label={STATUS_LABEL[m.status]} size="small" />
+                    </li>
+                  );
+                })}
+              </ul>
+              {!results.hasMetabolicSyndrome && (
+                <p className="as-note">Blood-test markers are only needed when metabolic syndrome is likely.</p>
+              )}
+            </section>
+          </div>
+
+          <section className="as-card as-plan" aria-labelledby="as-plan-title">
+            <div className="as-card__head">
+              <div>
+                <Typography id="as-plan-title" component="h2" className="as-card__title">
+                  Your personal plan
+                </Typography>
+                <p className="as-card__sub">Matched to your result. Small, steady changes make the biggest difference.</p>
+              </div>
+            </div>
+
+            <Tabs
+              value={tabValue}
+              onChange={(_, v) => setTabValue(v)}
+              variant="scrollable"
+              scrollButtons="auto"
+              allowScrollButtonsMobile
+              className="as-plan__tabs"
+              aria-label="Plan sections"
+            >
+              {plan.map((p, i) => (
+                <Tab
+                  key={p.label}
+                  icon={p.icon}
+                  iconPosition="start"
+                  label={p.label}
+                  id={`as-plan-tab-${i}`}
+                  aria-controls={`as-plan-${i}`}
+                />
+              ))}
+            </Tabs>
+
+            {plan.map((p, i) => (
+              <TabPanel key={p.label} value={tabValue} index={i}>
+                {p.items.length > 0 ? (
+                  <ul className={`as-plan__list${p.avoid ? ' is-avoid' : ''}`}>
+                    {p.items.map((item, j) => (
+                      <li key={j}>
+                        <span className="as-plan__mark" aria-hidden>
+                          {p.avoid ? <CloseRoundedIcon /> : <CheckRoundedIcon />}
+                        </span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="as-empty">{p.empty}</p>
+                )}
+              </TabPanel>
+            ))}
+          </section>
+
+          <div className="as-actions as-actions--center">
+            <Button variant="outlined" size="large" onClick={startNewAssessment} startIcon={<RestartAltRoundedIcon />}>
+              Start new assessment
+            </Button>
+            <Button
+              variant="gradient"
+              size="large"
+              onClick={handleDownloadReport}
+              startIcon={<FileDownloadRoundedIcon />}
+              className="as-primary"
+            >
+              Download report (PDF)
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Terms ─────────────────────────────────────────────────────── */}
       <Dialog
         open={termsOpen && !termsAccepted}
         onClose={() => {}}
         maxWidth="md"
         fullWidth
-        className="terms-dialog"
+        scroll="paper"
         disableEscapeKeyDown
+        aria-labelledby="as-terms-title"
+        slotProps={{ paper: { className: 'as-terms' } }}
       >
-        <DialogTitle className="terms-dialog-title">
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <WarningIcon sx={{ color: "#f59e0b" }} />
-            <Typography variant="h5" component="span">
-              Important Disclaimer & Terms of Use
-            </Typography>
-          </Box>
+        <DialogTitle id="as-terms-title" className="as-terms__title">
+          <span className="as-terms__icon" aria-hidden>
+            <GppMaybeRoundedIcon />
+          </span>
+          Before you start
         </DialogTitle>
-        <DialogContent className="terms-dialog-content">
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            Please read these terms carefully before using the Health Assessment
-            Tool.
-          </Alert>
+        <DialogContent dividers className="as-terms__content">
+          <p className="as-terms__intro">Please read these terms carefully before using the health assessment tool.</p>
 
-          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-            1. Medical Disclaimer
-          </Typography>
-          <Typography paragraph>
-            This tool is designed for{" "}
-            <strong>educational and informational purposes only</strong>. It is
-            NOT intended to be a substitute for professional medical advice,
-            diagnosis, or treatment. Always seek the advice of your physician or
-            other qualified health provider with any questions you may have
-            regarding a medical condition.
-          </Typography>
+          <h3>1. Medical disclaimer</h3>
+          <p>
+            This tool is designed for <strong>educational and informational purposes only</strong>. It is not a substitute
+            for professional medical advice, diagnosis or treatment. Always seek the advice of your physician or another
+            qualified health provider with any questions you may have about a medical condition.
+          </p>
 
-          <Typography variant="h6" gutterBottom>
-            2. Accuracy of Results
-          </Typography>
-          <Typography paragraph>
-            The predictions and recommendations provided by this tool are based
-            on statistical models and general health guidelines. Individual
-            results may vary, and the tool cannot account for all personal
-            health factors. The accuracy of results depends on the accuracy of
-            the information you provide.
-          </Typography>
+          <h3>2. Accuracy of results</h3>
+          <p>
+            Predictions and recommendations are based on statistical models and general health guidelines. Individual
+            results may vary, and the tool cannot account for every personal health factor. Results are only as accurate
+            as the information you provide.
+          </p>
 
-          <Typography variant="h6" gutterBottom>
-            3. No Doctor-Patient Relationship
-          </Typography>
-          <Typography paragraph>
-            Using this assessment tool does not create a doctor-patient
-            relationship. The recommendations provided are general in nature and
-            should be discussed with your healthcare provider before making any
-            changes to your diet, exercise, or medication regimen.
-          </Typography>
+          <h3>3. No doctor–patient relationship</h3>
+          <p>
+            Using this tool does not create a doctor–patient relationship. Recommendations are general and should be
+            discussed with your healthcare provider before changing your diet, exercise or medication.
+          </p>
 
-          <Typography variant="h6" gutterBottom>
-            4. Emergency Situations
-          </Typography>
-          <Typography paragraph>
-            If you are experiencing a medical emergency, please call your local
-            emergency services immediately. Do not rely on this tool for
-            emergency medical situations.
-          </Typography>
+          <h3>4. Emergencies</h3>
+          <p>
+            If you are experiencing a medical emergency, call your local emergency services immediately. Do not rely on this
+            tool in an emergency.
+          </p>
 
-          <Typography variant="h6" gutterBottom>
-            5. Data Privacy
-          </Typography>
-          <Typography paragraph>
-            The health information you enter is processed locally and is not
-            stored on our servers permanently. However, we recommend not
-            entering any personally identifiable information beyond what is
-            necessary for the assessment.
-          </Typography>
+          <h3>5. Data privacy</h3>
+          <p>
+            The health information you enter is processed locally and is not stored on our servers permanently. We
+            recommend not entering personally identifiable information beyond what the assessment needs.
+          </p>
 
-          <Typography variant="h6" gutterBottom>
-            6. Limitation of Liability
-          </Typography>
-          <Typography paragraph>
-            The creators and operators of this tool shall not be liable for any
-            damages arising from the use of this assessment tool or the
+          <h3>6. Limitation of liability</h3>
+          <p>
+            The creators and operators of this tool are not liable for any damages arising from its use or from the
             recommendations provided. Use this tool at your own risk.
-          </Typography>
+          </p>
         </DialogContent>
-        <DialogActions className="terms-dialog-actions">
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={termsCheckbox}
-                  onChange={(e) => setTermsCheckbox(e.target.checked)}
-                  sx={{
-                    color: "#cbd5e1",
-                    "&.Mui-checked": {
-                      color: "#10b981",
-                    },
-                    "& .MuiSvgIcon-root": {
-                      fontSize: "1.5rem",
-                    },
-                    "&.Mui-checked .MuiSvgIcon-root": {
-                      backgroundColor: "#10b981",
-                      borderRadius: "4px",
-                      color: "#ffffff",
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography>
-                  I have read, understood, and agree to these terms and
-                  conditions. I understand that this tool is for informational
-                  purposes only and is not a substitute for professional medical
-                  advice.
-                </Typography>
-              }
-            />
-            <Button
-              variant="contained"
-              onClick={acceptTerms}
-              disabled={!termsCheckbox}
-              fullWidth
-              size="large"
-              className="accept-terms-button"
-            >
-              Accept & Continue to Assessment
-            </Button>
-          </Box>
+        <DialogActions className="as-terms__actions">
+          <FormControlLabel
+            className="as-terms__agree"
+            control={<Checkbox checked={termsCheckbox} onChange={(e) => setTermsCheckbox(e.target.checked)} />}
+            label="I have read and agree to these terms. I understand this tool is for information only and is not a substitute for professional medical advice."
+          />
+          <Button variant="gradient" size="large" fullWidth onClick={acceptTerms} disabled={!termsCheckbox}>
+            Accept and continue
+          </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </div>
   );
 };
 
