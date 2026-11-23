@@ -1,11 +1,11 @@
 /**
- * Marker helpers for the assessment page — status + reference range for each
+ * Marker helpers for the assessment page and dashboard — status + reference range for each
  * of the five markers, derived from the shared thresholds in theme/factors.ts.
  * Display only; the prediction itself comes from the backend.
  */
-import { getFactorStatus, STATUS_TO_RISK, type FactorStatus } from '../../theme/factors';
-import type { FactorKey, RiskKey } from '../../theme/tokens';
-import type { RangeZone } from '../../components/ui/RangeBar';
+import { getFactorStatus, STATUS_TO_RISK, type FactorStatus } from './factors';
+import type { FactorKey, RiskKey } from './tokens';
+import type { RangeZone } from '../components/ui/RangeBar';
 
 export const STATUS_LABEL: Record<FactorStatus, string> = {
   normal: 'In range',

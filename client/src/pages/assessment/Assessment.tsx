@@ -7,17 +7,11 @@
  *   last  Results & recommendations
  */
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Alert,
   Button,
-  Checkbox,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControlLabel,
   InputAdornment,
   Slider,
   Switch,
@@ -47,7 +41,8 @@ import { RangeBar, RiskBadge, RiskGauge } from '../../components/ui';
 import { FACTORS, toRiskKey } from '../../theme/factors';
 import { factorVar } from '../../theme/cssVars';
 import type { FactorKey } from '../../theme/tokens';
-import { STATUS_LABEL, buildMarkerRows } from './markers';
+import { STATUS_LABEL, buildMarkerRows } from '../../theme/markers';
+import TermsDialog from './TermsDialog';
 import './Assessment.css';
 
 const STEPS_WITH_ADDITIONAL = ['Basic information', 'Blood tests', 'Your results'];
@@ -178,6 +173,15 @@ const Assessment = () => {
     startNewAssessment,
   } = useAssessmentStore();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  /** Leave without accepting: back to the previous in-app page, or Home if
+   *  the assessment was opened directly (no in-app history to return to). */
+  const exitAssessment = () => {
+    if (location.key === 'default') navigate('/', { replace: true });
+    else navigate(-1);
+  };
 
   const steps = results.hasMetabolicSyndrome ? STEPS_WITH_ADDITIONAL : STEPS_WITHOUT_ADDITIONAL;
 
@@ -576,75 +580,14 @@ const Assessment = () => {
         </div>
       )}
 
-      {/* ── Terms ─────────────────────────────────────────────────────── */}
-      <Dialog
+      {/* ── Terms (with a way out) ───────────────────────────────── */}
+      <TermsDialog
         open={termsOpen && !termsAccepted}
-        onClose={() => {}}
-        maxWidth="md"
-        fullWidth
-        scroll="paper"
-        disableEscapeKeyDown
-        aria-labelledby="as-terms-title"
-        slotProps={{ paper: { className: 'as-terms' } }}
-      >
-        <DialogTitle id="as-terms-title" className="as-terms__title">
-          <span className="as-terms__icon" aria-hidden>
-            <GppMaybeRoundedIcon />
-          </span>
-          Before you start
-        </DialogTitle>
-        <DialogContent dividers className="as-terms__content">
-          <p className="as-terms__intro">Please read these terms carefully before using the health assessment tool.</p>
-
-          <h3>1. Medical disclaimer</h3>
-          <p>
-            This tool is designed for <strong>educational and informational purposes only</strong>. It is not a substitute
-            for professional medical advice, diagnosis or treatment. Always seek the advice of your physician or another
-            qualified health provider with any questions you may have about a medical condition.
-          </p>
-
-          <h3>2. Accuracy of results</h3>
-          <p>
-            Predictions and recommendations are based on statistical models and general health guidelines. Individual
-            results may vary, and the tool cannot account for every personal health factor. Results are only as accurate
-            as the information you provide.
-          </p>
-
-          <h3>3. No doctor–patient relationship</h3>
-          <p>
-            Using this tool does not create a doctor–patient relationship. Recommendations are general and should be
-            discussed with your healthcare provider before changing your diet, exercise or medication.
-          </p>
-
-          <h3>4. Emergencies</h3>
-          <p>
-            If you are experiencing a medical emergency, call your local emergency services immediately. Do not rely on this
-            tool in an emergency.
-          </p>
-
-          <h3>5. Data privacy</h3>
-          <p>
-            The health information you enter is processed locally and is not stored on our servers permanently. We
-            recommend not entering personally identifiable information beyond what the assessment needs.
-          </p>
-
-          <h3>6. Limitation of liability</h3>
-          <p>
-            The creators and operators of this tool are not liable for any damages arising from its use or from the
-            recommendations provided. Use this tool at your own risk.
-          </p>
-        </DialogContent>
-        <DialogActions className="as-terms__actions">
-          <FormControlLabel
-            className="as-terms__agree"
-            control={<Checkbox checked={termsCheckbox} onChange={(e) => setTermsCheckbox(e.target.checked)} />}
-            label="I have read and agree to these terms. I understand this tool is for information only and is not a substitute for professional medical advice."
-          />
-          <Button variant="gradient" size="large" fullWidth onClick={acceptTerms} disabled={!termsCheckbox}>
-            Accept and continue
-          </Button>
-        </DialogActions>
-      </Dialog>
+        checked={termsCheckbox}
+        onCheck={setTermsCheckbox}
+        onAccept={acceptTerms}
+        onExit={exitAssessment}
+      />
     </div>
   );
 };

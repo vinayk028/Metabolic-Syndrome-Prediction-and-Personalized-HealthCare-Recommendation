@@ -44,7 +44,7 @@
 /* Default page container (non full-bleed routes) */
 .vb-page.MuiContainer-root {
   padding-top: clamp(1.25rem, 0.75rem + 2vw, 2.5rem);
-  padding-bottom: clamp(2rem, 1.25rem + 2.5vw, 3.5rem);
+  padding-bottom: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
 }
 
 /* Skip link — visible only on keyboard focus */

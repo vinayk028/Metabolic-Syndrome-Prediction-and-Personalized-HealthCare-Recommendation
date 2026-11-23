@@ -4,7 +4,9 @@
 
 .vb-footer {
   position: relative;
-  margin-top: var(--vb-space-section);
+  /* Pages already end with their own bottom padding; this only leaves room
+     for the pulse line that rides on the footer's top edge. */
+  margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   background: var(--vb-surface);
   border-top: 1px solid var(--vb-border);
 }

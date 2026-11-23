@@ -341,6 +341,12 @@ input:disabled {
   max-width: 100%;
 }
 
+/* …except chart surfaces: Recharts sizes its own SVG inside a zero-width
+   wrapper, so a percentage cap would collapse every chart to 0px. */
+.recharts-surface {
+  max-width: none;
+}
+
 /* Wide content scrolls inside itself instead of stretching the page
    (wrap tables in MUI <TableContainer> for the same effect) */
 .vb-main :where(pre) {
@@ -348,9 +354,10 @@ input:disabled {
   overflow-x: auto;
 }
 
-/* Recharts: let charts shrink with their card */
-.vb-main .recharts-responsive-container,
-.vb-main .recharts-wrapper {
+/* Recharts: let charts shrink with their card. Only the outer container —
+   Recharts 3 nests the wrapper/SVG inside a 0×0 div, so capping those at
+   100% would collapse the chart to nothing. */
+.vb-main .recharts-responsive-container {
   max-width: 100%;
 }
 

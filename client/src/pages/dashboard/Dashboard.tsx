@@ -1,71 +1,193 @@
 /**
- * Dashboard Page - Personalized patient dashboard with charts & MetS tracking
+ * Dashboard — personal overview of saved assessments: latest result, trend,
+ * severity mix, latest markers, plan summary and history.
+ *
+ * Data flow is unchanged: assessment history comes from getAssessmentHistory()
+ * and unauthenticated users are redirected to /login.
  */
-
-import React, { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, IconButton, Tooltip, Typography } from '@mui/material';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
+import SignalCellularAltRoundedIcon from '@mui/icons-material/SignalCellularAltRounded';
+import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
+import EventRoundedIcon from '@mui/icons-material/EventRounded';
+import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
+import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
+import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
+import RestaurantRoundedIcon from '@mui/icons-material/RestaurantRounded';
+import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
+import DirectionsRunRoundedIcon from '@mui/icons-material/DirectionsRunRounded';
+import SelfImprovementRoundedIcon from '@mui/icons-material/SelfImprovementRounded';
+import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded';
+import TipsAndUpdatesRoundedIcon from '@mui/icons-material/TipsAndUpdatesRounded';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import EventRepeatRoundedIcon from '@mui/icons-material/EventRepeatRounded';
 import {
-  Box,
-  Paper,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Chip,
-  CircularProgress,
-  Button,
-  Divider,
-  LinearProgress,
-  Tooltip,
-  IconButton,
-} from '@mui/material';
-import {
-  TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon,
-  TrendingFlat as TrendingFlatIcon,
-  Assessment as AssessmentIcon,
-  Favorite as HeartIcon,
-  Bloodtype as BloodIcon,
-  Speed as SpeedIcon,
-  Timeline as TimelineIcon,
-  Restaurant as DietIcon,
-  FitnessCenter as ExerciseIcon,
-  SelfImprovement as YogaIcon,
-  ArrowForward as ArrowForwardIcon,
-  Refresh as RefreshIcon,
-  CalendarToday as CalendarIcon,
-  CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon,
-  LocalHospital as HospitalIcon,
-} from '@mui/icons-material';
-import {
-  AreaChart,
   Area,
-  BarChart,
-  Bar,
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  Legend,
-  Cell,
 } from 'recharts';
 import { useAuthStore } from '../../stores';
 import { getAssessmentHistory } from '../../services/api';
 import type { AssessmentHistoryItem } from '../../types/types';
+import { EmptyState, PulseLoader, RangeBar, RiskBadge } from '../../components/ui';
+import { FACTORS, toRiskKey } from '../../theme/factors';
+import { STATUS_LABEL, buildMarkerRows } from '../../theme/markers';
+import { brand, riskColors, type RiskKey } from '../../theme/tokens';
+import { factorVar } from '../../theme/cssVars';
+import { FOCUS_TIPS, RECHECK_DAYS, buildMarkerSeries, nextCheck } from './insights';
 import './Dashboard.css';
 
-const Dashboard: React.FC = () => {
+const MAX_SAVED = 7;
+const LEVEL_LABEL: Record<RiskKey, string> = { low: 'Low', medium: 'Moderate', high: 'High' };
+const LEVEL_ORDER: RiskKey[] = ['low', 'medium', 'high'];
+
+const fmtLong = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+const fmtShort = (d: string) => new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+const pct = (p: number) => `${(p * 100).toFixed(1)}%`;
+
+const daysAgo = (d: string) => {
+  const days = Math.floor((Date.now() - new Date(d).getTime()) / 86_400_000);
+  if (days <= 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  return `${days} days ago`;
+};
+
+const levelOf = (a: AssessmentHistoryItem): RiskKey => toRiskKey(a.riskLevel) ?? 'low';
+
+/* ── Pieces ─────────────────────────────────────────────────────────────── */
+
+const Card = ({
+  title,
+  icon,
+  meta,
+  action,
+  className = '',
+  children,
+  id,
+}: {
+  title: string;
+  icon: ReactNode;
+  meta?: ReactNode;
+  action?: ReactNode;
+  className?: string;
+  children: ReactNode;
+  id: string;
+}) => (
+  <section className={`db-card ${className}`} aria-labelledby={id}>
+    <header className="db-card__head">
+      <span className="db-card__icon" aria-hidden>
+        {icon}
+      </span>
+      <div className="db-card__titles">
+        <Typography id={id} component="h2" className="db-card__title">
+          {title}
+        </Typography>
+        {meta && <p className="db-card__meta">{meta}</p>}
+      </div>
+      {action}
+    </header>
+    {children}
+  </section>
+);
+
+const Kpi = ({ icon, label, value, caption }: { icon: ReactNode; label: string; value: ReactNode; caption?: ReactNode }) => (
+  <li className="db-kpi">
+    <span className="db-kpi__icon" aria-hidden>
+      {icon}
+    </span>
+    <span className="db-kpi__label">{label}</span>
+    <span className="db-kpi__value">{value}</span>
+    {caption && <span className="db-kpi__caption">{caption}</span>}
+  </li>
+);
+
+/** Change in probability vs the previous assessment — down is good. */
+const Delta = ({ value }: { value: number }) => {
+  const pts = Math.abs(value * 100).toFixed(1);
+  if (value < -0.001)
+    return (
+      <span className="db-delta is-good">
+        <TrendingDownRoundedIcon aria-hidden /> {pts} pts lower than last time
+      </span>
+    );
+  if (value > 0.001)
+    return (
+      <span className="db-delta is-bad">
+        <TrendingUpRoundedIcon aria-hidden /> {pts} pts higher than last time
+      </span>
+    );
+  return (
+    <span className="db-delta">
+      <TrendingFlatRoundedIcon aria-hidden /> No change since last time
+    </span>
+  );
+};
+
+interface TrendPoint {
+  date: string;
+  full: string;
+  probability: number;
+  level: RiskKey;
+}
+
+/** Recharts injects active/payload into the content element. */
+const TrendTooltip = ({ active, payload }: { active?: boolean; payload?: { payload: TrendPoint }[] }) => {
+  if (!active || !payload?.length) return null;
+  const p = payload[0].payload;
+  return (
+    <div className="db-tip">
+      <span className="db-tip__date">{p.full}</span>
+      <span className="db-tip__value">{p.probability}%</span>
+      <RiskBadge level={p.level} label={`${LEVEL_LABEL[p.level]} severity`} size="small" />
+    </div>
+  );
+};
+
+/** Tiny fixed-size line of a marker's history; last point emphasised. */
+const Sparkline = ({ values, improving }: { values: number[]; improving: boolean | null }) => {
+  const W = 88;
+  const H = 28;
+  const P = 4;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  const pts = values.map((v, i) => [P + (i / (values.length - 1)) * (W - 2 * P), H - P - ((v - min) / span) * (H - 2 * P)]);
+  const color = improving === true ? riskColors.low.main : improving === false ? riskColors.high.main : brand.slate[500];
+  const [lx, ly] = pts[pts.length - 1];
+  return (
+    <svg className="db-spark" width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden>
+      <polyline
+        points={pts.map((pt) => pt.join(',')).join(' ')}
+        fill="none"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+      <circle cx={lx} cy={ly} r={3.5} fill={color} stroke="#fff" strokeWidth={1.5} />
+    </svg>
+  );
+};
+
+/* ── Page ───────────────────────────────────────────────────────────────── */
+
+const Dashboard = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore();
   const [assessments, setAssessments] = useState<AssessmentHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  // Refresh happens in place (no full-page loader) — the icon spins instead.
+  const [refreshing, setRefreshing] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -81,6 +203,7 @@ const Dashboard: React.FC = () => {
         const response = await getAssessmentHistory();
         if (response.success) {
           setAssessments(response.assessmentHistory || []);
+          setUpdatedAt(new Date());
         }
       } catch (err) {
         console.error('Error fetching assessment history:', err);
@@ -92,669 +215,501 @@ const Dashboard: React.FC = () => {
   }, [user]);
 
   const handleRefresh = async () => {
-    setLoading(true);
+    if (refreshing) return;
+    setRefreshing(true);
     try {
-      const response = await getAssessmentHistory();
+      // Keep the spinner up long enough to read as feedback, not a flicker
+      const [response] = await Promise.all([getAssessmentHistory(), new Promise((r) => setTimeout(r, 700))]);
       if (response.success) {
         setAssessments(response.assessmentHistory || []);
+        setUpdatedAt(new Date());
       }
     } catch (err) {
       console.error('Error refreshing:', err);
     } finally {
-      setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  // Sort assessments chronologically (oldest first for charts)
-  const sortedAssessments = useMemo(
+  // Oldest first (charts); newest is last
+  const sorted = useMemo(
     () => [...assessments].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
-    [assessments]
+    [assessments],
+  );
+  const latest = sorted.length > 0 ? sorted[sorted.length - 1] : null;
+  const previous = sorted.length > 1 ? sorted[sorted.length - 2] : null;
+
+  const trendData = useMemo<TrendPoint[]>(
+    () =>
+      sorted.map((a) => ({
+        date: fmtShort(a.date),
+        full: fmtLong(a.date),
+        probability: +(a.probability * 100).toFixed(1),
+        level: levelOf(a),
+      })),
+    [sorted],
   );
 
-  const latestAssessment = sortedAssessments.length > 0 ? sortedAssessments[sortedAssessments.length - 1] : null;
-  const previousAssessment = sortedAssessments.length > 1 ? sortedAssessments[sortedAssessments.length - 2] : null;
+  const levelCounts = useMemo(() => {
+    const c: Record<RiskKey, number> = { low: 0, medium: 0, high: 0 };
+    sorted.forEach((a) => c[levelOf(a)]++);
+    return c;
+  }, [sorted]);
 
-  // Compute trends
-  const probTrend = latestAssessment && previousAssessment
-    ? latestAssessment.probability - previousAssessment.probability
-    : 0;
-  const sevTrend = latestAssessment && previousAssessment
-    ? latestAssessment.severity - previousAssessment.severity
-    : 0;
-
-  // Chart data
-  const trendChartData = useMemo(() =>
-    sortedAssessments.map((a, i) => ({
-      name: `#${i + 1}`,
-      date: new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      probability: +(a.probability * 100).toFixed(1),
-      severity: +(a.severity * 100).toFixed(1),
-    })),
-    [sortedAssessments]
-  );
-
-  const riskDistribution = useMemo(() => {
-    const counts = { 'Low Severity': 0, 'Medium Severity': 0, 'High Severity': 0 };
-    sortedAssessments.forEach(a => {
-      if (counts[a.riskLevel as keyof typeof counts] !== undefined) {
-        counts[a.riskLevel as keyof typeof counts]++;
-      }
+  const markerRows = useMemo(() => {
+    const p = latest?.inputParameters;
+    if (!p) return [];
+    return buildMarkerRows({
+      gender: p.gender,
+      systolicBP: p.systolicBP,
+      diastolicBP: p.diastolicBP,
+      waistCircumference: p.waistCircumference,
+      hdlCholesterol: p.hdlCholesterol,
+      triglyceride: p.triglyceride,
+      fpg: p.fpg,
     });
-    return [
-      { name: 'Low', value: counts['Low Severity'], fill: '#10b981' },
-      { name: 'Medium', value: counts['Medium Severity'], fill: '#f59e0b' },
-      { name: 'High', value: counts['High Severity'], fill: '#ef4444' },
-    ];
-  }, [sortedAssessments]);
+  }, [latest]);
 
-  const vitalRadarData = useMemo(() => {
-    if (!latestAssessment?.inputParameters) return [];
-    const p = latestAssessment.inputParameters;
-    return [
-      { metric: 'Systolic BP', value: Math.min(((p.systolicBP || 120) / 200) * 100, 100), fullMark: 100 },
-      { metric: 'Diastolic BP', value: Math.min(((p.diastolicBP || 80) / 130) * 100, 100), fullMark: 100 },
-      { metric: 'Waist', value: Math.min(((p.waistCircumference || 75) / 150) * 100, 100), fullMark: 100 },
-      { metric: 'HDL', value: Math.min(((p.hdlCholesterol || 50) / 100) * 100, 100), fullMark: 100 },
-      { metric: 'Triglyceride', value: Math.min(((p.triglyceride || 150) / 500) * 100, 100), fullMark: 100 },
-      { metric: 'Glucose', value: Math.min(((p.fpg || 90) / 200) * 100, 100), fullMark: 100 },
-    ];
-  }, [latestAssessment]);
+  const series = useMemo(() => buildMarkerSeries(sorted), [sorted]);
+  // Out-of-range first, then borderline
+  const focus = useMemo(
+    () =>
+      markerRows
+        .filter((m) => m.status !== 'normal')
+        .sort((a, b) => (a.status === b.status ? 0 : a.status === 'elevated' ? -1 : 1)),
+    [markerRows],
+  );
 
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  /* ── Loading / auth ──────────────────────────────────────────────────── */
 
-  const getRiskColor = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'Low Severity': return '#10b981';
-      case 'Medium Severity': return '#f59e0b';
-      case 'High Severity': return '#ef4444';
-      default: return '#64748b';
-    }
-  };
+  if (authLoading || !user) return <PulseLoader label="Loading your dashboard…" fullPage />;
+  if (loading) return <PulseLoader label="Fetching your health data…" fullPage />;
 
-  const getRiskIcon = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'Low Severity': return <CheckCircleIcon />;
-      case 'Medium Severity': return <WarningIcon />;
-      case 'High Severity': return <HospitalIcon />;
-      default: return <AssessmentIcon />;
-    }
-  };
+  const latestLevel = latest ? levelOf(latest) : null;
+  const prevLevel = previous ? levelOf(previous) : null;
+  const levelChange =
+    latestLevel && prevLevel
+      ? latestLevel === prevLevel
+        ? 'Same as last time'
+        : LEVEL_ORDER.indexOf(latestLevel) < LEVEL_ORDER.indexOf(prevLevel)
+          ? `Improved from ${LEVEL_LABEL[prevLevel]}`
+          : `Up from ${LEVEL_LABEL[prevLevel]}`
+      : 'From your latest assessment';
 
-  const getTrendIcon = (value: number) => {
-    if (value > 0.01) return <TrendingUpIcon sx={{ color: '#ef4444' }} />;
-    if (value < -0.01) return <TrendingDownIcon sx={{ color: '#10b981' }} />;
-    return <TrendingFlatIcon sx={{ color: '#64748b' }} />;
-  };
+  const recs = latest?.recommendations;
+  const planTiles = recs
+    ? [
+        { label: 'Diet', icon: <RestaurantRoundedIcon />, n: recs.dietPlan?.length || 0 },
+        { label: 'Foods to limit', icon: <BlockRoundedIcon />, n: recs.avoidList?.length || 0 },
+        { label: 'Exercise', icon: <DirectionsRunRoundedIcon />, n: recs.exercisePlan?.length || 0 },
+        { label: 'Yoga', icon: <SelfImprovementRoundedIcon />, n: recs.yogaPoses?.length || 0 },
+      ]
+    : [];
 
-  const getTrendLabel = (value: number) => {
-    const pct = Math.abs(value * 100).toFixed(1);
-    if (value > 0.01) return `+${pct}%`;
-    if (value < -0.01) return `-${pct}%`;
-    return 'No change';
-  };
-
-  if (authLoading || !user) {
-    return (
-      <Box className="dashboard-loading">
-        <CircularProgress size={60} />
-        <Typography variant="h6" sx={{ mt: 2 }}>Loading Dashboard...</Typography>
-      </Box>
-    );
-  }
-
-  if (loading) {
-    return (
-      <Box className="dashboard-loading">
-        <CircularProgress size={60} />
-        <Typography variant="h6" sx={{ mt: 2 }}>Fetching your health data...</Typography>
-      </Box>
-    );
-  }
+  const diagnoses = latest?.inputParameters
+    ? [
+        { label: 'Fatty liver', on: latest.inputParameters.fattyLiver },
+        { label: 'Hypertension', on: latest.inputParameters.hypertension },
+        { label: 'Diabetes', on: latest.inputParameters.diabetes },
+      ]
+    : [];
 
   return (
-    <div className="dashboard-container">
-      {/* Header */}
-      <Box className="dashboard-header">
-        <Box className="dashboard-header-left">
-          <Typography variant="h3" className="dashboard-title">
-            Health Dashboard
+    <div className="db">
+      {/* ── Header ─────────────────────────────────────────────────────── */}
+      <header className="db-head">
+        <div className="db-head__copy">
+          <span className="db-eyebrow">Your dashboard</span>
+          <Typography variant="h2" component="h1" className="db-head__title">
+            Welcome back, <em className="db-serif">{user.firstName}</em>
           </Typography>
-          <Typography variant="body1" className="dashboard-subtitle">
-            Welcome back, <strong>{user.firstName}</strong>. Here's your personalized MetS health overview.
-          </Typography>
-        </Box>
-        <Box className="dashboard-header-actions">
-          <Tooltip title="Refresh data">
-            <IconButton onClick={handleRefresh} className="refresh-btn">
-              <RefreshIcon />
+          <Typography className="db-head__sub">Here's how your metabolic health is trending.</Typography>
+          {updatedAt && (
+            <p className="db-head__updated" aria-live="polite">
+              {refreshing
+                ? 'Updating…'
+                : `Updated ${updatedAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`}
+            </p>
+          )}
+        </div>
+        <div className="db-head__actions">
+          <Tooltip title={refreshing ? 'Refreshing…' : 'Refresh'}>
+            <IconButton
+              onClick={handleRefresh}
+              aria-label="Refresh data"
+              aria-busy={refreshing}
+              className={`db-refresh${refreshing ? ' is-spinning' : ''}`}
+            >
+              <RefreshRoundedIcon />
             </IconButton>
           </Tooltip>
-          <Button
-            variant="contained"
-            startIcon={<AssessmentIcon />}
-            onClick={() => navigate('/assessment')}
-            className="new-assessment-btn"
-          >
-            New Assessment
+          <Button variant="gradient" size="large" startIcon={<AddRoundedIcon />} onClick={() => navigate('/assessment')}>
+            New assessment
           </Button>
-        </Box>
-      </Box>
+        </div>
+      </header>
 
-      {sortedAssessments.length === 0 ? (
-        /* Empty State */
-        <Paper className="dashboard-empty">
-          <Box className="dashboard-empty-content">
-            <AssessmentIcon className="empty-icon" />
-            <Typography variant="h5">No Assessments Yet</Typography>
-            <Typography variant="body1" color="textSecondary" sx={{ mb: 3, maxWidth: 480 }}>
-              Take your first health assessment to unlock your personalized dashboard with trend charts,
-              risk tracking, and health insights.
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<AssessmentIcon />}
-              onClick={() => navigate('/assessment')}
-              className="new-assessment-btn"
-            >
-              Start Your First Assessment
+      {!latest ? (
+        <EmptyState
+          icon={<MonitorHeartRoundedIcon />}
+          title="No assessments yet"
+          description="Take your first assessment to unlock your dashboard — your trend, markers and personal plan will appear here."
+          action={
+            <Button variant="gradient" size="large" endIcon={<ArrowForwardRoundedIcon />} onClick={() => navigate('/assessment')}>
+              Start your first assessment
             </Button>
-          </Box>
-        </Paper>
+          }
+        />
       ) : (
         <>
-          {/* Summary KPI Cards */}
-          <Grid container spacing={3} className="kpi-section">
-            {/* Latest Risk Level */}
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card className="kpi-card">
-                <CardContent className="kpi-content">
-                  <Box className="kpi-icon-wrapper" sx={{ background: `${getRiskColor(latestAssessment!.riskLevel)}18` }}>
-                    {getRiskIcon(latestAssessment!.riskLevel)}
-                  </Box>
-                  <Box className="kpi-text">
-                    <Typography variant="caption" className="kpi-label">Risk Level</Typography>
-                    <Typography variant="h5" className="kpi-value" sx={{ color: getRiskColor(latestAssessment!.riskLevel) }}>
-                      {latestAssessment!.riskLevel.replace(' Severity', '')}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+          {/* ── Next check ────────────────────────────────────────────── */}
+          {(() => {
+            const { due, daysLeft } = nextCheck(latest.date);
+            const overdue = daysLeft <= 0;
+            return (
+              <section className={`db-next${overdue ? ' is-due' : ''}`} aria-label="Next check">
+                <span className="db-next__icon" aria-hidden>
+                  <EventRepeatRoundedIcon />
+                </span>
+                <p className="db-next__text">
+                  {overdue ? (
+                    <>
+                      <strong>Your next check is due.</strong> Your last assessment was {daysAgo(latest.date).toLowerCase()} — a
+                      fresh one shows whether your changes are working.
+                    </>
+                  ) : (
+                    <>
+                      <strong>
+                        Next check suggested around {due.toLocaleDateString(undefined, { day: 'numeric', month: 'long' })}
+                      </strong>{' '}
+                      (in {daysLeft} day{daysLeft === 1 ? '' : 's'}). Checking every {RECHECK_DAYS / 30} months shows
+                      whether your changes are working.
+                    </>
+                  )}
+                </p>
+                <Button
+                  variant={overdue ? 'gradient' : 'outlined'}
+                  endIcon={<ArrowForwardRoundedIcon />}
+                  onClick={() => navigate('/assessment')}
+                  className="db-next__btn"
+                >
+                  {overdue ? 'Start check' : 'Check now'}
+                </Button>
+              </section>
+            );
+          })()}
 
-            {/* Probability */}
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card className="kpi-card">
-                <CardContent className="kpi-content">
-                  <Box className="kpi-icon-wrapper probability">
-                    <SpeedIcon />
-                  </Box>
-                  <Box className="kpi-text">
-                    <Typography variant="caption" className="kpi-label">Probability</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="h5" className="kpi-value">
-                        {(latestAssessment!.probability * 100).toFixed(1)}%
-                      </Typography>
-                      {previousAssessment && (
-                        <Chip
-                          icon={getTrendIcon(probTrend)}
-                          label={getTrendLabel(probTrend)}
-                          size="small"
-                          className={`trend-chip ${probTrend > 0.01 ? 'up' : probTrend < -0.01 ? 'down' : 'flat'}`}
-                        />
-                      )}
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+          {/* ── KPIs ──────────────────────────────────────────────────── */}
+          <ul className="db-kpis" aria-label="Summary">
+            <Kpi
+              icon={<MonitorHeartRoundedIcon />}
+              label="Chance of MetS"
+              value={pct(latest.probability)}
+              caption={previous ? <Delta value={latest.probability - previous.probability} /> : 'Your first result'}
+            />
+            <Kpi
+              icon={<SignalCellularAltRoundedIcon />}
+              label="Severity"
+              value={<RiskBadge level={latestLevel} label={LEVEL_LABEL[latestLevel!]} />}
+              caption={levelChange}
+            />
+            <Kpi
+              icon={<HistoryRoundedIcon />}
+              label="Assessments"
+              value={
+                <>
+                  {sorted.length}
+                  <small> / {MAX_SAVED}</small>
+                </>
+              }
+              caption={`Your latest ${MAX_SAVED} are kept`}
+            />
+            <Kpi icon={<EventRoundedIcon />} label="Last check" value={fmtShort(latest.date)} caption={daysAgo(latest.date)} />
+          </ul>
 
-            {/* Severity */}
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card className="kpi-card">
-                <CardContent className="kpi-content">
-                  <Box className="kpi-icon-wrapper severity">
-                    <HeartIcon />
-                  </Box>
-                  <Box className="kpi-text">
-                    <Typography variant="caption" className="kpi-label">Severity</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="h5" className="kpi-value">
-                        {(latestAssessment!.severity * 100).toFixed(1)}%
-                      </Typography>
-                      {previousAssessment && (
-                        <Chip
-                          icon={getTrendIcon(sevTrend)}
-                          label={getTrendLabel(sevTrend)}
-                          size="small"
-                          className={`trend-chip ${sevTrend > 0.01 ? 'up' : sevTrend < -0.01 ? 'down' : 'flat'}`}
-                        />
-                      )}
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Total Assessments */}
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card className="kpi-card">
-                <CardContent className="kpi-content">
-                  <Box className="kpi-icon-wrapper assessments">
-                    <TimelineIcon />
-                  </Box>
-                  <Box className="kpi-text">
-                    <Typography variant="caption" className="kpi-label">Assessments</Typography>
-                    <Typography variant="h5" className="kpi-value">
-                      {sortedAssessments.length} <span className="kpi-unit">/ 7</span>
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
-
-          {/* Charts Row */}
-          <Grid container spacing={3} className="charts-section">
-            {/* Trend Line Chart */}
-            <Grid size={{ xs: 12, lg: 8 }}>
-              <Paper className="chart-card">
-                <Box className="chart-header">
-                  <Box>
-                    <Typography variant="h6" className="chart-title">
-                      <TimelineIcon className="chart-title-icon" /> Risk Trend
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Probability & severity over last {sortedAssessments.length} assessments
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box className="chart-body">
-                  <ResponsiveContainer width="100%" height={320}>
-                    <AreaChart data={trendChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="probGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#00b2a7" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#00b2a7" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="sevGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
-                      <YAxis stroke="#94a3b8" fontSize={12} domain={[0, 100]} unit="%" />
-                      <RechartsTooltip
-                        contentStyle={{
-                          backgroundColor: '#fff',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: 12,
-                          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                        }}
-                        formatter={(value) => [`${value}%`]}
-                      />
-                      <Legend />
-                      <Area
-                        type="monotone"
-                        dataKey="probability"
-                        stroke="#00b2a7"
-                        strokeWidth={3}
-                        fill="url(#probGradient)"
-                        dot={{ r: 5, fill: '#00b2a7', strokeWidth: 2, stroke: '#fff' }}
-                        activeDot={{ r: 7 }}
-                        name="Probability"
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="severity"
-                        stroke="#f59e0b"
-                        strokeWidth={3}
-                        fill="url(#sevGradient)"
-                        dot={{ r: 5, fill: '#f59e0b', strokeWidth: 2, stroke: '#fff' }}
-                        activeDot={{ r: 7 }}
-                        name="Severity"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </Box>
-              </Paper>
-            </Grid>
-
-            {/* Risk Distribution */}
-            <Grid size={{ xs: 12, lg: 4 }}>
-              <Paper className="chart-card">
-                <Box className="chart-header">
-                  <Box>
-                    <Typography variant="h6" className="chart-title">
-                      <AssessmentIcon className="chart-title-icon" /> Risk Distribution
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Across all {sortedAssessments.length} assessments
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box className="chart-body">
-                  <ResponsiveContainer width="100%" height={320}>
-                    <BarChart data={riskDistribution} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={13} />
-                      <YAxis allowDecimals={false} stroke="#94a3b8" fontSize={12} />
-                      <RechartsTooltip
-                        contentStyle={{
-                          backgroundColor: '#fff',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: 12,
-                          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                        }}
-                        formatter={(value) => [`${value} assessment(s)`]}
-                      />
-                      <Bar dataKey="value" radius={[10, 10, 0, 0]} barSize={52} name="Count">
-                        {riskDistribution.map((entry, index) => (
-                          <Cell key={index} fill={entry.fill} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
-
-          {/* Vitals & Latest Details Row */}
-          <Grid container spacing={3} className="details-section">
-            {/* Radar Chart - Vitals */}
-            {vitalRadarData.length > 0 && (
-              <Grid size={{ xs: 12, md: 5 }}>
-                <Paper className="chart-card">
-                  <Box className="chart-header">
-                    <Box>
-                      <Typography variant="h6" className="chart-title">
-                        <BloodIcon className="chart-title-icon" /> Latest Vitals Overview
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Normalized health parameters
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Box className="chart-body radar-body">
-                    <ResponsiveContainer width="100%" height={340}>
-                      <RadarChart outerRadius="70%" data={vitalRadarData}>
-                        <PolarGrid stroke="#e2e8f0" />
-                        <PolarAngleAxis dataKey="metric" stroke="#64748b" fontSize={12} />
-                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                        <Radar
-                          name="Vitals"
-                          dataKey="value"
-                          stroke="#00b2a7"
-                          fill="#00b2a7"
-                          fillOpacity={0.2}
+          {/* ── Trend + severity mix ──────────────────────────────────── */}
+          <div className="db-row db-row--trend">
+            <Card
+              id="db-trend"
+              title="Chance of metabolic syndrome"
+              icon={<ShowChartRoundedIcon />}
+              meta={sorted.length > 1 ? `Across your last ${sorted.length} assessments` : 'Take another assessment to see your trend'}
+            >
+              <div className="db-chart" role="img" aria-label={`Trend: ${trendData.map((d) => `${d.date} ${d.probability}%`).join(', ')}`}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={trendData} margin={{ top: 12, right: 12, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="dbTrendFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={brand.teal[500]} stopOpacity={0.22} />
+                        <stop offset="100%" stopColor={brand.teal[500]} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} stroke={brand.slate[200]} strokeDasharray="3 4" />
+                    <XAxis dataKey="date" tickLine={false} axisLine={false} fontSize={12} stroke={brand.slate[500]} dy={6} />
+                    <YAxis
+                      domain={[0, 100]}
+                      ticks={[0, 25, 50, 75, 100]}
+                      unit="%"
+                      tickLine={false}
+                      axisLine={false}
+                      fontSize={12}
+                      stroke={brand.slate[500]}
+                      width={44}
+                    />
+                    <RechartsTooltip
+                      content={<TrendTooltip />}
+                      cursor={{ stroke: brand.slate[300], strokeWidth: 1, strokeDasharray: '3 3' }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="probability"
+                      name="Chance of MetS"
+                      stroke={brand.teal[700]}
+                      strokeWidth={2}
+                      fill="url(#dbTrendFill)"
+                      isAnimationActive={false}
+                      dot={(props: { cx?: number; cy?: number; index?: number }) => (
+                        <circle
+                          key={props.index}
+                          cx={props.cx}
+                          cy={props.cy}
+                          r={5}
+                          fill={riskColors[trendData[props.index ?? 0]?.level ?? 'low'].main}
+                          stroke="#fff"
                           strokeWidth={2}
-                          dot={{ r: 4, fill: '#00b2a7' }}
                         />
-                        <RechartsTooltip
-                          contentStyle={{
-                            backgroundColor: '#fff',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: 12,
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                          }}
-                          formatter={(value) => [`${Number(value).toFixed(0)}%`, 'Normalized']}
+                      )}
+                      activeDot={{ r: 7, stroke: '#fff', strokeWidth: 2, fill: brand.teal[700] }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+              <ul className="db-legend" aria-label="Dot colour shows severity">
+                {LEVEL_ORDER.map((k) => (
+                  <li key={k}>
+                    <span className="db-legend__dot" style={{ background: riskColors[k].main }} aria-hidden />
+                    {LEVEL_LABEL[k]} severity
+                  </li>
+                ))}
+              </ul>
+            </Card>
+
+            <Card id="db-mix" title="Severity mix" icon={<SignalCellularAltRoundedIcon />} meta={`Across ${sorted.length} assessment${sorted.length > 1 ? 's' : ''}`}>
+              <ul className="db-mix">
+                {LEVEL_ORDER.map((k) => {
+                  const n = levelCounts[k];
+                  const share = sorted.length ? (n / sorted.length) * 100 : 0;
+                  return (
+                    <li key={k} className="db-mix__row">
+                      <div className="db-mix__top">
+                        <RiskBadge level={k} label={LEVEL_LABEL[k]} size="small" />
+                        <span className="db-mix__count">
+                          {n} <small>{n === 1 ? 'time' : 'times'}</small>
+                        </span>
+                      </div>
+                      <div className="db-mix__track" aria-hidden>
+                        <span style={{ width: `${share}%`, background: riskColors[k].main }} />
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Card>
+          </div>
+
+          {/* ── Your markers (latest + trend) ─────────────────────────── */}
+          <Card
+            id="db-markers"
+            title="Your markers"
+            icon={<MonitorHeartRoundedIcon />}
+            meta={
+              latest.inputParameters
+                ? `Latest ${fmtLong(latest.date)} · ${latest.inputParameters.gender === 'Women' ? 'Female' : 'Male'}, ${latest.inputParameters.age} years`
+                : fmtLong(latest.date)
+            }
+          >
+            {markerRows.length > 0 ? (
+              <ul className="db-markers">
+                {markerRows.map((m) => {
+                  const F = FACTORS[m.key];
+                  const Icon = F.icon;
+                  const s = series[m.key];
+                  const first = s?.points[0];
+                  return (
+                    <li key={m.key} className="db-marker" style={{ ['--f' as string]: factorVar(m.key) }}>
+                      <span className="db-marker__icon" aria-hidden>
+                        <Icon />
+                      </span>
+                      <div className="db-marker__body">
+                        <div className="db-marker__row">
+                          <span className="db-marker__name">{F.label}</span>
+                          <span className="db-marker__value">
+                            {m.display} <small>{m.unit}</small>
+                          </span>
+                        </div>
+                        <RangeBar
+                          min={m.min}
+                          max={m.max}
+                          zones={m.zones}
+                          value={m.value}
+                          thickness={6}
+                          label={`${F.label} ${m.display} ${m.unit}, ${STATUS_LABEL[m.status]}`}
                         />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </Box>
-                </Paper>
-              </Grid>
+                      </div>
+                      <div className="db-marker__status">
+                        <RiskBadge level={m.risk} label={STATUS_LABEL[m.status]} size="small" />
+                      </div>
+                      <div className="db-marker__trend">
+                        {s && s.points.length > 1 && first ? (
+                          <>
+                            <Sparkline values={s.points.map((p) => p.value)} improving={s.improving} />
+                            <span
+                              className={`db-change${s.improving === true ? ' is-good' : s.improving === false ? ' is-bad' : ''}`}
+                              title={`${first.display} on ${fmtLong(first.date)} → ${m.display} now`}
+                            >
+                              <span className="db-change__value">
+                                {s.delta === 0 ? (
+                                  <>
+                                    <TrendingFlatRoundedIcon aria-hidden /> No change
+                                  </>
+                                ) : (
+                                  <>
+                                    {s.delta < 0 ? <TrendingDownRoundedIcon aria-hidden /> : <TrendingUpRoundedIcon aria-hidden />}
+                                    {Math.abs(s.delta)} {s.unit}
+                                  </>
+                                )}
+                              </span>
+                              <small>since {fmtShort(first.date)}</small>
+                            </span>
+                          </>
+                        ) : (
+                          <span className="db-change db-change--na">Trend shows after your next check</span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="db-muted">Marker details are not available for this assessment.</p>
             )}
 
-            {/* Latest Assessment Details */}
-            <Grid size={{ xs: 12, md: vitalRadarData.length > 0 ? 7 : 12 }}>
-              <Paper className="chart-card latest-details-card">
-                <Box className="chart-header">
-                  <Box>
-                    <Typography variant="h6" className="chart-title">
-                      <CalendarIcon className="chart-title-icon" /> Latest Assessment Details
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {latestAssessment && formatDate(latestAssessment.date)}
-                    </Typography>
-                  </Box>
-                  <Chip
-                    label={latestAssessment?.riskLevel}
-                    sx={{
-                      backgroundColor: `${getRiskColor(latestAssessment!.riskLevel)}18`,
-                      color: getRiskColor(latestAssessment!.riskLevel),
-                      fontWeight: 700,
-                      border: `1px solid ${getRiskColor(latestAssessment!.riskLevel)}40`,
-                    }}
-                  />
-                </Box>
+            {diagnoses.length > 0 && (
+              <div className="db-diag" aria-label="Diagnoses">
+                {diagnoses.map((d) => (
+                  <span key={d.label} className={`db-diag__chip${d.on ? ' is-on' : ''}`}>
+                    {d.label}: <strong>{d.on ? 'Yes' : 'No'}</strong>
+                  </span>
+                ))}
+              </div>
+            )}
+          </Card>
 
-                <Box className="latest-details-body">
-                  {/* Progress Bars */}
-                  <Box className="detail-progress-group">
-                    <Box className="detail-progress-item">
-                      <Box className="detail-progress-label">
-                        <Typography variant="body2" fontWeight={600}>MetS Probability</Typography>
-                        <Typography variant="body2" fontWeight={700} color="#00b2a7">
-                          {(latestAssessment!.probability * 100).toFixed(1)}%
-                        </Typography>
-                      </Box>
-                      <LinearProgress
-                        variant="determinate"
-                        value={latestAssessment!.probability * 100}
-                        className="detail-progress-bar probability-bar"
-                      />
-                    </Box>
-                    <Box className="detail-progress-item">
-                      <Box className="detail-progress-label">
-                        <Typography variant="body2" fontWeight={600}>Severity</Typography>
-                        <Typography variant="body2" fontWeight={700} sx={{ color: getRiskColor(latestAssessment!.riskLevel) }}>
-                          {(latestAssessment!.severity * 100).toFixed(1)}%
-                        </Typography>
-                      </Box>
-                      <LinearProgress
-                        variant="determinate"
-                        value={latestAssessment!.severity * 100}
-                        className="detail-progress-bar severity-bar"
-                        sx={{
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: getRiskColor(latestAssessment!.riskLevel),
-                          }
-                        }}
-                      />
-                    </Box>
-                  </Box>
+          {/* ── Focus areas + plan ────────────────────────────────────── */}
+          <div className="db-row db-row--details">
+            <Card
+              id="db-focus"
+              title="Focus areas"
+              icon={<TipsAndUpdatesRoundedIcon />}
+              meta={focus.length ? 'Markers to work on, most important first' : 'From your latest assessment'}
+            >
+              {focus.length > 0 ? (
+                <ul className="db-focus">
+                  {focus.map((m) => {
+                    const F = FACTORS[m.key];
+                    const Icon = F.icon;
+                    return (
+                      <li key={m.key} className="db-focus__item" style={{ ['--f' as string]: factorVar(m.key) }}>
+                        <span className="db-marker__icon" aria-hidden>
+                          <Icon />
+                        </span>
+                        <div className="db-focus__body">
+                          <div className="db-focus__head">
+                            <span className="db-focus__name">{F.label}</span>
+                            <RiskBadge level={m.risk} label={STATUS_LABEL[m.status]} size="small" />
+                          </div>
+                          <p className="db-focus__tip">{FOCUS_TIPS[m.key]}</p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="db-allgood">
+                  <CheckCircleRoundedIcon aria-hidden />
+                  <p>
+                    <strong>All your markers are in range.</strong> Keep up your current habits and recheck regularly.
+                  </p>
+                </div>
+              )}
+              <p className="db-footnote">General guidance only — talk to your doctor before changing medication or treatment.</p>
+            </Card>
 
-                  <Divider sx={{ my: 2 }} />
-
-                  {/* Input Parameters Grid */}
-                  {latestAssessment?.inputParameters && (
-                    <Box className="vitals-grid">
-                      <Box className="vital-item">
-                        <Typography variant="caption">Age</Typography>
-                        <Typography variant="h6">{latestAssessment.inputParameters.age} yrs</Typography>
-                      </Box>
-                      <Box className="vital-item">
-                        <Typography variant="caption">Gender</Typography>
-                        <Typography variant="h6">{latestAssessment.inputParameters.gender === 'Men' ? 'Male' : 'Female'}</Typography>
-                      </Box>
-                      <Box className="vital-item">
-                        <Typography variant="caption">Systolic BP</Typography>
-                        <Typography variant="h6">{latestAssessment.inputParameters.systolicBP} <span className="vital-unit">mmHg</span></Typography>
-                      </Box>
-                      <Box className="vital-item">
-                        <Typography variant="caption">Diastolic BP</Typography>
-                        <Typography variant="h6">{latestAssessment.inputParameters.diastolicBP} <span className="vital-unit">mmHg</span></Typography>
-                      </Box>
-                      <Box className="vital-item">
-                        <Typography variant="caption">Waist</Typography>
-                        <Typography variant="h6">{latestAssessment.inputParameters.waistCircumference} <span className="vital-unit">cm</span></Typography>
-                      </Box>
-                      {latestAssessment.inputParameters.hdlCholesterol && (
-                        <Box className="vital-item">
-                          <Typography variant="caption">HDL</Typography>
-                          <Typography variant="h6">{latestAssessment.inputParameters.hdlCholesterol} <span className="vital-unit">mg/dL</span></Typography>
-                        </Box>
-                      )}
-                      {latestAssessment.inputParameters.triglyceride && (
-                        <Box className="vital-item">
-                          <Typography variant="caption">Triglyceride</Typography>
-                          <Typography variant="h6">{latestAssessment.inputParameters.triglyceride} <span className="vital-unit">mg/dL</span></Typography>
-                        </Box>
-                      )}
-                      {latestAssessment.inputParameters.fpg && (
-                        <Box className="vital-item">
-                          <Typography variant="caption">Glucose</Typography>
-                          <Typography variant="h6">{latestAssessment.inputParameters.fpg} <span className="vital-unit">mg/dL</span></Typography>
-                        </Box>
-                      )}
-                    </Box>
-                  )}
-
-                  <Divider sx={{ my: 2 }} />
-
-                  {/* Conditions */}
-                  {latestAssessment?.inputParameters && (
-                    <Box className="conditions-row">
-                      <Chip
-                        icon={latestAssessment.inputParameters.fattyLiver ? <WarningIcon /> : <CheckCircleIcon />}
-                        label={`Fatty Liver: ${latestAssessment.inputParameters.fattyLiver ? 'Yes' : 'No'}`}
-                        size="small"
-                        className={`condition-chip ${latestAssessment.inputParameters.fattyLiver ? 'positive' : 'negative'}`}
-                      />
-                      <Chip
-                        icon={latestAssessment.inputParameters.hypertension ? <WarningIcon /> : <CheckCircleIcon />}
-                        label={`Hypertension: ${latestAssessment.inputParameters.hypertension ? 'Yes' : 'No'}`}
-                        size="small"
-                        className={`condition-chip ${latestAssessment.inputParameters.hypertension ? 'positive' : 'negative'}`}
-                      />
-                      <Chip
-                        icon={latestAssessment.inputParameters.diabetes ? <WarningIcon /> : <CheckCircleIcon />}
-                        label={`Diabetes: ${latestAssessment.inputParameters.diabetes ? 'Yes' : 'No'}`}
-                        size="small"
-                        className={`condition-chip ${latestAssessment.inputParameters.diabetes ? 'positive' : 'negative'}`}
-                      />
-                    </Box>
-                  )}
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
-
-          {/* Latest Recommendations */}
-          {latestAssessment?.recommendations && (
-            <Paper className="recommendations-overview">
-              <Box className="chart-header">
-                <Box>
-                  <Typography variant="h6" className="chart-title">
-                    <DietIcon className="chart-title-icon" /> Latest Recommendations Summary
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Based on your most recent assessment
-                  </Typography>
-                </Box>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  endIcon={<ArrowForwardIcon />}
-                  onClick={() => navigate('/profile')}
-                  className="view-all-btn"
-                >
-                  View Full History
+            <Card
+              id="db-plan"
+              title="Your plan"
+              icon={<RestaurantRoundedIcon />}
+              meta="From your latest assessment"
+              action={
+                <Button size="small" endIcon={<ArrowForwardRoundedIcon />} onClick={() => navigate('/profile')} className="db-link">
+                  Full history
                 </Button>
-              </Box>
-              <Grid container spacing={2} sx={{ mt: 1 }}>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Box className="rec-summary-card diet">
-                    <DietIcon className="rec-icon" />
-                    <Typography variant="h4" className="rec-count">
-                      {latestAssessment.recommendations.dietPlan?.length || 0}
-                    </Typography>
-                    <Typography variant="body2">Diet Recommendations</Typography>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Box className="rec-summary-card avoid">
-                    <WarningIcon className="rec-icon" />
-                    <Typography variant="h4" className="rec-count">
-                      {latestAssessment.recommendations.avoidList?.length || 0}
-                    </Typography>
-                    <Typography variant="body2">Foods to Avoid</Typography>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Box className="rec-summary-card exercise">
-                    <ExerciseIcon className="rec-icon" />
-                    <Typography variant="h4" className="rec-count">
-                      {latestAssessment.recommendations.exercisePlan?.length || 0}
-                    </Typography>
-                    <Typography variant="body2">Exercise Plans</Typography>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                  <Box className="rec-summary-card yoga">
-                    <YogaIcon className="rec-icon" />
-                    <Typography variant="h4" className="rec-count">
-                      {latestAssessment.recommendations.yogaPoses?.length || 0}
-                    </Typography>
-                    <Typography variant="body2">Yoga Poses</Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Paper>
-          )}
+              }
+            >
+              {planTiles.length > 0 ? (
+                <>
+                  <ul className="db-plan">
+                    {planTiles.map((t) => (
+                      <li key={t.label} className="db-plan__tile">
+                        <span className="db-plan__icon" aria-hidden>
+                          {t.icon}
+                        </span>
+                        <span className="db-plan__n">{t.n}</span>
+                        <span className="db-plan__label">{t.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {recs?.dietPlan?.length ? (
+                    <div className="db-picks">
+                      <span className="db-picks__label">Top picks</span>
+                      <ul>
+                        {recs.dietPlan.slice(0, 3).map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </>
+              ) : (
+                <p className="db-muted">No recommendations saved for this assessment.</p>
+              )}
+            </Card>
+          </div>
 
-          {/* Assessment Timeline */}
-          <Paper className="timeline-card">
-            <Box className="chart-header">
-              <Box>
-                <Typography variant="h6" className="chart-title">
-                  <CalendarIcon className="chart-title-icon" /> Assessment Timeline
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Your last {sortedAssessments.length} assessment(s)
-                </Typography>
-              </Box>
-            </Box>
-            <Box className="timeline-body">
-              {[...sortedAssessments].reverse().map((assessment, index) => (
-                <Box className="timeline-item" key={assessment._id || index}>
-                  <Box className="timeline-dot" sx={{ borderColor: getRiskColor(assessment.riskLevel) }}>
-                    <Box className="timeline-dot-inner" sx={{ backgroundColor: getRiskColor(assessment.riskLevel) }} />
-                  </Box>
-                  {index < sortedAssessments.length - 1 && <Box className="timeline-line" />}
-                  <Box className="timeline-content">
-                    <Box className="timeline-content-header">
-                      <Typography variant="subtitle2" className="timeline-date">
-                        {formatDate(assessment.date)}
-                      </Typography>
-                      <Chip
-                        label={assessment.riskLevel}
-                        size="small"
-                        sx={{
-                          backgroundColor: `${getRiskColor(assessment.riskLevel)}18`,
-                          color: getRiskColor(assessment.riskLevel),
-                          fontWeight: 700,
-                          fontSize: '0.7rem',
-                        }}
-                      />
-                    </Box>
-                    <Box className="timeline-metrics">
-                      <Typography variant="body2">
-                        Probability: <strong>{(assessment.probability * 100).toFixed(1)}%</strong>
-                      </Typography>
-                      <Typography variant="body2">
-                        Severity: <strong>{(assessment.severity * 100).toFixed(1)}%</strong>
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
+          {/* ── History ───────────────────────────────────────────────── */}
+          <Card id="db-history" title="Assessment history" icon={<HistoryRoundedIcon />} meta={`Your last ${sorted.length}, newest first`}>
+            <ol className="db-history">
+              {[...sorted].reverse().map((a, i) => {
+                const level = levelOf(a);
+                return (
+                  <li key={a._id || i} className="db-history__row">
+                    <span className="db-history__dot" style={{ background: riskColors[level].main }} aria-hidden />
+                    <div className="db-history__when">
+                      <span className="db-history__date">{fmtLong(a.date)}</span>
+                      {i === 0 && <span className="db-history__tag">Latest</span>}
+                    </div>
+                    <div className="db-history__prob">
+                      <span className="db-history__pct">{pct(a.probability)}</span>
+                      <span className="db-history__bar" aria-hidden>
+                        <span style={{ width: `${Math.min(100, a.probability * 100)}%` }} />
+                      </span>
+                    </div>
+                    <RiskBadge level={level} label={`${LEVEL_LABEL[level]} severity`} size="small" />
+                  </li>
+                );
+              })}
+            </ol>
+          </Card>
         </>
       )}
     </div>
