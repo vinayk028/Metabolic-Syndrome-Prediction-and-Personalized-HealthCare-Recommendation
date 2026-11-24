@@ -1,241 +1,241 @@
-/* Auth Pages Styles */
-.auth-container {
-  min-height: calc(100dvh - var(--vb-navbar-h) - 8rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  position: relative;
-  overflow: hidden;
+/* ==========================================================================
+   Auth (Sign in / Create account) — "Vital Balance" / clinical premium
+   Wide: tinted brand panel + form side by side. Narrow: form only.
+   ========================================================================== */
+
+.au {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+  max-width: 64rem;
+  margin-inline: auto;
 }
 
-.auth-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.auth-shape {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.1;
-}
-
-.auth-shape-1 {
-  width: clamp(220px, 35vw, 400px);
-  height: clamp(220px, 35vw, 400px);
-  background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
-  top: -100px;
-  right: -100px;
-  animation: float 8s ease-in-out infinite;
-}
-
-.auth-shape-2 {
-  width: clamp(160px, 26vw, 300px);
-  height: clamp(160px, 26vw, 300px);
-  background: linear-gradient(135deg, #00897b 0%, #00695c 100%);
-  bottom: -50px;
-  left: -50px;
-  animation: float 10s ease-in-out infinite reverse;
-}
-
-.auth-shape-3 {
-  width: 200px;
-  height: 200px;
-  background: linear-gradient(135deg, #4dcac3 0%, #00b2a7 100%);
-  top: 50%;
-  left: 10%;
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-20px) rotate(5deg);
+@media (min-width: 60rem) {
+  .au {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    /* each column keeps its own height — the panel never stretches to a tall form */
+    align-items: start;
   }
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 440px;
-  padding: 2.5rem;
-  border-radius: 24px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 178, 167, 0.1) !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1),
-              0 8px 25px rgba(0, 178, 167, 0.08) !important;
-  position: relative;
-  z-index: 1;
+.au-serif {
+  font-family: var(--vb-font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.08em;
+  color: var(--vb-primary);
 }
 
-.auth-card-signup {
-  max-width: 520px;
+.au-eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vb-primary);
 }
 
-.auth-header {
-  text-align: center;
-  margin-bottom: 2rem;
+/* ── Brand panel (wide screens only) ───────────────────────────────────── */
+
+.au-panel {
+  display: none;
 }
 
-.auth-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
-  border-radius: 20px;
-  color: white;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 178, 167, 0.35);
-  transition: transform 0.3s ease;
+@media (min-width: 60rem) {
+  .au-panel {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    /* stays in view while a long form (sign-up) scrolls */
+    position: sticky;
+    top: calc(var(--vb-navbar-h) + var(--vb-safe-top) + 1rem);
+    padding: clamp(2rem, 1.5rem + 1.5vw, 2.75rem);
+    border-radius: clamp(1.25rem, 0.75rem + 1.5vw, 2rem);
+    border: 1px solid color-mix(in srgb, var(--vb-primary) 16%, var(--vb-border));
+    background:
+      radial-gradient(60% 55% at 85% 85%, color-mix(in srgb, var(--vb-primary) 24%, transparent) 0%, transparent 72%),
+      radial-gradient(50% 50% at 0% 0%, color-mix(in srgb, #6366f1 10%, transparent) 0%, transparent 70%),
+      linear-gradient(150deg, color-mix(in srgb, var(--vb-primary) 4%, var(--vb-paper)) 0%, color-mix(in srgb, var(--vb-primary) 12%, var(--vb-paper)) 100%);
+  }
 }
 
-.auth-logo:hover {
-  transform: scale(1.05) rotate(-5deg);
-  box-shadow: 0 10px 30px rgba(0, 178, 167, 0.45);
+.au-panel__title {
+  margin-top: 0.75rem;
+  font-family: var(--vb-font-display);
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--vb-text);
 }
 
-.auth-logo svg {
-  font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
-}
-
-.auth-title {
-  font-weight: 700 !important;
-  background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.5rem !important;
-}
-
-.auth-subtitle {
-  color: #64748b !important;
-  font-size: 0.95rem !important;
-}
-
-.auth-alert {
-  margin-bottom: 1.5rem !important;
-  border-radius: 12px !important;
-}
-
-.auth-form {
+.au-benefits {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  list-style: none;
 }
 
-.auth-form .MuiTextField-root {
-  background: #f8fafc;
-  border-radius: 12px;
+.au-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.975rem;
+  line-height: 1.45;
+  color: var(--vb-text);
 }
 
-.auth-form .MuiOutlinedInput-root {
-  border-radius: 12px;
-  transition: all 0.3s ease;
+.au-benefits__tick {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-top: 0.05rem;
+  border-radius: 50%;
+  color: #fff;
+  background-image: var(--vb-gradient-brand);
 }
 
-.auth-form .MuiOutlinedInput-root:hover {
-  background: #ffffff;
+.au-benefits__tick .MuiSvgIcon-root {
+  font-size: 0.95rem;
 }
 
-.auth-form .MuiOutlinedInput-root.Mui-focused {
-  background: #ffffff;
+.au-panel__ring {
+  align-self: center;
+  width: min(100%, 15rem);
+  padding: 0.9rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--vb-paper) 80%, transparent);
+  border: 1px solid var(--vb-border);
+  box-shadow: var(--vb-shadow-md);
 }
 
-.auth-form .input-icon {
-  color: #94a3b8;
-  transition: color 0.3s ease;
+.au-ring__n {
+  font-family: var(--vb-font-display);
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--vb-text);
 }
 
-.auth-form .MuiOutlinedInput-root.Mui-focused .input-icon {
-  color: #00b2a7;
+.au-ring__label {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--vb-text-muted);
 }
 
-.auth-submit-btn {
-  margin-top: 0.5rem !important;
-  padding: 14px 24px !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  border-radius: 12px !important;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.35) !important;
-  transition: all 0.3s ease !important;
+/* ── Form card ─────────────────────────────────────────────────────────── */
+
+.au-form-wrap {
+  display: flex;
+  justify-content: center;
 }
 
-.auth-submit-btn:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 12px 35px rgba(16, 185, 129, 0.45) !important;
+.au-card {
+  width: 100%;
+  max-width: 30rem;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border: 1px solid var(--vb-border);
+  border-radius: clamp(1.25rem, 0.75rem + 1.5vw, 2rem);
+  background: var(--vb-paper);
+  box-shadow: var(--vb-shadow-md);
 }
 
-.auth-submit-btn:disabled {
-  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%) !important;
-  box-shadow: none !important;
-  transform: none !important;
+@media (min-width: 60rem) {
+  .au-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: none;
+  }
 }
 
-.auth-divider {
-  margin: 2rem 0 !important;
+.au-head {
+  margin-bottom: 1.5rem;
 }
 
-.auth-divider::before,
-.auth-divider::after {
-  border-color: #e2e8f0 !important;
+.au-head__mark {
+  display: inline-flex;
+  margin-bottom: 1rem;
 }
 
-.auth-footer {
+/* The brand panel already carries the brand on wide screens */
+@media (min-width: 60rem) {
+  .au-head__mark {
+    display: none;
+  }
+}
+
+.au-title.MuiTypography-root {
+  margin-top: 0.4rem;
+  font-size: clamp(1.75rem, 1.35rem + 1.4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--vb-text);
+}
+
+.au-sub.MuiTypography-root {
+  margin-top: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--vb-text-muted);
+}
+
+.au-alert.MuiAlert-root {
+  margin-bottom: 1.25rem;
+  border-radius: var(--vb-radius-md);
+}
+
+.au-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* First + last name side by side when there is room */
+.au-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.15rem;
+}
+
+@media (min-width: 30rem) {
+  .au-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.au-submit.MuiButton-root {
+  margin-top: 0.5rem;
+  min-height: 3.25rem;
+}
+
+.au-fine {
+  font-size: 0.75rem;
+  line-height: 1.5;
   text-align: center;
+  color: var(--vb-text-faint);
 }
 
-.auth-footer .MuiTypography-root {
-  color: #64748b;
+.au-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--vb-border);
+  font-size: 0.9375rem;
+  text-align: center;
+  color: var(--vb-text-muted);
 }
 
-.auth-link {
-  color: #00b2a7 !important;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.3s ease;
+.au-link {
+  font-weight: 700;
+  color: var(--vb-primary);
 }
 
-.auth-link:hover {
-  color: #009188 !important;
+.au-link:hover {
   text-decoration: underline;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 600px) {
-  .auth-container {
-    padding: 1rem;
-  }
-  
-  .auth-card {
-    padding: 1.75rem;
-    border-radius: 20px !important;
-  }
-
-  .auth-logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-  }
-
-  .auth-logo svg {
-    font-size: 1.75rem;
-  }
-
-  .auth-title {
-    font-size: 1.75rem !important;
-  }
-
-  .auth-form {
-    gap: 1rem;
-  }
 }

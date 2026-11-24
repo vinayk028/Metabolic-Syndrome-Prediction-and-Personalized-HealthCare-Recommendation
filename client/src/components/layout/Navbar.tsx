@@ -18,6 +18,7 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores';
 import BrandLogo from '../ui/BrandLogo';
 import { DARK_HERO_ROUTES, NAV_ITEMS, PROFILE_ITEM, isPathActive } from './navConfig';
+import { ThemeIconButton, ThemeMenuItem, ThemeSwitchRow } from './ThemeToggle';
 import './Navbar.css';
 
 const initials = (first?: string, last?: string) => `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`.toUpperCase() || '?';
@@ -112,6 +113,7 @@ const Navbar = () => {
                 </IconButton>
               ) : (
                 <>
+                  <ThemeIconButton className="vb-nav__theme" />
                   <Button component={Link} to="/login" variant="text" className="vb-nav__signin">
                     Sign in
                   </Button>
@@ -158,6 +160,7 @@ const Navbar = () => {
         <MenuItem component={Link} to="/profile" onClick={closeAccount} className="vb-account-menu__item">
           <PersonRoundedIcon /> Profile
         </MenuItem>
+        <ThemeMenuItem />
         <Divider />
         <MenuItem onClick={handleLogout} className="vb-account-menu__item is-danger">
           <LogoutRoundedIcon /> Sign out
@@ -207,6 +210,7 @@ const Navbar = () => {
           </ul>
 
           <Box className="vb-menu__footer">
+            <ThemeSwitchRow />
             {loggedIn ? (
               <>
                 <Box className="vb-menu__user">

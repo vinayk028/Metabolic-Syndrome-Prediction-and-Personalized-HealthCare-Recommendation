@@ -15,7 +15,7 @@
   font-size: clamp(1.875rem, 1.35rem + 2.4vw, 2.75rem);
   font-weight: 800;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
+  background: linear-gradient(135deg, var(--vb-primary) 0%, var(--vb-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -23,7 +23,7 @@
 
 .about-subtitle {
   font-size: 1.15rem;
-  color: #64748b;
+  color: var(--vb-text-muted);
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.7;
@@ -38,14 +38,14 @@
   font-weight: 700;
   margin-bottom: 0.75rem;
   font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
-  background: linear-gradient(135deg, #1e293b 0%, #00b2a7 100%);
+  background: linear-gradient(135deg, var(--vb-text) 0%, var(--vb-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .page-subtitle {
-  color: #64748b;
+  color: var(--vb-text-muted);
   font-weight: 400;
   font-size: 1.05rem;
   max-width: 700px;
@@ -58,9 +58,9 @@
 }
 
 .overview-card {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--vb-paper) !important;
   backdrop-filter: blur(20px);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--vb-border);
   border-radius: 24px !important;
   padding: 2.5rem;
   display: flex;
@@ -74,7 +74,7 @@
   width: 100px;
   height: 100px;
   border-radius: 28px;
-  background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
+  background: linear-gradient(135deg, var(--vb-primary) 0%, var(--vb-primary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,12 +89,12 @@
 .overview-content h3 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 1rem;
 }
 
 .overview-content p {
-  color: #64748b;
+  color: var(--vb-text-muted);
   line-height: 1.75;
   font-size: 1.05rem;
 }
@@ -112,21 +112,21 @@
 .section-title {
   font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
   font-weight: 700;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 0.75rem;
 }
 
 .section-description {
-  color: #64748b;
+  color: var(--vb-text-muted);
   font-size: 1.05rem;
   max-width: 600px;
   margin: 0 auto;
 }
 
 .risk-card {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--vb-paper) !important;
   backdrop-filter: blur(20px);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--vb-border);
   border-radius: 20px !important;
   padding: 2rem;
   height: 100%;
@@ -154,7 +154,7 @@
 
 .risk-icon svg {
   font-size: 1.75rem;
-  color: #00b2a7;
+  color: var(--vb-primary);
 }
 
 .risk-icon.warning {
@@ -192,12 +192,12 @@
 .risk-title {
   font-size: 1.15rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 0.75rem;
 }
 
 .risk-description {
-  color: #64748b;
+  color: var(--vb-text-muted);
   line-height: 1.6;
   font-size: 0.95rem;
 }
@@ -207,11 +207,11 @@
   padding: 0.6rem 1rem;
   background: rgba(0, 178, 167, 0.08);
   border-radius: 10px;
-  border-left: 3px solid #00b2a7;
+  border-left: 3px solid var(--vb-primary);
 }
 
 .risk-threshold span {
-  color: #00b2a7;
+  color: var(--vb-primary);
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -239,13 +239,13 @@
 
 .checkup-header svg {
   font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
-  color: #00b2a7;
+  color: var(--vb-primary);
 }
 
 .checkup-header h3 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--vb-text);
 }
 
 .checkup-item {
@@ -253,7 +253,7 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1rem 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--vb-border);
 }
 
 .checkup-item:last-child {
@@ -264,7 +264,7 @@
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
+  background: linear-gradient(135deg, var(--vb-primary) 0%, var(--vb-primary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -277,12 +277,12 @@
 .checkup-content h4 {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 0.35rem;
 }
 
 .checkup-content p {
-  color: #64748b;
+  color: var(--vb-text-muted);
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -293,9 +293,9 @@
 }
 
 .info-card {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--vb-paper) !important;
   backdrop-filter: blur(20px);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--vb-border);
   border-radius: 20px !important;
   padding: 2rem;
   text-align: center;
@@ -323,7 +323,7 @@
 
 .info-icon svg {
   font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
-  color: #00b2a7;
+  color: var(--vb-primary);
 }
 
 .info-icon.purple svg {
@@ -337,12 +337,12 @@
 .info-title {
   font-size: 1.15rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 0.75rem;
 }
 
 .info-description {
-  color: #64748b;
+  color: var(--vb-text-muted);
   line-height: 1.6;
   font-size: 0.95rem;
 }
@@ -365,9 +365,9 @@
 
 /* Intro Card with Image */
 .intro-card {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--vb-paper) !important;
   backdrop-filter: blur(20px);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--vb-border);
   border-radius: 24px !important;
   padding: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -407,7 +407,7 @@
   width: 70px;
   height: 70px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
+  background: linear-gradient(135deg, var(--vb-primary) 0%, var(--vb-primary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -423,12 +423,12 @@
 .intro-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 1rem;
 }
 
 .intro-text {
-  color: #64748b;
+  color: var(--vb-text-muted);
   line-height: 1.75;
   font-size: 1.05rem;
 }
@@ -441,13 +441,13 @@
 .section-title {
   font-size: clamp(1.5rem, 1.25rem + 1.2vw, 2rem);
   font-weight: 700;
-  color: #1e293b;
+  color: var(--vb-text);
   text-align: center;
   margin-bottom: 0.75rem;
 }
 
 .section-subtitle {
-  color: #64748b;
+  color: var(--vb-text-muted);
   font-size: 1.05rem;
   text-align: center;
   max-width: 600px;
@@ -455,9 +455,9 @@
 }
 
 .condition-card {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--vb-paper) !important;
   backdrop-filter: blur(20px);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--vb-border);
   border-radius: 20px !important;
   padding: 1.5rem;
   height: 100%;
@@ -484,7 +484,7 @@
 
 .condition-icon svg {
   font-size: 1.75rem;
-  color: #00b2a7;
+  color: var(--vb-primary);
 }
 
 .condition-icon.condition-orange {
@@ -525,12 +525,12 @@
 .condition-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 0.5rem;
 }
 
 .condition-description {
-  color: #64748b;
+  color: var(--vb-text-muted);
   line-height: 1.6;
 }
 
@@ -541,9 +541,9 @@
 }
 
 .list-card {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--vb-paper) !important;
   backdrop-filter: blur(20px);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--vb-border);
   border-radius: 20px !important;
   height: 100%;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -606,7 +606,7 @@
 .list-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--vb-text);
 }
 
 .list-item {
@@ -635,7 +635,7 @@
 .importance-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--vb-text);
   margin-bottom: 2rem;
 }
 
@@ -651,7 +651,7 @@
 .importance-number {
   font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #00b2a7 0%, #009188 100%);
+  background: linear-gradient(135deg, var(--vb-primary) 0%, var(--vb-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -680,7 +680,7 @@
 }
 
 .importance-text {
-  color: #64748b;
+  color: var(--vb-text-muted);
   font-size: 1rem;
   line-height: 1.5;
 }

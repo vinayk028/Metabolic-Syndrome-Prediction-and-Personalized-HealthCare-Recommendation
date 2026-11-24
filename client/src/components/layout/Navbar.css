@@ -370,3 +370,47 @@
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
 }
+
+/* ── Theme toggle ──────────────────────────────────────────────────────── */
+
+/* Guests: sun/moon in the bar, wide screens only (the menu has it below) */
+.vb-nav__theme.MuiIconButton-root {
+  display: none;
+  color: var(--vb-text-muted);
+}
+
+@media (min-width: 900px) {
+  .vb-nav__theme.MuiIconButton-root {
+    display: inline-flex;
+  }
+}
+
+.vb-theme-item.MuiMenuItem-root {
+  padding-right: 8px;
+}
+
+.vb-theme-item__label {
+  flex: 1;
+}
+
+.vb-theme-row {
+  display: flex;
+  align-items: center;
+  gap: var(--vb-space-3);
+  padding: var(--vb-space-2) var(--vb-space-3) var(--vb-space-2) var(--vb-space-4);
+  border-radius: var(--vb-radius-md);
+  border: 1px solid var(--vb-border);
+  cursor: pointer;
+}
+
+.vb-theme-row__icon {
+  display: grid;
+  place-items: center;
+  color: var(--vb-text-muted);
+}
+
+.vb-theme-row__label {
+  flex: 1;
+  font-weight: 600;
+  color: var(--vb-text);
+}

@@ -31,7 +31,7 @@ export const PROFILE_ITEM: NavItem = {
   label: 'Profile',
   path: '/profile',
   icon: PersonRoundedIcon,
-  hint: 'Your details & history',
+  hint: 'Your details & security',
   auth: true,
 };
 

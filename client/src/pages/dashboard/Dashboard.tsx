@@ -173,7 +173,7 @@ const Sparkline = ({ values, improving }: { values: number[]; improving: boolean
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      <circle cx={lx} cy={ly} r={3.5} fill={color} stroke="#fff" strokeWidth={1.5} />
+      <circle className="db-dot" cx={lx} cy={ly} r={3.5} fill={color} stroke="#fff" strokeWidth={1.5} />
     </svg>
   );
 };
@@ -474,6 +474,7 @@ const Dashboard = () => {
                           cx={props.cx}
                           cy={props.cy}
                           r={5}
+                          className="db-dot"
                           fill={riskColors[trendData[props.index ?? 0]?.level ?? 'low'].main}
                           stroke="#fff"
                           strokeWidth={2}
@@ -650,11 +651,6 @@ const Dashboard = () => {
               title="Your plan"
               icon={<RestaurantRoundedIcon />}
               meta="From your latest assessment"
-              action={
-                <Button size="small" endIcon={<ArrowForwardRoundedIcon />} onClick={() => navigate('/profile')} className="db-link">
-                  Full history
-                </Button>
-              }
             >
               {planTiles.length > 0 ? (
                 <>

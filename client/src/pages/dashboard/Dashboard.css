@@ -881,3 +881,18 @@
   font-size: 0.75rem;
   color: var(--vb-text-faint);
 }
+
+/* ── Chart colours follow the theme (CSS beats SVG presentation attributes) ── */
+.db-chart .recharts-cartesian-grid line {
+  stroke: var(--vb-border);
+}
+
+.db-chart .recharts-cartesian-axis-tick-value,
+.db-chart .recharts-cartesian-axis-tick text {
+  fill: var(--vb-text-muted);
+}
+
+.db-dot,
+.db-chart .recharts-active-dot circle {
+  stroke: var(--vb-paper);
+}

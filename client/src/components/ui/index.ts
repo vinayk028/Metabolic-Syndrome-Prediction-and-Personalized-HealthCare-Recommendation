@@ -15,3 +15,4 @@ export { default as RiskBadge } from './RiskBadge';
 export { default as RiskGauge } from './RiskGauge';
 export { default as SectionHeader } from './SectionHeader';
 export { default as StatTile } from './StatTile';
+export { default as LabeledField, PasswordField } from './LabeledField';
