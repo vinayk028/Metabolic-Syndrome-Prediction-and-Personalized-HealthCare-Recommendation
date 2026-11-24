@@ -6,7 +6,7 @@
  * and unauthenticated users are redirected to /login.
  */
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
@@ -527,6 +527,17 @@ const Dashboard = () => {
               latest.inputParameters
                 ? `Latest ${fmtLong(latest.date)} · ${latest.inputParameters.gender === 'Women' ? 'Female' : 'Male'}, ${latest.inputParameters.age} years`
                 : fmtLong(latest.date)
+            }
+            action={
+              <Button
+                component={Link}
+                to="/about#markers"
+                size="small"
+                endIcon={<ArrowForwardRoundedIcon />}
+                className="db-link"
+              >
+                What do these mean?
+              </Button>
             }
           >
             {markerRows.length > 0 ? (

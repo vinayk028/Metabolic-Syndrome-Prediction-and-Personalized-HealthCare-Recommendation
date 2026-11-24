@@ -7,7 +7,6 @@ import WhatWeProvide from './sections/WhatWeProvide';
 import HowItWorks from './sections/HowItWorks';
 import FeatureRows from './sections/FeatureRows';
 import NewsCarousel from './sections/NewsCarousel';
-import FaqSection from './sections/FaqSection';
 import './Landing.css';
 
 const Landing = () => (
@@ -17,7 +16,6 @@ const Landing = () => (
     <HowItWorks />
     <FeatureRows />
     <NewsCarousel />
-    <FaqSection />
   </div>
 );
 

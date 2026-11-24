@@ -14,6 +14,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores';
 import BrandLogo from '../ui/BrandLogo';
@@ -210,6 +211,10 @@ const Navbar = () => {
           </ul>
 
           <Box className="vb-menu__footer">
+            <Link to="/about" className="vb-menu__about">
+              <InfoOutlinedIcon aria-hidden />
+              About MetS Health &amp; FAQ
+            </Link>
             <ThemeSwitchRow />
             {loggedIn ? (
               <>

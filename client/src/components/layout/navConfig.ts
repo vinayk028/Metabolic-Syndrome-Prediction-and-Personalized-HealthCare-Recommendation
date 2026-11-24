@@ -6,7 +6,6 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded';
 import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded';
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
-import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 
 export interface NavItem {
@@ -24,7 +23,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Assessment', path: '/assessment', icon: MonitorHeartRoundedIcon, hint: 'Check your 5 risk factors' },
   { label: 'Dashboard', path: '/dashboard', icon: SpaceDashboardRoundedIcon, hint: 'Your results & trends', auth: true },
   { label: 'Resources', path: '/resources', icon: AutoStoriesRoundedIcon, hint: 'Guides & health news' },
-  { label: 'About', path: '/about', icon: InfoRoundedIcon, hint: 'How the prediction works' },
 ];
 
 export const PROFILE_ITEM: NavItem = {

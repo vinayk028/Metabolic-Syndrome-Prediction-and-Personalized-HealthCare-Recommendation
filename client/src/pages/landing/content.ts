@@ -82,23 +82,3 @@ export const FEATURES: Feature[] = [
     to: '#a78bfa',
   },
 ];
-
-/* ── FAQ ───────────────────────────────────────────────────────────────── */
-export const FAQS: { q: string; a: string }[] = [
-  {
-    q: 'How does it work?',
-    a: 'You enter a few numbers from a routine check-up. We estimate how likely metabolic syndrome is, work out how severe it is, and match a diet, exercise and yoga plan to your result.',
-  },
-  {
-    q: 'What information do I need?',
-    a: 'Your age and sex, waist circumference, blood pressure, fasting plasma glucose, triglycerides and HDL cholesterol, plus whether you have been diagnosed with fatty liver, hypertension or diabetes. These are all on a standard blood test and check-up.',
-  },
-  {
-    q: 'Do I need an account?',
-    a: 'No — anyone can take an assessment and download the PDF report. Create a free account if you want to save your results and follow your progress on the dashboard.',
-  },
-  {
-    q: 'Is this a medical diagnosis?',
-    a: 'No. MetS Health is an educational tool that helps you understand your risk. Always discuss your results and any changes to your treatment with a qualified healthcare professional.',
-  },
-];

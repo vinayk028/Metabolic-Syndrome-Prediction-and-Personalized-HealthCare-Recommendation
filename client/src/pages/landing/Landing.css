@@ -1,7 +1,7 @@
 /* ==========================================================================
    Landing — "Clinical premium"
    Restrained palette (ink, teal, neutrals; status colours only where they
-   mean something), editorial type with a serif accent, real product UI.
+   mean something), editorial type with a brand-colour accent, real product UI.
    Fluid by construction: clamp()/min()/% sizing, auto-fit grids and
    container queries — no device-specific layouts.
    ========================================================================== */
@@ -17,11 +17,10 @@
 
 /* ── Shared typography ─────────────────────────────────────────────────── */
 
+/* Emphasised words: same font as the heading, brand colour only */
 .lp-serif {
-  font-family: var(--vb-font-serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-style: normal;
+  color: var(--vb-primary);
 }
 
 .lp-kicker {
@@ -46,7 +45,6 @@
 
 .lp-h2 .lp-serif {
   color: var(--vb-primary);
-  font-size: 1.08em;
 }
 
 .lp-muted.MuiTypography-root,
@@ -212,11 +210,7 @@
 }
 
 .lp-hero__title .lp-serif {
-  display: inline-block;
-  font-size: 1.1em;
-  line-height: 0.95;
   color: var(--vb-primary);
-  padding-right: 0.06em; /* italic overhang */
 }
 
 .lp-hero__lead.MuiTypography-root {
@@ -978,53 +972,4 @@
   gap: 0.4rem;
   font-weight: 700;
   color: #5eead4;
-}
-
-/* ── FAQ ───────────────────────────────────────────────────────────────── */
-
-.lp-faq {
-  border-top: 1px solid var(--vb-border);
-}
-
-.lp-faq__item.MuiAccordion-root {
-  background: transparent;
-  border-bottom: 1px solid var(--vb-border);
-}
-
-.lp-faq__item.MuiAccordion-root::before {
-  display: none;
-}
-
-.lp-faq__q.MuiAccordionSummary-root {
-  min-height: 72px;
-  padding: 0;
-}
-
-.lp-faq__q .MuiAccordionSummary-content {
-  margin-block: 1.1rem;
-}
-
-.lp-faq__q .MuiAccordionSummary-expandIconWrapper {
-  margin-left: 1rem;
-  color: var(--vb-text);
-  transition: transform var(--vb-dur-base) var(--vb-ease);
-}
-
-.lp-faq__q .MuiAccordionSummary-expandIconWrapper.Mui-expanded {
-  transform: rotate(45deg);
-}
-
-.lp-faq__q-text.MuiTypography-root {
-  font-family: var(--vb-font-display);
-  font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.2rem);
-  font-weight: 700;
-  color: var(--vb-text);
-}
-
-.lp-faq__a.MuiAccordionDetails-root {
-  padding: 0 2.5rem 1.5rem 0;
-}
-
-.lp-faq__a .MuiTypography-root {
-  color: var(--vb-text-muted);
 }

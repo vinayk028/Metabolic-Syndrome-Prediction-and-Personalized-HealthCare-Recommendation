@@ -19,11 +19,9 @@
   }
 }
 
+/* Emphasised words: same font as the heading, brand colour only */
 .au-serif {
-  font-family: var(--vb-font-serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.08em;
+  font-style: normal;
   color: var(--vb-primary);
 }
 

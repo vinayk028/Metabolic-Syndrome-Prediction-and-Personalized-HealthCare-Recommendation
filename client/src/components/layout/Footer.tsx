@@ -33,7 +33,7 @@ const Footer = () => {
       title: 'Learn',
       links: [
         { label: 'About MetS Health', to: '/about' },
-        { label: 'Frequently asked questions', to: '/#faq' },
+        { label: 'Frequently asked questions', to: '/about#faq' },
       ],
     },
     {

@@ -414,3 +414,25 @@
   font-weight: 600;
   color: var(--vb-text);
 }
+
+/* Quiet link to About in the small-screen menu */
+.vb-menu__about {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: var(--vb-space-2);
+  padding: var(--vb-space-2) var(--vb-space-3);
+  border-radius: var(--vb-radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--vb-text-muted);
+}
+
+.vb-menu__about:hover,
+.vb-menu__about:focus-visible {
+  color: var(--vb-primary);
+}
+
+.vb-menu__about .MuiSvgIcon-root {
+  font-size: 1.15rem;
+}
