@@ -8,8 +8,8 @@ import { AnimatedReveal } from '../../../components/ui';
 import { STEPS } from '../content';
 
 const HowItWorks = () => (
-  <section id="how-it-works" className="lp-section lp-section--sunken" aria-labelledby="lp-how-title">
-    <Container maxWidth="lg">
+  <section id="how-it-works" className="lp-section" aria-labelledby="lp-how-title">
+    <Container maxWidth="xl">
       <div className="lp-head-row">
         <div>
           <span className="lp-kicker">How it works</span>

@@ -171,7 +171,7 @@ const ROWS: Row[] = [
 
 const FeatureRows = () => (
   <section id="features" className="lp-section" aria-label="Features">
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <div className="lp-rows">
         {ROWS.map((r, i) => (
           <div key={r.kicker} className={`lp-row${i % 2 ? ' is-flipped' : ''}`}>

@@ -148,6 +148,17 @@ html {
   text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--vb-navbar-h) + 16px);
+  /* No visible page scrollbar — the page still scrolls with wheel, trackpad,
+     keyboard and touch. Inner scroll areas keep their slim themed bar. */
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Inner scroll areas (dialogs, lists, carousels): slim, brand-tinted */
+body * {
   scrollbar-width: thin;
   scrollbar-color: rgba(var(--mui-palette-primary-mainChannel) / 0.35) transparent;
 }
@@ -376,4 +387,11 @@ input:disabled {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Site content fills every screen width; only the small fluid gutter
+   (--vb-gutter, ~16px on phones → ~40px on large screens) is left at the
+   sides. Navbar, footer and pages share this container, so they align. */
+.MuiContainer-root.MuiContainer-maxWidthXl {
+  max-width: none;
 }

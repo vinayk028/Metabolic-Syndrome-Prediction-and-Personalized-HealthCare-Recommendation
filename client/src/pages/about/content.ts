@@ -107,7 +107,7 @@ export const PRIVACY_POINTS: { icon: SvgIconComponent; title: string; text: stri
   },
 ];
 
-/* ── FAQ (moved here from the landing page) ─────────────────────────────── */
+/* ── FAQ (from the landing and Resources pages) ─────────────────────────────── */
 export const FAQS: { q: string; a: string }[] = [
   {
     q: 'How does it work?',
@@ -124,5 +124,25 @@ export const FAQS: { q: string; a: string }[] = [
   {
     q: 'Is this a medical diagnosis?',
     a: 'No. MetS Health is an educational tool that helps you understand your risk. Always discuss your results and any changes to your treatment with a qualified healthcare professional.',
+  },
+  {
+    q: 'What causes metabolic syndrome?',
+    a: "It is closely linked to being overweight and inactive, and to insulin resistance — when the body has difficulty using insulin effectively. Genetics, ageing and hormonal changes can also contribute.",
+  },
+  {
+    q: 'Can metabolic syndrome be reversed?',
+    a: 'Often, yes. Weight loss, regular physical activity, a healthy diet, managing stress and getting enough sleep can significantly improve or even resolve it. Some people may also need medication — your doctor can advise.',
+  },
+  {
+    q: 'How is metabolic syndrome diagnosed?',
+    a: 'It is diagnosed when at least three of the five markers are out of range: a large waist, high triglycerides, low HDL cholesterol, high blood pressure and high fasting blood sugar. A healthcare provider confirms this with blood tests and physical measurements.',
+  },
+  {
+    q: 'What are the long-term risks if it is not treated?',
+    a: 'Untreated, it significantly raises the risk of type 2 diabetes, cardiovascular disease and stroke. Finding it early and making changes is the best way to prevent these.',
+  },
+  {
+    q: 'How often should I get screened?',
+    a: 'Adults over 40, or anyone with risk factors such as excess weight, a family history of diabetes or an inactive lifestyle, should be screened every year. Younger adults with risk factors should ask their doctor how often to check.',
   },
 ];

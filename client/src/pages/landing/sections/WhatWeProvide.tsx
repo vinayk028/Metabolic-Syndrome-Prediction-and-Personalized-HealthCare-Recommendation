@@ -7,7 +7,7 @@ import { FEATURES } from '../content';
 
 const WhatWeProvide = () => (
   <section id="features-overview" className="lp-section" aria-labelledby="lp-provide-title">
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <div className="lp-head-row">
         <div>
           <span className="lp-kicker">What we provide</span>

@@ -59,7 +59,7 @@ const Layout = ({ children }: LayoutProps) => {
             children
           ) : (
             // Legacy pages are designed for `lg`; redesigned pages can widen in Phase 4.
-            <Container maxWidth="lg" className="vb-page">
+            <Container maxWidth="xl" className="vb-page">
               {children}
             </Container>
           )}
