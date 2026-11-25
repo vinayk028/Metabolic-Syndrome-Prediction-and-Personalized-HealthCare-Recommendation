@@ -31,14 +31,12 @@ const HeroSection = () => {
 
         <Container maxWidth="xl" className="lp-hero__inner">
           <div className="lp-hero__copy">
-          {loggedIn && (
-            <motion.div {...fadeUp(0)}>
-              <span className="lp-hero__badge">
+            {loggedIn && (
+              <motion.span className="lp-hero__badge lp-hero__welcome" {...fadeUp(0)}>
                 <span className="lp-hero__badge-dot" />
                 Welcome back, {user?.firstName}
-              </span>
-            </motion.div>
-          )}
+              </motion.span>
+            )}
 
           <motion.div {...fadeUp(0.08)}>
             <Typography id="lp-hero-title" variant="display" component="h1" className="lp-hero__title">

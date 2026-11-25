@@ -1,48 +1,54 @@
 /**
- * Light / dark theme controls. MUI's colour-scheme manager does the work:
- * it flips <html data-theme>, which every --vb-* token follows, and remembers
- * the choice in localStorage ("mui-mode").
+ * Theme controls. MUI's colour-scheme manager does the work: it flips
+ * <html data-theme>, which every --vb-* token follows, and remembers the
+ * choice in localStorage ("mui-mode").
+ *
+ * ThemeChooser — "Theme" row with Light / Dark options (account menu and the
+ *                small-screen menu)
+ * ThemeIconButton — compact sun/moon toggle in the bar for guests
  */
-import { IconButton, MenuItem, Switch, Tooltip } from '@mui/material';
+import { IconButton, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
 import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
-import { useThemeMode } from './useThemeMode';
+import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
+import { useThemeMode, type ThemeChoice } from './useThemeMode';
 
-/** Row for the account dropdown — stays open so the change is visible. */
-export const ThemeMenuItem = () => {
-  const { isDark, toggle } = useThemeMode();
+export const ThemeChooser = ({ className = '' }: { className?: string }) => {
+  const { mode, setTheme } = useThemeMode();
   return (
-    <MenuItem onClick={toggle} className="vb-account-menu__item vb-theme-item" role="menuitemcheckbox" aria-checked={isDark}>
-      {isDark ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
-      <span className="vb-theme-item__label">Dark mode</span>
-      <Switch size="small" checked={isDark} tabIndex={-1} inputProps={{ 'aria-hidden': true }} />
-    </MenuItem>
+    <div className={`vb-theme ${className}`} role="group" aria-labelledby="vb-theme-label">
+      <span className="vb-theme__label" id="vb-theme-label">
+        <PaletteOutlinedIcon aria-hidden />
+        Theme
+      </span>
+      <ToggleButtonGroup
+        exclusive
+        size="small"
+        value={mode}
+        onChange={(_, v: ThemeChoice | null) => v && setTheme(v)}
+        className="vb-theme__options"
+        aria-labelledby="vb-theme-label"
+      >
+        <ToggleButton value="light" aria-label="Light theme">
+          <LightModeRoundedIcon aria-hidden /> Light
+        </ToggleButton>
+        <ToggleButton value="dark" aria-label="Dark theme">
+          <DarkModeRoundedIcon aria-hidden /> Dark
+        </ToggleButton>
+      </ToggleButtonGroup>
+    </div>
   );
 };
 
 /** Compact sun/moon button for the bar (guests on wide screens). */
 export const ThemeIconButton = ({ className }: { className?: string }) => {
   const { isDark, toggle } = useThemeMode();
-  const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+  const label = isDark ? 'Switch to light theme' : 'Switch to dark theme';
   return (
     <Tooltip title={label}>
       <IconButton onClick={toggle} aria-label={label} className={className}>
         {isDark ? <LightModeRoundedIcon /> : <DarkModeRoundedIcon />}
       </IconButton>
     </Tooltip>
-  );
-};
-
-/** Labelled switch row for the full-screen menu. */
-export const ThemeSwitchRow = () => {
-  const { isDark, toggle } = useThemeMode();
-  return (
-    <label className="vb-theme-row">
-      <span className="vb-theme-row__icon" aria-hidden>
-        {isDark ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
-      </span>
-      <span className="vb-theme-row__label">Dark mode</span>
-      <Switch checked={isDark} onChange={toggle} />
-    </label>
   );
 };

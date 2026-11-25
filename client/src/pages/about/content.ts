@@ -80,10 +80,10 @@ export const NUMBER_GUIDES: NumberGuide[] = [
   {
     icon: BadgeRoundedIcon,
     title: 'About you',
-    gives: 'Age, sex and existing diagnoses',
+    gives: 'Age, gender and existing diagnoses',
     tips: [
       'Have any diagnosis of fatty liver, hypertension or diabetes to hand.',
-      'Thresholds for waist and HDL differ by sex, so choose the right one.',
+      'Thresholds for waist and HDL differ by gender, so choose the right one.',
     ],
   },
 ];
@@ -115,7 +115,7 @@ export const FAQS: { q: string; a: string }[] = [
   },
   {
     q: 'What information do I need?',
-    a: 'Your age and sex, waist circumference, blood pressure, fasting plasma glucose, triglycerides and HDL cholesterol, plus whether you have been diagnosed with fatty liver, hypertension or diabetes. These are all on a standard blood test and check-up.',
+    a: 'Your age and gender, waist circumference, blood pressure, fasting plasma glucose, triglycerides and HDL cholesterol, plus whether you have been diagnosed with fatty liver, hypertension or diabetes. These are all on a standard blood test and check-up.',
   },
   {
     q: 'Do I need an account?',

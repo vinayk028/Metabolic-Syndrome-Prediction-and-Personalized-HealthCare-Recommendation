@@ -118,7 +118,7 @@
   isolation: isolate;
   /* a stage of its own: inset from the page edges, clear of the navbar above
      and the next section below */
-  margin: 0.25rem clamp(0.5rem, 0.25rem + 1.5vw, 1.5rem) 0;
+  margin: clamp(0.75rem, 0.5rem + 0.6vw, 1.25rem) clamp(0.5rem, 0.25rem + 1.5vw, 1.5rem) 0;
   padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
 }
 
@@ -127,7 +127,7 @@
   .lp-hero {
     display: flex;
     align-items: center;
-    min-height: min(calc(100dvh - var(--vb-navbar-h) - var(--vb-safe-top) - 1.5rem), 60rem);
+    min-height: min(calc(100dvh - var(--vb-navbar-h) - var(--vb-safe-top) - 2.5rem), 60rem);
   }
 
   .lp-hero__inner.MuiContainer-root {
@@ -207,7 +207,7 @@
 
 .lp-hero__title.MuiTypography-root {
   max-width: 100%;
-  margin-top: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  margin-top: 0;
   font-size: clamp(2.5rem, 1.6rem + 2.8vw, 4rem);
   font-weight: 700;
   line-height: 1.04;
@@ -1092,4 +1092,9 @@
    the other half of the gap itself */
 .lp-hero {
   margin-bottom: calc(var(--lp-gap) / 2);
+}
+
+/* Welcome badge (signed-in users): centred just above the headline */
+.lp-hero__welcome {
+  margin-bottom: clamp(1rem, 0.85rem + 0.5vw, 1.35rem);
 }

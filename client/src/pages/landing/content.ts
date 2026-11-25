@@ -19,7 +19,7 @@ export interface IconCopy {
 export const STEPS: { title: string; text: string }[] = [
   {
     title: 'Enter five markers',
-    text: 'Waist, blood pressure, fasting glucose, triglycerides and HDL — all on a routine check-up — plus age, sex and existing diagnoses.',
+    text: 'Waist, blood pressure, fasting glucose, triglycerides and HDL — all on a routine check-up — plus age, gender and existing diagnoses.',
   },
   {
     title: 'Get your risk and severity',

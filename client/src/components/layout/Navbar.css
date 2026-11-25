@@ -22,6 +22,39 @@
   box-shadow: var(--vb-shadow-xs);
 }
 
+/* Wide screens: no bar behind the capsule. Content passing underneath is
+   softly frosted by a progressive blur that fades out toward the bottom —
+   no solid band, no hard edge, no border; only the capsule stays crisp. */
+@media (min-width: 900px) {
+  .vb-nav.is-scrolled {
+    background-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: transparent;
+    box-shadow: none;
+  }
+
+  .vb-nav::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 -1.5rem;
+    z-index: -1;
+    pointer-events: none;
+    /* fully frosted behind the bar, then a short fade below its edge */
+    background: color-mix(in srgb, var(--vb-bg) 82%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 1.5rem), transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 1.5rem), transparent 100%);
+    opacity: 0;
+    transition: opacity var(--vb-dur-base) var(--vb-ease);
+  }
+
+  .vb-nav.is-scrolled::before {
+    opacity: 1;
+  }
+}
+
 .vb-nav__bar.MuiToolbar-root {
   min-height: var(--vb-navbar-h);
   height: var(--vb-navbar-h);
@@ -40,23 +73,29 @@
   border-radius: var(--vb-radius-sm);
 }
 
-/* ── Desktop links ─────────────────────────────────────────────── */
+/* ── Desktop links: one capsule, active page as a raised pill ─────── */
 
 .vb-nav__links {
   display: none;
   align-items: center;
-  gap: var(--vb-space-1);
+  gap: 2px;
   margin: 0 auto;
-  padding: 4px;
+  padding: 5px;
   border-radius: var(--vb-radius-pill);
+  border: 1px solid var(--vb-border);
+  /* light: a white capsule lifted off the page; dark overrides below */
+  background: color-mix(in srgb, var(--vb-paper) 92%, transparent);
+  backdrop-filter: saturate(160%) blur(12px);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  box-shadow: var(--vb-shadow-sm);
 }
 
 .vb-nav__link {
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
+  height: 42px;
+  padding: 0 18px;
   border-radius: var(--vb-radius-pill);
   font-family: var(--vb-font-display);
   font-size: 0.9375rem;
@@ -74,17 +113,36 @@
   color: var(--vb-primary);
 }
 
+/* Active page: raised white pill (slides between links) — same language as
+   the Profile and plan tabs */
 .vb-nav__pill {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  background: rgba(var(--mui-palette-primary-mainChannel) / 0.1);
   z-index: 0;
+  border-radius: inherit;
+  /* teal-tinted pill — the current page is clear in both themes */
+  background: color-mix(in srgb, var(--vb-primary) 12%, var(--vb-paper));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vb-primary) 28%, transparent);
 }
 
 .vb-nav__link-label {
   position: relative;
   z-index: 1;
+}
+
+/* Dark mode: capsule a step lighter than the page, active pill teal-tinted
+   so the selection is clearly visible */
+[data-theme='dark'] .vb-nav__links {
+  background: color-mix(in srgb, var(--vb-paper) 72%, transparent);
+}
+
+[data-theme='dark'] .vb-nav__pill {
+  background: color-mix(in srgb, var(--vb-primary) 22%, var(--vb-paper));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vb-primary) 40%, transparent);
+}
+
+[data-theme='dark'] .vb-nav__link.is-active {
+  color: #fff;
 }
 
 /* ── Actions ───────────────────────────────────────────────────── */
@@ -385,34 +443,66 @@
   }
 }
 
-.vb-theme-item.MuiMenuItem-root {
-  padding-right: 8px;
-}
-
-.vb-theme-item__label {
-  flex: 1;
-}
-
-.vb-theme-row {
+/* Theme chooser: "Theme" label + Light / Dark segmented options */
+.vb-theme {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--vb-space-3);
-  padding: var(--vb-space-2) var(--vb-space-3) var(--vb-space-2) var(--vb-space-4);
-  border-radius: var(--vb-radius-md);
-  border: 1px solid var(--vb-border);
-  cursor: pointer;
 }
 
-.vb-theme-row__icon {
-  display: grid;
-  place-items: center;
+.vb-theme--menu {
+  margin: 4px 8px;
+  padding: 6px 4px 6px 8px;
+}
+
+.vb-theme--sheet {
+  padding: var(--vb-space-2) var(--vb-space-2) var(--vb-space-2) var(--vb-space-4);
+  border-radius: var(--vb-radius-md);
+  border: 1px solid var(--vb-border);
+}
+
+.vb-theme__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vb-space-3);
+  font-weight: 500;
+  color: var(--vb-text);
+}
+
+.vb-theme__label .MuiSvgIcon-root {
+  font-size: 20px;
   color: var(--vb-text-muted);
 }
 
-.vb-theme-row__label {
-  flex: 1;
+.vb-theme__options.MuiToggleButtonGroup-root {
+  padding: 3px;
+  gap: 3px;
+  border-radius: var(--vb-radius-pill);
+  background: var(--vb-surface-sunken);
+}
+
+.vb-theme__options .MuiToggleButton-root {
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  border: 0 !important;
+  border-radius: var(--vb-radius-pill) !important;
+  font-family: var(--vb-font-display);
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--vb-text);
+  text-transform: none;
+  color: var(--vb-text-muted);
+}
+
+.vb-theme__options .MuiToggleButton-root .MuiSvgIcon-root {
+  font-size: 1rem;
+}
+
+.vb-theme__options .MuiToggleButton-root.Mui-selected,
+.vb-theme__options .MuiToggleButton-root.Mui-selected:hover {
+  color: var(--vb-primary);
+  background: color-mix(in srgb, var(--vb-primary) 14%, var(--vb-paper));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vb-primary) 30%, transparent);
 }
 
 /* Quiet link to About in the small-screen menu */

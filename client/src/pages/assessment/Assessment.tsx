@@ -189,11 +189,11 @@ const Assessment = () => {
     (results.hasMetabolicSyndrome && activeStep === 2) ||
     (!results.hasMetabolicSyndrome && activeStep === 1 && results.probability > 0);
 
-  const sex = patientInfo.gender;
+  const gender = patientInfo.gender;
 
   const severityKey = toRiskKey(results.riskLevel);
   const markerRows = buildMarkerRows({
-    gender: sex,
+    gender,
     systolicBP: patientInfo.systolicBP,
     diastolicBP: patientInfo.diastolicBP,
     waistCircumference: patientInfo.waistCircumference,
@@ -274,13 +274,13 @@ const Assessment = () => {
               </div>
 
               <div>
-                <span className="as-label" id="as-sex-label">
-                  Sex
+                <span className="as-label" id="as-gender-label">
+                  Gender
                 </span>
                 <ToggleButtonGroup
                   exclusive
                   fullWidth
-                  aria-labelledby="as-sex-label"
+                  aria-labelledby="as-gender-label"
                   value={patientInfo.gender}
                   onChange={(_, v) => v && setPatientInfo('gender', v)}
                   className="as-segment"
@@ -288,7 +288,7 @@ const Assessment = () => {
                   <ToggleButton value="Men">Male</ToggleButton>
                   <ToggleButton value="Women">Female</ToggleButton>
                 </ToggleButtonGroup>
-                <p className="as-note">Thresholds for waist and HDL differ by sex.</p>
+                <p className="as-note">Thresholds for waist and HDL differ by gender.</p>
               </div>
             </div>
           </Section>
@@ -473,7 +473,7 @@ const Assessment = () => {
                   Your markers
                 </Typography>
                 <span className="as-card__meta">
-                  {sex === 'Women' ? 'Female' : 'Male'} · {patientInfo.age} years
+                  {gender === 'Women' ? 'Female' : 'Male'} · {patientInfo.age} years
                 </span>
               </div>
               <ul className="as-markers__list">

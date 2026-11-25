@@ -15,7 +15,7 @@ import { AnimatedReveal, RiskBadge } from '../../../components/ui';
 const PipelineSnippet = () => (
   <div className="lp-snippet lp-pipe" role="img" aria-label="How it works: your markers go in, you get a 52% probability and a moderate severity, then a personal plan.">
     {[
-      { k: 'Input', v: '5 markers + age, sex, history' },
+      { k: 'Input', v: '5 markers + age, gender, history' },
       { k: 'Prediction', v: 'Probability 52%' },
       { k: 'Severity Calculation', v: 'Severity: Moderate', badge: true },
       { k: 'Output', v: 'Personal plan & PDF report' },

@@ -28,8 +28,8 @@ export interface MarkerRow {
 const isNum = (n: number) => Number.isFinite(n);
 
 /** Reference range zones per marker (ascending). HDL is "lower is worse". */
-const rangeFor = (key: FactorKey, sex: string): { min: number; max: number; zones: RangeZone[] } => {
-  const woman = sex === 'Women';
+const rangeFor = (key: FactorKey, gender: string): { min: number; max: number; zones: RangeZone[] } => {
+  const woman = gender === 'Women';
   switch (key) {
     case 'waist': {
       const cut = woman ? 88 : 102;
@@ -89,9 +89,9 @@ const rangeFor = (key: FactorKey, sex: string): { min: number; max: number; zone
 };
 
 /** Status for a single marker, or null while the input is empty/invalid. */
-export const markerStatus = (key: FactorKey, value: number, sex: string, secondary?: number): FactorStatus | null => {
+export const markerStatus = (key: FactorKey, value: number, gender: string, secondary?: number): FactorStatus | null => {
   if (!isNum(value) || (secondary !== undefined && !isNum(secondary))) return null;
-  return getFactorStatus(key, value, sex, secondary);
+  return getFactorStatus(key, value, gender, secondary);
 };
 
 interface Inputs {

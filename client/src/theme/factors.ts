@@ -86,14 +86,14 @@ export const FACTORS: Record<FactorKey, FactorMeta> = {
 
 export type FactorStatus = 'normal' | 'borderline' | 'elevated';
 
-type Sex = 'Men' | 'Women' | string;
+type Gender = 'Men' | 'Women' | string;
 
 /**
  * Classify a single factor value for UI display (ring segments, badges).
  * `value` for bloodPressure is systolic; pass diastolic as `secondary`.
  */
-export function getFactorStatus(key: FactorKey, value: number, sex: Sex = 'Men', secondary?: number): FactorStatus {
-  const isWoman = sex === 'Women';
+export function getFactorStatus(key: FactorKey, value: number, gender: Gender = 'Men', secondary?: number): FactorStatus {
+  const isWoman = gender === 'Women';
   switch (key) {
     case 'waist': {
       const cut = isWoman ? 88 : 102;
