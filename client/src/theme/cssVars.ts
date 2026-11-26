@@ -10,6 +10,3 @@ export const factorVar = (key: FactorKey, tone: 'main' | 'soft' = 'main') =>
 
 export const riskVar = (key: RiskKey, tone: 'main' | 'light' | 'soft' | 'contrastText' = 'main') =>
   `var(--mui-palette-risk-${key}-${tone})`;
-
-/** `rgba(var(--mui-palette-primary-mainChannel) / a)` */
-export const primaryAlpha = (alpha: number) => `rgba(var(--mui-palette-primary-mainChannel) / ${alpha})`;

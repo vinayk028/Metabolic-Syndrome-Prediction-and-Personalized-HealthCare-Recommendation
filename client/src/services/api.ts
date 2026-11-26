@@ -89,11 +89,6 @@ export const deleteAccount = async (): Promise<AuthResponse> => {
 
 // ============ Assessment APIs ============
 
-export const healthCheck = async () => {
-    const response = await api.get('/health');
-    return response.data;
-};
-
 export const predictMetabolicSyndrome = async (patientInfo: PatientInfo): Promise<PredictionResult> => {
     const response = await api.post('/mets/predict', patientInfo);
     return response.data;

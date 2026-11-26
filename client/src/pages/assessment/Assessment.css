@@ -13,11 +13,6 @@
 }
 
 /* Emphasised words: same font as the heading, brand colour only */
-.as-serif {
-  font-style: normal;
-  color: var(--vb-primary);
-}
-
 .as-eyebrow {
   display: block;
   font-size: 0.75rem;
@@ -278,7 +273,7 @@
   color: var(--vb-text-faint);
 }
 
-/* Sex: segmented control */
+/* Gender: segmented control */
 .as-segment.MuiToggleButtonGroup-root {
   padding: 4px;
   gap: 4px;

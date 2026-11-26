@@ -18,7 +18,7 @@ const FaqSection = () => {
       <div className="ab-faq__aside">
         <span className="ab-eyebrow">FAQ</span>
         <Typography id="ab-faq-title" variant="h2" className="ab-h2">
-          Questions, <em className="ab-serif">answered</em>
+          Questions, <em className="vb-accent-text">answered</em>
         </Typography>
         <p className="ab-lead">
           Can't find what you're looking for? Our AI assistant can explain metabolic syndrome, your markers and your

@@ -20,11 +20,6 @@
 }
 
 /* Emphasised words: same font as the heading, brand colour only */
-.au-serif {
-  font-style: normal;
-  color: var(--vb-primary);
-}
-
 .au-eyebrow {
   display: block;
   font-size: 0.75rem;

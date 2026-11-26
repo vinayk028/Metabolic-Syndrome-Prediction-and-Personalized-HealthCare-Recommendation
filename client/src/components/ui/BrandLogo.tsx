@@ -8,8 +8,6 @@ interface BrandLogoProps {
   size?: number;
   showWordmark?: boolean;
   showTagline?: boolean;
-  /** Use white text (for dark/brand backgrounds) */
-  inverted?: boolean;
 }
 
 export const BrandMark = ({ size = 36 }: { size?: number }) => (
@@ -44,7 +42,7 @@ export const BrandMark = ({ size = 36 }: { size?: number }) => (
   </Box>
 );
 
-const BrandLogo = ({ size = 36, showWordmark = true, showTagline = false, inverted = false }: BrandLogoProps) => (
+const BrandLogo = ({ size = 36, showWordmark = true, showTagline = false }: BrandLogoProps) => (
   <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.25 }}>
     <BrandMark size={size} />
     {showWordmark && (
@@ -57,11 +55,11 @@ const BrandLogo = ({ size = 36, showWordmark = true, showTagline = false, invert
             fontSize: size * 0.5,
             letterSpacing: '-0.02em',
             lineHeight: 1.1,
-            color: inverted ? '#fff' : 'text.primary',
+            color: 'text.primary',
           }}
         >
           MetS
-          <Box component="span" sx={{ color: inverted ? 'rgba(255,255,255,0.85)' : 'primary.main' }}>
+          <Box component="span" sx={{ color: 'primary.main' }}>
             {' '}
             Health
           </Box>
@@ -74,7 +72,7 @@ const BrandLogo = ({ size = 36, showWordmark = true, showTagline = false, invert
               fontWeight: 600,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              color: inverted ? 'rgba(255,255,255,0.7)' : 'text.secondary',
+              color: 'text.secondary',
               mt: 0.25,
             }}
           >

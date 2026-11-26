@@ -10,11 +10,6 @@
 }
 
 /* Emphasised words: same font as the heading, brand colour only */
-.ab-serif {
-  font-style: normal;
-  color: var(--vb-primary);
-}
-
 .ab-eyebrow {
   display: block;
   font-size: 0.75rem;

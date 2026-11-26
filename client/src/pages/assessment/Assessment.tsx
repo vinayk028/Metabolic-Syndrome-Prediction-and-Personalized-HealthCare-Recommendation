@@ -216,7 +216,7 @@ const Assessment = () => {
         <div className="as-head__copy">
           <span className="as-eyebrow">Health assessment</span>
           <Typography variant="h2" component="h1" className="as-head__title">
-            Check your <em className="as-serif">metabolic risk</em>
+            Check your <em className="vb-accent-text">metabolic risk</em>
           </Typography>
           <Typography className="as-head__sub">
             Takes about two minutes. Keep your latest check-up or blood-test numbers handy.

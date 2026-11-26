@@ -7,11 +7,6 @@
    ========================================================================== */
 
 .lp {
-  --lp-ink: #0b1220;
-  --lp-ink-2: #111a2e;
-  --lp-on-ink: #e2e8f0;
-  --lp-on-ink-muted: rgba(226, 232, 240, 0.68);
-  --lp-teal-glow: rgba(45, 212, 191, 0.22);
   /* One spacing system for the whole page:
      --lp-gap      between any two blocks of content (sections, feature rows)
      --lp-head-gap between a section heading and its content */
@@ -23,11 +18,6 @@
 /* ── Shared typography ─────────────────────────────────────────────────── */
 
 /* Emphasised words: same font as the heading, brand colour only */
-.lp-serif {
-  font-style: normal;
-  color: var(--vb-primary);
-}
-
 .lp-kicker {
   display: inline-block;
   margin-bottom: 0.9rem;
@@ -48,18 +38,9 @@
   color: var(--vb-text);
 }
 
-.lp-h2 .lp-serif {
-  color: var(--vb-primary);
-}
-
 .lp-muted.MuiTypography-root,
 .lp-muted {
   color: var(--vb-text-muted);
-}
-
-.lp-split__aside .lp-muted.MuiTypography-root {
-  margin-top: 1.25rem;
-  max-width: 34rem;
 }
 
 /* ── Section rhythm ────────────────────────────────────────────────────── */
@@ -68,26 +49,6 @@
   position: relative;
   /* half above + half below → neighbouring sections add up to one --lp-gap */
   padding-block: calc(var(--lp-gap) / 2);
-}
-
-.lp-section--sunken {
-  background: var(--vb-surface-sunken);
-  border-block: 1px solid var(--vb-border);
-}
-
-/* Two columns: sticky aside + content. Collapses to one column naturally. */
-.lp-split.MuiContainer-root {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: clamp(2.5rem, 1rem + 5vw, 6rem);
-  align-items: start;
-}
-
-@media (min-width: 900px) {
-  .lp-split__aside {
-    position: sticky;
-    top: calc(var(--vb-navbar-h) + 2rem);
-  }
 }
 
 .lp-head-row {
@@ -213,10 +174,6 @@
   line-height: 1.04;
   letter-spacing: -0.04em;
   color: var(--vb-text);
-}
-
-.lp-hero__title .lp-serif {
-  color: var(--vb-primary);
 }
 
 .lp-hero__lead.MuiTypography-root {

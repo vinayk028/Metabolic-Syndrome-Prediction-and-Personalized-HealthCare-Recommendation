@@ -12,11 +12,6 @@
 }
 
 /* Emphasised words: same font as the heading, brand colour only */
-.db-serif {
-  font-style: normal;
-  color: var(--vb-primary);
-}
-
 .db-eyebrow {
   display: block;
   font-size: 0.75rem;

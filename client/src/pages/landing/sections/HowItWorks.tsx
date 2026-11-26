@@ -14,7 +14,7 @@ const HowItWorks = () => (
         <div>
           <span className="lp-kicker">How it works</span>
           <Typography id="lp-how-title" variant="h2" className="lp-h2">
-            From check-up numbers to a <em className="lp-serif">clear plan.</em>
+            From check-up numbers to a <em className="vb-accent-text">clear plan.</em>
           </Typography>
         </div>
         <Button component={Link} to="/assessment" variant="gradient" size="large" endIcon={<ArrowForwardRoundedIcon />}>

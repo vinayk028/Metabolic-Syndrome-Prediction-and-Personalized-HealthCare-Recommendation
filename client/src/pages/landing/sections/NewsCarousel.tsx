@@ -62,7 +62,7 @@ const NewsCarousel = () => {
           <div>
             <span className="lp-kicker">In the news</span>
             <Typography id="lp-news-title" variant="h2" className="lp-h2">
-              Latest on <em className="lp-serif">metabolic health</em>
+              Latest on <em className="vb-accent-text">metabolic health</em>
             </Typography>
           </div>
           <Button component={Link} to="/resources" endIcon={<ArrowForwardRoundedIcon />} className="lp-news__all">

@@ -12,7 +12,7 @@ const WhatWeProvide = () => (
         <div>
           <span className="lp-kicker">What we provide</span>
           <Typography id="lp-provide-title" variant="h2" className="lp-h2">
-            Everything you need, <em className="lp-serif">in one place.</em>
+            Everything you need, <em className="vb-accent-text">in one place.</em>
           </Typography>
         </div>
       </div>

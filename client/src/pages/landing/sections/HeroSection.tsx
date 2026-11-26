@@ -40,7 +40,7 @@ const HeroSection = () => {
 
           <motion.div {...fadeUp(0.08)}>
             <Typography id="lp-hero-title" variant="display" component="h1" className="lp-hero__title">
-              Catch metabolic syndrome <em className="lp-serif">before it catches you.</em>
+              Catch metabolic syndrome <em className="vb-accent-text">before it catches you.</em>
             </Typography>
           </motion.div>
 

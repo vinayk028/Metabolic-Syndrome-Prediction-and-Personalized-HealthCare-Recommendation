@@ -154,12 +154,6 @@
   gap: clamp(1rem, 0.75rem + 1vw, 1.5rem);
 }
 
-.pf-loading {
-  display: grid;
-  place-items: center;
-  padding: 3rem;
-}
-
 /* ── Cards ─────────────────────────────────────────────────────────────── */
 
 .pf-card {

@@ -18,7 +18,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores';
 import BrandLogo from '../ui/BrandLogo';
-import { DARK_HERO_ROUTES, NAV_ITEMS, PROFILE_ITEM, isPathActive } from './navConfig';
+import { NAV_ITEMS, PROFILE_ITEM, isPathActive } from './navConfig';
 import { ThemeChooser, ThemeIconButton } from './ThemeToggle';
 import './Navbar.css';
 
@@ -66,20 +66,18 @@ const Navbar = () => {
   const userInitials = initials(user?.firstName, user?.lastName);
   const menuItems = [...NAV_ITEMS, ...(loggedIn ? [PROFILE_ITEM] : [])];
   const solid = scrolled || menuOpen;
-  // Light text while floating over a dark hero (pages that start dark)
-  const onDark = !solid && DARK_HERO_ROUTES.includes(pathname);
 
   return (
     <>
       <AppBar
         position="fixed"
-        className={`vb-nav${solid ? ' is-scrolled' : ''}${onDark ? ' is-on-dark' : ''}`}
+        className={`vb-nav${solid ? ' is-scrolled' : ''}`}
         component="header"
       >
         <Container maxWidth="xl">
           <Toolbar disableGutters className="vb-nav__bar">
             <Link to="/" className="vb-nav__logo" aria-label="MetS Health home">
-              <BrandLogo size={36} inverted={onDark} />
+              <BrandLogo size={36} />
             </Link>
 
             {/* Inline links (wide screens) */}

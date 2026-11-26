@@ -2,7 +2,7 @@
  * App Component - Main entry point
  */
 
-import { lazy, Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { MotionConfig } from 'framer-motion';
@@ -21,8 +21,6 @@ import Signup from './pages/auth/Signup';
 import Profile from './pages/profile/Profile';
 import Dashboard from './pages/dashboard/Dashboard';
 
-// Dev-only living style guide (tree-shaken out of production builds)
-const DesignSystem = import.meta.env.DEV ? lazy(() => import('./pages/design-system/DesignSystem')) : null;
 
 function App() {
     const initAuth = useAuthStore((s) => s.initAuth);
@@ -44,16 +42,6 @@ function App() {
                             <Route path="/resources" element={<Resources />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/signup" element={<Signup />} />
-                            {DesignSystem && (
-                                <Route
-                                    path="/design-system"
-                                    element={
-                                        <Suspense fallback={null}>
-                                            <DesignSystem />
-                                        </Suspense>
-                                    }
-                                />
-                            )}
                             <Route path="/profile" element={
                                 <ProtectedRoute>
                                     <Profile />

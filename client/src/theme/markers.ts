@@ -89,7 +89,7 @@ const rangeFor = (key: FactorKey, gender: string): { min: number; max: number; z
 };
 
 /** Status for a single marker, or null while the input is empty/invalid. */
-export const markerStatus = (key: FactorKey, value: number, gender: string, secondary?: number): FactorStatus | null => {
+const markerStatus = (key: FactorKey, value: number, gender: string, secondary?: number): FactorStatus | null => {
   if (!isNum(value) || (secondary !== undefined && !isNum(secondary))) return null;
   return getFactorStatus(key, value, gender, secondary);
 };

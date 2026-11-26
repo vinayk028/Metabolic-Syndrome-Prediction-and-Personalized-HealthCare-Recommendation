@@ -35,7 +35,7 @@ const About = () => (
       <div className="ab-head__copy">
         <span className="ab-eyebrow">Our purpose</span>
         <Typography id="ab-intro-title" variant="h2" className="ab-head__title">
-          Five markers. <em className="ab-serif">One clear picture.</em>
+          Five markers. <em className="vb-accent-text">One clear picture.</em>
         </Typography>
         <Typography className="ab-head__sub">
           Metabolic syndrome affects millions of people, often without symptoms. MetS Health turns the numbers from a
@@ -53,7 +53,7 @@ const About = () => (
       <div className="ab-what__intro">
         <span className="ab-eyebrow">What it is</span>
         <Typography id="ab-what-title" variant="h2" className="ab-h2">
-          A cluster, <em className="ab-serif">not a single disease.</em>
+          A cluster, <em className="vb-accent-text">not a single disease.</em>
         </Typography>
         <p className="ab-lead">
           Metabolic syndrome is a group of related conditions that together raise your risk of cardiovascular disease,
@@ -108,7 +108,7 @@ const About = () => (
       <div className="ab-section__head">
         <span className="ab-eyebrow">Before you start</span>
         <Typography id="ab-numbers-title" variant="h2" className="ab-h2">
-          Getting your <em className="ab-serif">numbers right</em>
+          Getting your <em className="vb-accent-text">numbers right</em>
         </Typography>
         <p className="ab-lead">Accurate inputs give an accurate result. Here's where each number comes from.</p>
       </div>
@@ -191,7 +191,7 @@ const About = () => (
       <div className="ab-section__head">
         <span className="ab-eyebrow">Your data</span>
         <Typography id="ab-privacy-title" variant="h2" className="ab-h2">
-          Your data, <em className="ab-serif">your choice</em>
+          Your data, <em className="vb-accent-text">your choice</em>
         </Typography>
       </div>
       <ul className="ab-privacy">

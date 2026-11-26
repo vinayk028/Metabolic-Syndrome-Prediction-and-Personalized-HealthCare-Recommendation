@@ -39,8 +39,6 @@ export const PROFILE_ITEM: NavItem = {
  */
 export const FULL_BLEED_ROUTES: string[] = ['/'];
 
-/** Routes whose first section is dark — the navbar uses light text over them until scrolled. (None right now.) */
-export const DARK_HERO_ROUTES: string[] = [];
 
 export const isPathActive = (current: string, path: string) =>
   path === '/' ? current === '/' : current === path || current.startsWith(`${path}/`);

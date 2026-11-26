@@ -29,7 +29,7 @@ const AuthShell = ({ eyebrow, title, subtitle, children, footer }: AuthShellProp
       <div className="au-panel__copy">
         <span className="au-eyebrow">MetS Health account</span>
         <p className="au-panel__title">
-          Your metabolic health, <em className="au-serif">in balance.</em>
+          Your metabolic health, <em className="vb-accent-text">in balance.</em>
         </p>
         <ul className="au-benefits">
           {BENEFITS.map((b) => (

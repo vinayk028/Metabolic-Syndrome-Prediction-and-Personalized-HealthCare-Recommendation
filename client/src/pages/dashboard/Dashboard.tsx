@@ -321,7 +321,7 @@ const Dashboard = () => {
         <div className="db-head__copy">
           <span className="db-eyebrow">Your dashboard</span>
           <Typography variant="h2" component="h1" className="db-head__title">
-            Welcome back, <em className="db-serif">{user.firstName}</em>
+            Welcome back, <em className="vb-accent-text">{user.firstName}</em>
           </Typography>
           <Typography className="db-head__sub">Here's how your metabolic health is trending.</Typography>
           {updatedAt && (

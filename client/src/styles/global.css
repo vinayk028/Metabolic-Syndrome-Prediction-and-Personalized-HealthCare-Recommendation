@@ -11,11 +11,6 @@
 :root {
   /* ── Colour aliases (follow light/dark automatically) ── */
   --vb-primary: var(--mui-palette-primary-main);
-  --vb-primary-light: var(--mui-palette-primary-light);
-  --vb-primary-dark: var(--mui-palette-primary-dark);
-  --vb-primary-rgb: var(--mui-palette-primary-mainChannel);
-  --vb-accent: var(--mui-palette-accent-main);
-  --vb-accent-light: var(--mui-palette-accent-light);
 
   --vb-bg: var(--mui-palette-background-default);
   --vb-paper: var(--mui-palette-background-paper);
@@ -28,31 +23,15 @@
   --vb-text-muted: var(--mui-palette-text-secondary);
   --vb-text-faint: var(--mui-palette-text-disabled);
 
-  /* Risk factors (identity colours) */
-  --vb-factor-waist: var(--mui-palette-factor-waist-main);
-  --vb-factor-waist-soft: var(--mui-palette-factor-waist-soft);
-  --vb-factor-bp: var(--mui-palette-factor-bloodPressure-main);
-  --vb-factor-bp-soft: var(--mui-palette-factor-bloodPressure-soft);
-  --vb-factor-glucose: var(--mui-palette-factor-glucose-main);
-  --vb-factor-glucose-soft: var(--mui-palette-factor-glucose-soft);
-  --vb-factor-tg: var(--mui-palette-factor-triglycerides-main);
-  --vb-factor-tg-soft: var(--mui-palette-factor-triglycerides-soft);
-  --vb-factor-hdl: var(--mui-palette-factor-hdl-main);
-  --vb-factor-hdl-soft: var(--mui-palette-factor-hdl-soft);
-
   /* Risk status */
   --vb-risk-low: var(--mui-palette-risk-low-main);
   --vb-risk-low-soft: var(--mui-palette-risk-low-soft);
   --vb-risk-medium: var(--mui-palette-risk-medium-main);
-  --vb-risk-medium-soft: var(--mui-palette-risk-medium-soft);
   --vb-risk-high: var(--mui-palette-risk-high-main);
-  --vb-risk-high-soft: var(--mui-palette-risk-high-soft);
 
   /* ── Brand constants (scheme-independent) ── */
-  --vb-teal-500: #0f9d8f;
   --vb-coral-400: #ff5a5f;
   --vb-gradient-brand: linear-gradient(135deg, #0f9d8f 0%, #0b7f74 100%);
-  --vb-gradient-vital: linear-gradient(120deg, #0f9d8f 0%, #0ea5a0 45%, #ff5a5f 100%);
 
   /* ── Shape ── */
   --vb-radius-xs: 6px;
@@ -69,10 +48,8 @@
   --vb-space-4: 1rem;
   --vb-space-5: 1.25rem;
   --vb-space-6: 1.5rem;
-  --vb-space-8: 2rem;
   --vb-space-10: 2.5rem;
   --vb-space-12: 3rem;
-  --vb-space-16: 4rem;
   --vb-space-section: clamp(3rem, 2rem + 4vw, 6rem);
   --vb-gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
 
@@ -83,7 +60,6 @@
   --vb-shadow-lg: 0 12px 24px rgba(15, 23, 42, 0.08), 0 32px 64px rgba(15, 23, 42, 0.1);
   --vb-shadow-brand: 0 6px 18px rgba(11, 127, 116, 0.28);
   --vb-shadow-brand-lg: 0 10px 28px rgba(11, 127, 116, 0.36);
-  --vb-ring-focus: 0 0 0 3px rgba(var(--mui-palette-primary-mainChannel) / 0.35);
 
   /* ── Motion ── */
   --vb-ease: cubic-bezier(0.4, 0, 0.2, 1);
@@ -269,25 +245,6 @@ input:disabled {
   background-clip: padding-box;
 }
 
-/* ==========================================================================
-   Utilities
-   ========================================================================== */
-
-.gradient-text {
-  background: var(--vb-gradient-vital);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-.glass-effect {
-  background: var(--vb-glass);
-  backdrop-filter: saturate(180%) blur(16px);
-  -webkit-backdrop-filter: saturate(180%) blur(16px);
-  border: 1px solid var(--vb-border);
-}
-
 .visually-hidden {
   position: absolute !important;
   width: 1px;
@@ -306,25 +263,10 @@ input:disabled {
   transition: opacity var(--vb-dur-base) var(--vb-ease);
 }
 
-/* Kept for existing pages until their Phase 4 redesign */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes vb-pulse-draw {
-  from {
-    stroke-dashoffset: var(--vb-pulse-length, 600);
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
+/* Highlighted words in headings ("…before it catches you.") */
+.vb-accent-text {
+  font-style: normal;
+  color: var(--vb-primary);
 }
 
 /* ==========================================================================

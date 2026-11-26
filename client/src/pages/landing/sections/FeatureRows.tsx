@@ -138,7 +138,7 @@ const ROWS: Row[] = [
     kicker: 'Prediction',
     title: (
       <>
-        Know where you stand. <em className="lp-serif">Clearly.</em>
+        Know where you stand. <em className="vb-accent-text">Clearly.</em>
       </>
     ),
     text: 'Enter a few numbers from a routine check-up and see how likely metabolic syndrome is, and how severe — so the result reflects both likelihood and degree.',
@@ -149,7 +149,7 @@ const ROWS: Row[] = [
     kicker: 'Personal plan',
     title: (
       <>
-        Advice shaped by <em className="lp-serif">your numbers.</em>
+        Advice shaped by <em className="vb-accent-text">your numbers.</em>
       </>
     ),
     text: 'Recommendations change with your severity grade — what to eat, what to limit, how to move and which yoga poses to try.',
@@ -160,7 +160,7 @@ const ROWS: Row[] = [
     kicker: 'Progress',
     title: (
       <>
-        Watch your risk <em className="lp-serif">come down.</em>
+        Watch your risk <em className="vb-accent-text">come down.</em>
       </>
     ),
     text: 'Save each assessment to your dashboard and see how lifestyle changes move your probability and every marker over time.',
