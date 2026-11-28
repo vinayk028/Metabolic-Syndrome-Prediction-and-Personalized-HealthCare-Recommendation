@@ -18,45 +18,51 @@ import {
     Button,
     Tooltip,
 } from '@mui/material';
-import {
-    Chat as ChatIcon,
-    Close as CloseIcon,
-    Send as SendIcon,
-    DeleteOutline as ClearIcon,
-    HealthAndSafety as AssistantIcon,
-} from '@mui/icons-material';
+// Path imports (as elsewhere in the app): the package barrel pulls in every icon in dev and tests
+import ChatIcon from '@mui/icons-material/Chat';
+import CloseIcon from '@mui/icons-material/Close';
+import SendIcon from '@mui/icons-material/Send';
+import ClearIcon from '@mui/icons-material/DeleteOutline';
+import AssistantIcon from '@mui/icons-material/HealthAndSafety';
 import { useChatStore, QUICK_ACTIONS } from '../../stores/chatStore';
 import './ChatAssistant.css';
 
 // ============ Markdown Renderer ============
 
-/** Simple markdown → HTML converter for chat bubbles */
+/** Escape HTML so reply text can never inject markup or script */
+const escapeHtml = (text: string): string =>
+    text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+/** Simple markdown → HTML converter for assistant replies (input is escaped first) */
 const renderMarkdown = (text: string): string => {
-    return text
+    return escapeHtml(text)
         // Bold: **text**
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         // Italic: *text* (not preceded/followed by *)
         .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
         // Inline code: `code`
         .replace(/`(.*?)`/g, '<code>$1</code>')
-        // Headers: ### text
-        .replace(/^### (.*$)/gm, '<h4>$1</h4>')
-        .replace(/^## (.*$)/gm, '<h3>$1</h3>')
+        // Headings (## / ###): a bold line, not a page heading
+        .replace(/^#{2,3} (.*)$/gm, '<span class="chat-heading">$1</span>')
         // Unordered list items: - text or • text
         .replace(/^[-•] (.*$)/gm, '<li>$1</li>')
-        // Wrap consecutive <li> tags in <ul>
-        .replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>')
+        // Wrap consecutive <li> tags in <ul> (newlines between items dropped: a <ul> may only hold <li>)
+        .replace(/((?:<li>.*<\/li>\n?)+)/g, (items) => `<ul>${items.replace(/\n/g, '')}</ul>`)
         // Paragraphs: double newline
         .replace(/\n\n/g, '</p><p>')
-        // Single newline → <br>
+        // Single newline → <br> (a heading is a block, so it needs no break after it)
+        .replace(/(<\/span>)\n/g, '$1')
         .replace(/\n/g, '<br>')
         // Wrap in paragraph
         .replace(/^(.*)$/, '<p>$1</p>')
         // Clean up empty paragraphs
         .replace(/<p><\/p>/g, '')
-        // Clean up paragraphs wrapping block elements
-        .replace(/<p>(<h[34]>)/g, '$1')
-        .replace(/(<\/h[34]>)<\/p>/g, '$1')
+        // Clean up paragraphs wrapping lists
         .replace(/<p>(<ul>)/g, '$1')
         .replace(/(<\/ul>)<\/p>/g, '$1');
 };
@@ -152,7 +158,7 @@ const ChatAssistant = () => {
                                 <AssistantIcon />
                             </Avatar>
                             <Box className="chat-header-text">
-                                <Typography variant="subtitle2" component="h6">
+                                <Typography variant="subtitle2" component="h2">
                                     MetS Health Assistant
                                 </Typography>
                                 <Box className="chat-header-status">
@@ -178,18 +184,19 @@ const ChatAssistant = () => {
                     </Box>
 
                     {/* Messages */}
-                    <Box className="chat-messages" role="log" aria-live="polite">
+                    <Box className="chat-messages" role="log" aria-live="polite" aria-label="Conversation" tabIndex={0}>
                         {messages.map((msg) => (
                             <Box key={msg.id} className={`chat-message ${msg.role}`}>
                                 <Box>
-                                    <Box
-                                        className="chat-bubble"
-                                        dangerouslySetInnerHTML={{
-                                            __html: msg.role === 'assistant'
-                                                ? renderMarkdown(msg.content)
-                                                : msg.content,
-                                        }}
-                                    />
+                                    {msg.role === 'assistant' ? (
+                                        <Box
+                                            className="chat-bubble"
+                                            dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }}
+                                        />
+                                    ) : (
+                                        // The user's own text is shown as plain text, never as HTML
+                                        <Box className="chat-bubble">{msg.content}</Box>
+                                    )}
                                     <Typography className="chat-time">
                                         {new Date(msg.timestamp).toLocaleTimeString([], {
                                             hour: '2-digit',

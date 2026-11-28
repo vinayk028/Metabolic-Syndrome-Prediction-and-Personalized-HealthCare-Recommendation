@@ -69,7 +69,7 @@ const Section = ({ icon, title, hint, children }: { icon: ReactNode; title: stri
         {icon}
       </span>
       <div>
-        <Typography component="h3" className="as-section__title">
+        <Typography component="h2" className="as-section__title">
           {title}
         </Typography>
         {hint && <p className="as-section__hint">{hint}</p>}

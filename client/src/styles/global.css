@@ -11,6 +11,9 @@
 :root {
   /* ── Colour aliases (follow light/dark automatically) ── */
   --vb-primary: var(--mui-palette-primary-main);
+  /* Teal text on teal-tinted backgrounds (chips, active nav, selected options):
+     one step darker so it stays readable (WCAG AA 4.5:1) */
+  --vb-primary-ink: var(--mui-palette-primary-dark);
 
   --vb-bg: var(--mui-palette-background-default);
   --vb-paper: var(--mui-palette-background-paper);
@@ -21,7 +24,9 @@
 
   --vb-text: var(--mui-palette-text-primary);
   --vb-text-muted: var(--mui-palette-text-secondary);
-  --vb-text-faint: var(--mui-palette-text-disabled);
+  /* Quietest text (dates, hints, footnotes). Not MUI's "disabled" grey, which
+     is too light for real information; this still meets AA (≥ 4.5:1) */
+  --vb-text-faint: #606f86;
 
   /* Risk status */
   --vb-risk-low: var(--mui-palette-risk-low-main);
@@ -94,6 +99,8 @@
   --vb-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.4), 0 32px 64px rgba(0, 0, 0, 0.45);
   --vb-shadow-brand: 0 6px 22px rgba(43, 196, 180, 0.22);
   --vb-shadow-brand-lg: 0 10px 32px rgba(43, 196, 180, 0.32);
+  --vb-text-faint: #76869c;
+  --vb-primary-ink: var(--mui-palette-primary-main);
   color-scheme: dark;
 }
 

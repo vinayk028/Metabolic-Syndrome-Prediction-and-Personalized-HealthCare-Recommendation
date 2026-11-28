@@ -78,7 +78,7 @@
   border-radius: var(--vb-radius-pill);
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--vb-primary);
+  color: var(--vb-primary-ink);
   background: color-mix(in srgb, var(--vb-primary) 12%, var(--vb-paper));
 }
 
@@ -212,16 +212,23 @@
   }
 }
 
+/* Icon sits in the left gutter (absolutely placed), label above value */
 .pf-detail {
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 0.85rem 1rem;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(2.25rem + 1.7rem);
+  padding: 0.85rem 1rem 0.85rem calc(1rem + 2.25rem + 0.85rem);
   border-radius: var(--vb-radius-md);
   background: var(--vb-surface-sunken);
 }
 
 .pf-detail__icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -234,10 +241,6 @@
 
 .pf-detail__icon .MuiSvgIcon-root {
   font-size: 1.2rem;
-}
-
-.pf-detail__body {
-  min-width: 0;
 }
 
 .pf-detail dt {

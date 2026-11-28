@@ -110,7 +110,7 @@
 }
 
 .vb-nav__link.is-active {
-  color: var(--vb-primary);
+  color: var(--vb-primary-ink);
 }
 
 /* Active page: raised white pill (slides between links) — same language as
@@ -268,6 +268,98 @@
   color: var(--vb-risk-high);
 }
 
+/* The menu list is a grid so the Theme row (label · Light · Dark) sits on one
+   line while every other row spans the full width */
+.vb-account-menu .MuiList-root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+
+.vb-account-menu .MuiList-root > * {
+  grid-column: 1 / -1;
+}
+
+/* Non-item rows (header, "Theme" label) use ListSubheader: reset its look */
+.vb-account-menu .MuiListSubheader-root {
+  position: static;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  background: none;
+}
+
+.vb-account-menu .vb-account-menu__header {
+  padding: var(--vb-space-4);
+}
+
+.vb-account-menu .MuiList-root > .vb-account-menu__theme-label {
+  grid-column: 1;
+  padding: 6px 0 6px 16px;
+  font-weight: 500;
+  color: var(--vb-text);
+}
+
+/* Light / Dark: a sunken pill track split across two menu items */
+.vb-account-menu .MuiList-root > .vb-theme-opt {
+  grid-column: auto;
+}
+
+.vb-theme-opt.MuiMenuItem-root,
+.vb-theme-opt.MuiMenuItem-root:hover,
+.vb-theme-opt.MuiMenuItem-root.Mui-focusVisible {
+  min-height: 0;
+  margin-block: 4px;
+  padding: 3px;
+  background: var(--vb-surface-sunken);
+}
+
+.vb-theme-opt--first.MuiMenuItem-root {
+  margin-left: var(--vb-space-3);
+  padding-right: 1.5px;
+  border-radius: var(--vb-radius-pill) 0 0 var(--vb-radius-pill);
+}
+
+.vb-theme-opt--last.MuiMenuItem-root {
+  margin-right: 12px;
+  padding-left: 1.5px;
+  border-radius: 0 var(--vb-radius-pill) var(--vb-radius-pill) 0;
+}
+
+.vb-theme-opt__inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--vb-radius-pill);
+  font-family: var(--vb-font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vb-text-muted);
+}
+
+.vb-theme-opt__inner .MuiSvgIcon-root {
+  font-size: 1rem;
+}
+
+.vb-theme-opt:hover .vb-theme-opt__inner {
+  color: var(--vb-text);
+}
+
+.vb-theme-opt.is-on .vb-theme-opt__inner {
+  color: var(--vb-primary-ink);
+  background: color-mix(in srgb, var(--vb-primary) 14%, var(--vb-paper));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vb-primary) 30%, transparent);
+}
+
+/* Keyboard focus: ring around the option itself */
+.vb-theme-opt.Mui-focusVisible .vb-theme-opt__inner {
+  outline: 2px solid var(--vb-primary);
+  outline-offset: 1px;
+}
+
 /* ── Full-screen menu (narrow screens) ─────────────────────────── */
 
 .vb-menu__backdrop.MuiBackdrop-root {
@@ -368,7 +460,7 @@
 }
 
 .vb-menu__item.is-active .vb-menu__label {
-  color: var(--vb-primary);
+  color: var(--vb-primary-ink);
 }
 
 .vb-menu__item.is-active .vb-menu__icon {
@@ -426,11 +518,6 @@
   gap: var(--vb-space-3);
 }
 
-.vb-theme--menu {
-  margin: 4px 8px;
-  padding: 6px 4px 6px 8px;
-}
-
 .vb-theme--sheet {
   padding: var(--vb-space-2) var(--vb-space-2) var(--vb-space-2) var(--vb-space-4);
   border-radius: var(--vb-radius-md);
@@ -475,7 +562,7 @@
 
 .vb-theme__options .MuiToggleButton-root.Mui-selected,
 .vb-theme__options .MuiToggleButton-root.Mui-selected:hover {
-  color: var(--vb-primary);
+  color: var(--vb-primary-ink);
   background: color-mix(in srgb, var(--vb-primary) 14%, var(--vb-paper));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--vb-primary) 30%, transparent);
 }

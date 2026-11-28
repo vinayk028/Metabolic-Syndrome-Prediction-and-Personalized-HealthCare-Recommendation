@@ -72,15 +72,16 @@ const Card = ({ title, sub, action, children, tone }: { title: string; sub?: str
   </section>
 );
 
-const Detail = ({ icon, label, value }: { icon: ReactNode; label: string; value?: string | null }) => (
-  <div className="pf-detail">
-    <span className="pf-detail__icon" aria-hidden>
-      {icon}
-    </span>
-    <div className="pf-detail__body">
-      <dt>{label}</dt>
-      <dd className={value ? undefined : 'is-empty'}>{value || 'Not added yet'}</dd>
-    </div>
+/** One label/value pair of the details <dl>: the group div holds only <dt> + <dd>. */
+const Detail = ({ icon, label, value, wide }: { icon: ReactNode; label: string; value?: string | null; wide?: boolean }) => (
+  <div className={`pf-detail${wide ? ' pf-details__wide' : ''}`}>
+    <dt>
+      <span className="pf-detail__icon" aria-hidden>
+        {icon}
+      </span>
+      {label}
+    </dt>
+    <dd className={value ? undefined : 'is-empty'}>{value || 'Not added yet'}</dd>
   </div>
 );
 
@@ -331,9 +332,7 @@ const Profile = () => {
                 value={user.dateOfBirth ? formatDate(user.dateOfBirth) : null}
               />
               <Detail icon={<PersonOutlineRoundedIcon />} label="Gender" value={user.gender} />
-              <div className="pf-details__wide">
-                <Detail icon={<PlaceOutlinedIcon />} label="Address" value={user.address} />
-              </div>
+              <Detail icon={<PlaceOutlinedIcon />} label="Address" value={user.address} wide />
             </dl>
           ) : (
             <form onSubmit={handleProfileSubmit} className="pf-form">

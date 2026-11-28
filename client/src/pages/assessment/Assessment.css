@@ -412,6 +412,11 @@
   gap: 0.5rem;
 }
 
+/* Text button on the tinted panel: darker teal for contrast */
+.as-save__actions .MuiButton-text {
+  color: var(--vb-primary-ink);
+}
+
 .as-results__top {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

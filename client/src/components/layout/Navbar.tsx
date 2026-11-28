@@ -6,7 +6,20 @@
  */
 import { useEffect, useState, type MouseEvent } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { AppBar, Avatar, Box, Button, Container, Divider, Drawer, IconButton, Menu, MenuItem, Toolbar } from '@mui/material';
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Divider,
+  Drawer,
+  IconButton,
+  ListSubheader,
+  Menu,
+  MenuItem,
+  Toolbar,
+} from '@mui/material';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
@@ -15,11 +28,15 @@ import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
+import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded';
+import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores';
 import BrandLogo from '../ui/BrandLogo';
 import { NAV_ITEMS, PROFILE_ITEM, isPathActive } from './navConfig';
 import { ThemeChooser, ThemeIconButton } from './ThemeToggle';
+import { useThemeMode } from './useThemeMode';
 import './Navbar.css';
 
 const initials = (first?: string, last?: string) => `${first?.charAt(0) ?? ''}${last?.charAt(0) ?? ''}`.toUpperCase() || '?';
@@ -30,6 +47,7 @@ const Navbar = () => {
   const [accountAnchor, setAccountAnchor] = useState<null | HTMLElement>(null);
   const { pathname } = useLocation();
   const { user, isAuthenticated, logout } = useAuthStore();
+  const { mode, setTheme } = useThemeMode();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -104,7 +122,8 @@ const Navbar = () => {
                 <IconButton
                   onClick={openAccount}
                   className="vb-nav__avatar-btn"
-                  aria-label="Account menu"
+                  // Name starts with the visible initials (voice users can say "click AR")
+                  aria-label={`${userInitials}, account menu`}
                   aria-haspopup="menu"
                   aria-expanded={Boolean(accountAnchor)}
                 >
@@ -143,15 +162,19 @@ const Navbar = () => {
         onClose={closeAccount}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{ paper: { className: 'vb-account-menu' } }}
+        // The dropdown renders outside the page landmarks: label it as its own region
+        slotProps={{ paper: { className: 'vb-account-menu', role: 'region', 'aria-label': 'Account' } }}
       >
-        <Box className="vb-account-menu__header">
-          <Avatar className="vb-nav__avatar vb-nav__avatar--lg">{userInitials}</Avatar>
+        {/* Who is signed in — shown, but not a menu item */}
+        <ListSubheader role="none" disableSticky className="vb-account-menu__header">
+          <Avatar className="vb-nav__avatar vb-nav__avatar--lg" aria-hidden>
+            {userInitials}
+          </Avatar>
           <Box sx={{ minWidth: 0 }}>
             <div className="vb-account-menu__name">{user?.fullName}</div>
             <div className="vb-account-menu__email">{user?.email}</div>
           </Box>
-        </Box>
+        </ListSubheader>
         <Divider />
         <MenuItem component={Link} to="/dashboard" onClick={closeAccount} className="vb-account-menu__item">
           <SpaceDashboardRoundedIcon /> Dashboard
@@ -159,7 +182,33 @@ const Navbar = () => {
         <MenuItem component={Link} to="/profile" onClick={closeAccount} className="vb-account-menu__item">
           <PersonRoundedIcon /> Profile
         </MenuItem>
-        <ThemeChooser className="vb-theme--menu" />
+        {/* Theme: "Theme" label + Light / Dark as radio menu items, so arrow keys reach them */}
+        <ListSubheader role="none" disableSticky className="vb-theme__label vb-account-menu__theme-label">
+          <PaletteOutlinedIcon aria-hidden />
+          Theme
+        </ListSubheader>
+        <MenuItem
+          role="menuitemradio"
+          aria-checked={mode === 'light'}
+          aria-label="Light theme"
+          onClick={() => setTheme('light')}
+          className={`vb-theme-opt vb-theme-opt--first${mode === 'light' ? ' is-on' : ''}`}
+        >
+          <span className="vb-theme-opt__inner">
+            <LightModeRoundedIcon aria-hidden /> Light
+          </span>
+        </MenuItem>
+        <MenuItem
+          role="menuitemradio"
+          aria-checked={mode === 'dark'}
+          aria-label="Dark theme"
+          onClick={() => setTheme('dark')}
+          className={`vb-theme-opt vb-theme-opt--last${mode === 'dark' ? ' is-on' : ''}`}
+        >
+          <span className="vb-theme-opt__inner">
+            <DarkModeRoundedIcon aria-hidden /> Dark
+          </span>
+        </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout} className="vb-account-menu__item is-danger">
           <LogoutRoundedIcon /> Sign out
@@ -175,7 +224,7 @@ const Navbar = () => {
         // Sit just under the app bar so its menu/close button stays usable
         sx={{ zIndex: 1190 }}
         disableEnforceFocus
-        slotProps={{ paper: { className: 'vb-menu' }, backdrop: { className: 'vb-menu__backdrop' } }}
+        slotProps={{ paper: { className: 'vb-menu', 'aria-label': 'Menu' }, backdrop: { className: 'vb-menu__backdrop' } }}
       >
         <Box component="nav" aria-label="Site" className="vb-menu__inner">
           <ul className="vb-menu__list">
@@ -217,7 +266,9 @@ const Navbar = () => {
             {loggedIn ? (
               <>
                 <Box className="vb-menu__user">
-                  <Avatar className="vb-nav__avatar vb-nav__avatar--lg">{userInitials}</Avatar>
+                  <Avatar className="vb-nav__avatar vb-nav__avatar--lg" aria-hidden>
+                    {userInitials}
+                  </Avatar>
                   <Box sx={{ minWidth: 0 }}>
                     <div className="vb-account-menu__name">{user?.fullName}</div>
                     <div className="vb-account-menu__email">{user?.email}</div>

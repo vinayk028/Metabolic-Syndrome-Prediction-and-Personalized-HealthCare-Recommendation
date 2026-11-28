@@ -3,8 +3,8 @@
  * <html data-theme>, which every --vb-* token follows, and remembers the
  * choice in localStorage ("mui-mode").
  *
- * ThemeChooser — "Theme" row with Light / Dark options (account menu and the
- *                small-screen menu)
+ * ThemeChooser — "Theme" row with Light / Dark options (small-screen menu;
+ *                the account menu renders the same choice as radio menu items)
  * ThemeIconButton — compact sun/moon toggle in the bar for guests
  */
 import { IconButton, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
