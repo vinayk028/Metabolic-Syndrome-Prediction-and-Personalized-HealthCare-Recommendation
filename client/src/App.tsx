@@ -11,15 +11,8 @@ import { useAuthStore } from './stores';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
-// Pages
-import Landing from './pages/landing/Landing';
-import About from './pages/about/About';
-import Assessment from './pages/assessment/Assessment';
-import Resources from './pages/resources/Resources';
-import Login from './pages/auth/Login';
-import Signup from './pages/auth/Signup';
-import Profile from './pages/profile/Profile';
-import Dashboard from './pages/dashboard/Dashboard';
+// Pages load on demand (see pages/lazyPages.ts)
+import { About, Assessment, Dashboard, Landing, Login, Profile, Resources, Signup } from './pages/lazyPages';
 
 
 function App() {

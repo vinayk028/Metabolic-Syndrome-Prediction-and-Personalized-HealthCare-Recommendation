@@ -12,7 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import { useNewsStore } from '../../../stores';
-import DEFAULT_NEWS_IMAGE from '../../../assets/news.png';
+import DEFAULT_NEWS_IMAGE from '../../../assets/news.webp';
 
 const formatDate = (iso: string) => {
   const d = new Date(iso);

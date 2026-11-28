@@ -11,7 +11,7 @@ import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded';
 import { AnimatedReveal } from '../../components/ui';
 import { FACTORS, FACTOR_ORDER } from '../../theme/factors';
 import { factorVar } from '../../theme/cssVars';
-import ABOUT_HERO_IMAGE from '../../assets/about_hero.jpg';
+import ABOUT_HERO_IMAGE from '../../assets/about_hero.webp';
 import DOCTOR_IMAGE from '../../assets/doctor.jpg';
 import HEALTH_CHECK_IMAGE from '../../assets/health_check.jpg';
 import { NUMBER_GUIDES, PREVENTION, PRIVACY_POINTS, RISK_FACTORS } from './content';

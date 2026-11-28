@@ -41,6 +41,25 @@
   width: 100%;
 }
 
+/* While a page's code downloads: hold the space (footer stays put); the
+   spinner only appears if loading takes a noticeable moment */
+.vb-page-loading {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+}
+
+.vb-page-loading > * {
+  opacity: 0;
+  animation: vb-page-loading-in 200ms ease 400ms forwards;
+}
+
+@keyframes vb-page-loading-in {
+  to {
+    opacity: 1;
+  }
+}
+
 /* Default page container (non full-bleed routes) */
 .vb-page.MuiContainer-root {
   padding-top: clamp(1.25rem, 0.75rem + 2vw, 2.5rem);

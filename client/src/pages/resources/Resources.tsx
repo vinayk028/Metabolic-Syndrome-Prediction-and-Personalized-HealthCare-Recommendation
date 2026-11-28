@@ -14,7 +14,7 @@ import DirectionsRunRoundedIcon from '@mui/icons-material/DirectionsRunRounded';
 import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useNewsStore } from '../../stores';
-import DEFAULT_NEWS_IMAGE from '../../assets/news.png';
+import DEFAULT_NEWS_IMAGE from '../../assets/news.webp';
 import './Resources.css';
 
 const getTimeAgo = (dateString: string): string => {
