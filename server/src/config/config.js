@@ -30,9 +30,10 @@ const config = {
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
 
     // CORS
-    // Comma-separated list in CORS_ORIGINS, e.g. "https://mets-client-production.up.railway.app"
-    corsOrigins: process.env.CORS_ORIGINS
-        ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim()).filter(Boolean)
+    // Comma-separated list in CORS_ORIGINS, e.g. "https://mets-client-production.up.railway.app".
+    // Falls back to CLIENT_URL, then to the local dev origins.
+    corsOrigins: (process.env.CORS_ORIGINS || process.env.CLIENT_URL)
+        ? (process.env.CORS_ORIGINS || process.env.CLIENT_URL).split(',').map(origin => origin.trim()).filter(Boolean)
         : ['http://localhost:5173', 'http://localhost:3000'],
 
     // Python Service
@@ -69,6 +70,10 @@ const connectDB = async () => {
 
 const validateConfig = () => {
     if (config.jwtSecret === 'your-super-secret-jwt-key') {
+        if (!config.isDev) {
+            // Refuse to start: tokens signed with a public default secret can be forged
+            throw new Error('JWT_SECRET must be set in production.');
+        }
         console.warn('⚠️  Warning: Using default JWT secret. Set JWT_SECRET in production.');
     }
     if (!config.guardianApiKey) {

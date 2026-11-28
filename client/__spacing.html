@@ -1,0 +1,57 @@
+<!doctype html>
+<html><body><pre id="out"></pre>
+<script>
+(async () => {
+  // Temporary spacing probe (deleted after stage 6).
+  // For each page and width: gap from the bar to the first content, gaps between
+  // the page's top-level blocks, and the gap from the last block to the footer.
+  const out = document.getElementById('out');
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const PAGES = [
+    ['/', 0], ['/assessment', 0], ['/dashboard', 1], ['/resources', 0], ['/about', 0],
+    ['/login', 0], ['/signup', 0], ['/profile', 1], ['/nope', 0],
+  ];
+  const visible = (el) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return r.height > 1 && cs.display !== 'none' && cs.visibility !== 'hidden'; };
+  // Descend through single-child wrappers until there are several blocks
+  const blocksOf = (root) => {
+    let node = root;
+    for (let i = 0; i < 6; i++) {
+      const kids = [...node.children].filter(visible);
+      if (kids.length !== 1) return kids;
+      node = kids[0];
+    }
+    return [...node.children].filter(visible);
+  };
+  const res = [];
+  for (const w of [1440, 768, 375]) {
+    for (const [route, auth] of PAGES) {
+      const f = document.createElement('iframe');
+      f.style.width = w + 'px'; f.style.height = '900px';
+      f.src = `/__shot.html?route=${route}&auth=${auth}`;
+      document.body.appendChild(f);
+      await new Promise((r) => (f.onload = r));
+      await wait(3000);
+      const d = f.contentDocument;
+      const g = (el) => el.getBoundingClientRect();
+      const page = d.querySelector('.vb-main__page');
+      const navBottom = g(d.querySelector('.vb-nav__spacer') || d.querySelector('header')).bottom;
+      const footer = d.querySelector('footer');
+      const blocks = blocksOf(d.querySelector('.vb-page') || page);
+      if (!blocks.length) { res.push({ w, route, top: null, topText: null, gaps: [], bottom: null, names: ['(empty page)'], overflow: false }); f.remove(); continue; }
+      const gaps = blocks.slice(1).map((b, i) => Math.round(g(b).top - g(blocks[i]).bottom));
+      const firstText = [...page.querySelectorAll('h1, h2, [class*="eyebrow"], [class*="kicker"], [class*="welcome"]')].find(visible);
+      res.push({
+        w, route,
+        top: Math.round(g(blocks[0]).top - navBottom),
+        topText: firstText ? Math.round(g(firstText).top - navBottom) : null,
+        gaps,
+        bottom: footer ? Math.round(g(footer).top - g(blocks[blocks.length - 1]).bottom) : null,
+        names: blocks.map((b) => (b.className.baseVal ?? b.className).toString().split(' ').find((c) => !c.startsWith('Mui') && !c.startsWith('css-')) || b.tagName.toLowerCase()),
+        overflow: d.documentElement.scrollWidth > d.documentElement.clientWidth,
+      });
+      f.remove();
+    }
+  }
+  out.textContent = JSON.stringify(res) + '\nDONE';
+})().catch((e) => (document.getElementById('out').textContent = 'null\nERR ' + e));
+</script></body></html>

@@ -16,8 +16,8 @@ COPY . .
 # Change to non-root user
 USER node
 
-# Expose port 3000
-EXPOSE 3000
+# Expose the API port (PORT, default 5000)
+EXPOSE 5000
 
 # Start the application
 CMD ["npm", "start"]
