@@ -16,6 +16,9 @@ COPY server/src/services/prediction/prediction_service.py ./prediction_service.p
 # Copy PredictionModel submodule
 COPY PredictionModel ./PredictionModel
 
+# Flush print() output immediately so startup messages appear in container logs
+ENV PYTHONUNBUFFERED=1
+
 # Model location inside container
 ENV MODEL_PATH=/app/PredictionModel/src/Bayesian_Model/Bayesian_Prediction_Model.pkl
 
