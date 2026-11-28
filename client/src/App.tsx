@@ -12,7 +12,7 @@ import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Pages load on demand (see pages/lazyPages.ts)
-import { About, Assessment, Dashboard, Landing, Login, Profile, Resources, Signup } from './pages/lazyPages';
+import { About, Assessment, Dashboard, Landing, Login, NotFound, Profile, Resources, Signup } from './pages/lazyPages';
 
 
 function App() {
@@ -45,6 +45,8 @@ function App() {
                                     <Dashboard />
                                 </ProtectedRoute>
                             } />
+                            {/* Any other address */}
+                            <Route path="*" element={<NotFound />} />
                         </Routes>
                     </Layout>
                 </Router>

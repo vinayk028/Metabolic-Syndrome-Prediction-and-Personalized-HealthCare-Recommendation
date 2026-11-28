@@ -16,7 +16,7 @@ import { motion } from 'framer-motion';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ChatAssistant from '../chat/ChatAssistant';
-import { FULL_BLEED_ROUTES } from './navConfig';
+import { FULL_BLEED_ROUTES, pageTitle } from './navConfig';
 import { preloadPage } from '../../pages/lazyPages';
 import './Layout.css';
 
@@ -40,6 +40,11 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const { pathname, hash } = useLocation();
   const fullBleed = FULL_BLEED_ROUTES.includes(pathname);
+
+  // Each page gets its own browser-tab title
+  useEffect(() => {
+    document.title = pageTitle(pathname);
+  }, [pathname]);
 
   // One listener for every internal link (nav, buttons, footer…)
   useEffect(() => {

@@ -40,6 +40,24 @@ export const PROFILE_ITEM: NavItem = {
 export const FULL_BLEED_ROUTES: string[] = ['/'];
 
 
+/** Browser-tab titles (also what screen readers announce on page change). */
+const PAGE_TITLES: Record<string, string> = {
+  '/assessment': 'Assessment',
+  '/dashboard': 'Dashboard',
+  '/resources': 'Resources',
+  '/about': 'About & FAQ',
+  '/login': 'Sign in',
+  '/signup': 'Create account',
+  '/profile': 'Profile',
+};
+
+/** "Dashboard · MetS Health"; the home page keeps the full site title; unknown paths are "Page not found". */
+export const pageTitle = (path: string) => {
+  const p = path.length > 1 ? path.replace(/\/+$/, '') : path;
+  if (p === '/') return 'MetS Health · Know your metabolic risk';
+  return `${PAGE_TITLES[p] ?? 'Page not found'} · MetS Health`;
+};
+
 export const isPathActive = (current: string, path: string) =>
   path === '/' ? current === '/' : current === path || current.startsWith(`${path}/`);
 

@@ -27,6 +27,7 @@ export const Login = lazy(loaders['/login']);
 export const Signup = lazy(loaders['/signup']);
 export const Profile = lazy(loaders['/profile']);
 export const Dashboard = lazy(loaders['/dashboard']);
+export const NotFound = lazy(() => import('./not-found/NotFound'));
 
 /** Start downloading a page's code before it is opened (safe to call repeatedly). */
 export const preloadPage = (path: string) => {

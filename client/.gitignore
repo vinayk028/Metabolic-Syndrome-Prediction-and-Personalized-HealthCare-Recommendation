@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local audit / probe scratch files (never part of the app)
+/__*
