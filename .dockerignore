@@ -1,0 +1,33 @@
+# Root build context is used only by the prediction-service image,
+# which needs server/src/services/prediction/ and PredictionModel/.
+
+# Git
+.git
+.github
+
+# Environment / secrets
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Dependencies and build output
+**/node_modules
+**/venv
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/target
+**/dist
+**/coverage
+
+# Other apps and docs (not needed by the prediction image)
+client
+docs
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+*.log

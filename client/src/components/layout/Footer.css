@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.vb-footer {
+  position: relative;
+  /* Pages already end with their own bottom padding; this only leaves room
+     for the pulse line that rides on the footer's top edge. */
+  margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  background: var(--vb-surface);
+  border-top: 1px solid var(--vb-border);
+}
+
+.vb-footer__top {
+  padding: var(--vb-space-12) 0 var(--vb-space-10);
+}
+
+.vb-footer__blurb.MuiTypography-root {
+  max-width: 340px;
+  margin-top: var(--vb-space-4);
+  color: var(--vb-text-muted);
+}
+
+.vb-footer__factors {
+  margin-top: var(--vb-space-5);
+}
+
+.vb-footer__factor {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--vb-radius-sm);
+}
+
+.vb-footer__factor .MuiSvgIcon-root {
+  font-size: 18px;
+}
+
+.vb-footer__heading.MuiTypography-root {
+  margin-bottom: var(--vb-space-4);
+  font-family: var(--vb-font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vb-text);
+}
+
+.vb-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vb-space-1);
+  list-style: none;
+}
+
+.vb-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  font-size: 0.9375rem;
+  color: var(--vb-text-muted);
+}
+
+.vb-footer__links a:hover {
+  color: var(--vb-primary);
+}
+
+.vb-footer__bottom {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: var(--vb-space-3);
+  padding: var(--vb-space-5) 0 var(--vb-space-6);
+  border-top: 1px solid var(--vb-border);
+}
+
+.vb-footer__disclaimer.MuiTypography-root,
+.vb-footer__copy.MuiTypography-root {
+  color: var(--vb-text-muted);
+}
+
+.vb-footer__bottom .MuiIconButton-root {
+  width: 36px;
+  height: 36px;
+  color: var(--vb-text-muted);
+}
+
+.vb-footer {
+  padding-bottom: var(--vb-safe-bottom);
+}
+
+@media (min-width: 900px) {
+  .vb-footer__bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

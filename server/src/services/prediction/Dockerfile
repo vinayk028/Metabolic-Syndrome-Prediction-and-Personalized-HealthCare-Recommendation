@@ -21,6 +21,5 @@ ENV MODEL_PATH=/app/PredictionModel/src/Bayesian_Model/Bayesian_Prediction_Model
 
 EXPOSE 5001
 
-# Start the application
-# CMD ["python", "prediction_service.py"]
-CMD ["gunicorn", "--bind", "0.0.0.0:5001", "prediction_service:app"]
+# Start the application on $PORT (hosts like Railway inject it), defaulting to 5001
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-5001} --timeout 120 prediction_service:app"]

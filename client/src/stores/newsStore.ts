@@ -6,7 +6,7 @@
 import { create } from 'zustand';
 import type { NewsArticle } from '../types/types';
 import { getMetabolicSyndromeNews } from '../services/api';
-import DEFAULT_NEWS_IMAGE from '../assets/news.png';
+import DEFAULT_NEWS_IMAGE from '../assets/news.webp';
 
 interface NewsState {
     // Home slideshow (articles 16–20 from DB)

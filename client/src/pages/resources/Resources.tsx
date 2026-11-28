@@ -1,443 +1,323 @@
 /**
- * Resources Page
- * Educational materials, news, and references for metabolic syndrome
+ * Resources — latest metabolic-health news and trusted external sources.
+ * Data flow unchanged: news comes from useNewsStore().fetchResourceNews().
+ * (The FAQ now lives on the About page.)
  */
-
-import { useEffect } from 'react';
-import {
-    Box,
-    Typography,
-    Card,
-    CardContent,
-    CardMedia,
-    Grid,
-    Link,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    Button,
-    Chip,
-    Skeleton,
-} from '@mui/material';
-import {
-    ExpandMore as ExpandMoreIcon,
-    Link as LinkIcon,
-    LocalHospital as HospitalIcon,
-    Newspaper as NewspaperIcon,
-    FitnessCenter as FitnessIcon,
-    MenuBook as BookIcon,
-    Info as InfoIcon,
-    OpenInNew as OpenInNewIcon,
-    Refresh as RefreshIcon,
-    AccessTime as TimeIcon,
-    Science as ScienceIcon,
-} from '@mui/icons-material';
+import { useEffect, useState, type ReactNode, type SyntheticEvent } from 'react';
+import { Button, Skeleton, Typography } from '@mui/material';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
+import NewspaperRoundedIcon from '@mui/icons-material/NewspaperRounded';
+import LocalHospitalRoundedIcon from '@mui/icons-material/LocalHospitalRounded';
+import ScienceRoundedIcon from '@mui/icons-material/ScienceRounded';
+import DirectionsRunRoundedIcon from '@mui/icons-material/DirectionsRunRounded';
+import MonitorHeartRoundedIcon from '@mui/icons-material/MonitorHeartRounded';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useNewsStore } from '../../stores';
+import DEFAULT_NEWS_IMAGE from '../../assets/news.webp';
 import './Resources.css';
 
-// ==================== Helper Functions ====================
-
 const getTimeAgo = (dateString: string): string => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (seconds < 60) return 'Just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-    return date.toLocaleDateString();
+  const seconds = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  return new Date(dateString).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-// ==================== Static Data ====================
+interface Source {
+  title: string;
+  description: string;
+  url: string;
+}
 
-const medicalResources = [
-    {
+interface SourceGroup {
+  title: string;
+  sub: string;
+  icon: ReactNode;
+  tone: string;
+  items: Source[];
+}
+
+// Ordered so each row pairs groups of similar length (4+3, 2+2)
+const SOURCE_GROUPS: SourceGroup[] = [
+  {
+    title: 'Medical organizations',
+    sub: 'Clinical overviews from trusted health bodies',
+    icon: <LocalHospitalRoundedIcon />,
+    tone: '#e11d48',
+    items: [
+      {
         title: 'American Heart Association',
         description: 'Comprehensive information about metabolic syndrome and heart health',
         url: 'https://www.heart.org/en/health-topics/metabolic-syndrome',
-    },
-    {
+      },
+      {
         title: 'Mayo Clinic',
-        description: 'Symptoms, causes, and treatment of metabolic syndrome',
+        description: 'Symptoms, causes and treatment of metabolic syndrome',
         url: 'https://www.mayoclinic.org/diseases-conditions/metabolic-syndrome/symptoms-causes/syc-20351916',
-    },
-    {
+      },
+      {
         title: 'National Heart, Lung, and Blood Institute',
         description: 'In-depth medical research and guidelines',
         url: 'https://www.nhlbi.nih.gov/health-topics/metabolic-syndrome',
-    },
-    {
+      },
+      {
         title: 'World Health Organization',
         description: 'Global health data on noncommunicable diseases',
         url: 'https://www.who.int/news-room/fact-sheets/detail/noncommunicable-diseases',
-    },
-];
-
-const researchResources = [
-    {
-        title: 'PubMed',
-        description: 'Latest research articles on metabolic syndrome',
-        url: 'https://pubmed.ncbi.nlm.nih.gov/?term=metabolic+syndrome',
-    },
-    {
-        title: 'American Diabetes Association',
-        description: 'Research on metabolic syndrome and diabetes connection',
-        url: 'https://diabetes.org/diabetes-risk/prediabetes/metabolic-syndrome',
-    },
-];
-
-const lifestyleResources = [
-    {
+      },
+    ],
+  },
+  {
+    title: 'Lifestyle',
+    sub: 'Practical guides for diet, activity and stress',
+    icon: <DirectionsRunRoundedIcon />,
+    tone: '#16a34a',
+    items: [
+      {
         title: 'DASH Diet',
         description: 'Dietary approaches to stop hypertension',
         url: 'https://www.nhlbi.nih.gov/health-topics/dash-eating-plan',
-    },
-    {
-        title: 'Physical Activity Guidelines - CDC',
+      },
+      {
+        title: 'Physical Activity Guidelines — CDC',
         description: 'Recommended physical activity for adults',
         url: 'https://www.cdc.gov/physicalactivity/basics/index.htm',
-    },
-    {
-        title: 'Stress Management - Mayo Clinic',
+      },
+      {
+        title: 'Stress Management — Mayo Clinic',
         description: 'Techniques for managing stress effectively',
         url: 'https://www.mayoclinic.org/healthy-lifestyle/stress-management/in-depth/stress-management/art-20044289',
-    },
-];
-
-const monitoringResources = [
-    {
-        title: 'Blood Pressure Monitoring',
+      },
+    ],
+  },
+  {
+    title: 'Research & studies',
+    sub: 'Where the evidence comes from',
+    icon: <ScienceRoundedIcon />,
+    tone: '#2563eb',
+    items: [
+      {
+        title: 'PubMed',
+        description: 'Latest research articles on metabolic syndrome',
+        url: 'https://pubmed.ncbi.nlm.nih.gov/?term=metabolic+syndrome',
+      },
+      {
+        title: 'American Diabetes Association',
+        description: 'Research on the link between metabolic syndrome and diabetes',
+        url: 'https://diabetes.org/diabetes-risk/prediabetes/metabolic-syndrome',
+      },
+    ],
+  },
+  {
+    title: 'Monitoring',
+    sub: 'Understand and track your numbers at home',
+    icon: <MonitorHeartRoundedIcon />,
+    tone: '#7c3aed',
+    items: [
+      {
+        title: 'Blood Pressure Readings — AHA',
         description: 'Guide to understanding blood pressure readings',
         url: 'https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings',
-    },
-    {
-        title: 'Blood Glucose Monitoring - CDC',
+      },
+      {
+        title: 'Blood Glucose Monitoring — CDC',
         description: 'How to monitor and manage blood sugar levels',
         url: 'https://www.cdc.gov/diabetes/managing/managing-blood-sugar/bloodglucosemonitoring.html',
-    },
+      },
+    ],
+  },
 ];
-
-const faqs = [
-    {
-        question: 'What causes metabolic syndrome?',
-        answer: 'Metabolic syndrome is closely linked to overweight/obesity and inactivity. It\'s also linked to insulin resistance, which causes the body to have difficulty using insulin effectively. Genetic factors, aging, and hormonal changes can also contribute to developing metabolic syndrome.',
-    },
-    {
-        question: 'Can metabolic syndrome be reversed?',
-        answer: 'Yes, metabolic syndrome can often be reversed or managed through lifestyle changes. Weight loss, regular physical activity, healthy diet, stress management, and adequate sleep can significantly improve or eliminate metabolic syndrome conditions. In some cases, medication may also be prescribed.',
-    },
-    {
-        question: 'How is metabolic syndrome diagnosed?',
-        answer: 'Metabolic syndrome is diagnosed when a person has at least three of the five following conditions: large waist circumference, high triglycerides, low HDL cholesterol, high blood pressure, and high fasting blood sugar. A healthcare provider will perform blood tests and physical measurements.',
-    },
-    {
-        question: 'What are the long-term risks of untreated metabolic syndrome?',
-        answer: 'If left untreated, metabolic syndrome significantly increases the risk of developing type 2 diabetes (5x higher risk), cardiovascular disease (2x higher risk), stroke, and other serious health conditions. Early detection and management are crucial for prevention.',
-    },
-    {
-        question: 'How often should I get screened for metabolic syndrome?',
-        answer: 'Adults over 40, or those with risk factors like obesity, family history of diabetes, or sedentary lifestyle, should be screened annually. Younger adults with risk factors should discuss screening frequency with their healthcare provider.',
-    },
-];
-
-const DEFAULT_NEWS_IMAGE = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400';
-
-// ==================== Component ====================
 
 const Resources = () => {
-    const {
-        resourceArticles: news,
-        resourceLoading: newsLoading,
-        resourceError: newsError,
-        fetchResourceNews: fetchNews,
-    } = useNewsStore();
+  const {
+    resourceArticles: news,
+    resourceLoading: newsLoading,
+    resourceError: newsError,
+    fetchResourceNews: fetchNews,
+  } = useNewsStore();
 
-    useEffect(() => {
-        fetchNews();
-    }, [fetchNews]);
+  // Refresh happens in place: the current stories stay on screen and only the
+  // icon spins (skeletons are for the very first load).
+  const [refreshing, setRefreshing] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
 
-    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-        e.currentTarget.src = DEFAULT_NEWS_IMAGE;
-    };
+  useEffect(() => {
+    fetchNews().then(() => setUpdatedAt(new Date()));
+  }, [fetchNews]);
 
-    return (
-        <Box className="resources-page">
-            {/* Page Header */}
-            <Box className="page-header">
-                <Typography variant="h2" className="page-title">
-                    Resources & References
-                </Typography>
-                <Typography variant="h6" className="page-subtitle">
-                    Educational materials and trusted sources for metabolic syndrome information
-                </Typography>
-            </Box>
+  const handleRefresh = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    // Keep the spinner up long enough to read as feedback, not a flicker
+    await Promise.all([fetchNews(), new Promise((r) => setTimeout(r, 700))]);
+    setUpdatedAt(new Date());
+    setRefreshing(false);
+  };
 
-            {/* News Section */}
-            <Card className="news-section-card">
-                <CardContent>
-                    <Box className="card-header news-header">
-                        <Box className="news-title-section">
-                            <NewspaperIcon className="card-icon news-icon" />
-                            <Typography variant="h5" className="card-title">
-                                Latest MetS News
-                            </Typography>
-                        </Box>
-                        <Button
-                            startIcon={<RefreshIcon />}
-                            onClick={fetchNews}
-                            disabled={newsLoading}
-                            className="resources-refresh-btn"
-                            size="small"
-                        >
-                            Refresh
-                        </Button>
-                    </Box>
+  const busy = refreshing || newsLoading;
+  const firstLoad = newsLoading && news.length === 0;
 
-                    {newsLoading ? (
-                        <Grid container spacing={3} className="news-grid">
-                            {[1, 2, 3, 4, 5, 6].map((item) => (
-                                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item}>
-                                    <Card className="news-card-skeleton">
-                                        <Skeleton variant="rectangular" height={160} />
-                                        <CardContent>
-                                            <Skeleton variant="text" width="40%" height={24} />
-                                            <Skeleton variant="text" width="100%" height={28} />
-                                            <Skeleton variant="text" width="100%" />
-                                            <Skeleton variant="text" width="80%" />
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    ) : newsError && news.length === 0 ? (
-                        <Box className="news-error">
-                            <Typography variant="body1" color="textSecondary">
-                                {newsError}
-                            </Typography>
-                            <Button
-                                variant="outlined"
-                                startIcon={<RefreshIcon />}
-                                onClick={fetchNews}
-                                sx={{ mt: 2 }}
-                            >
-                                Try Again
-                            </Button>
-                        </Box>
-                    ) : (
-                        <Grid container spacing={3} className="news-grid">
-                            {news.map((article, index) => (
-                                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
-                                    <Card className="news-card">
-                                        <CardMedia
-                                            component="img"
-                                            height="160"
-                                            image={article.image || DEFAULT_NEWS_IMAGE}
-                                            alt={article.title}
-                                            className="news-card-image"
-                                            onError={handleImageError}
-                                        />
-                                        <CardContent className="news-card-content">
-                                            <Box className="news-meta">
-                                                <Chip
-                                                    label={article.source}
-                                                    size="small"
-                                                    className="news-source-chip"
-                                                />
-                                                <Typography variant="caption" className="news-time">
-                                                    <TimeIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                                                    {getTimeAgo(article.publishedAt)}
-                                                </Typography>
-                                            </Box>
-                                            <Typography variant="h6" className="news-title">
-                                                {article.title}
-                                            </Typography>
-                                            <Typography variant="body2" className="news-description">
-                                                {article.description}
-                                            </Typography>
-                                            <Link
-                                                href={article.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="news-link"
-                                            >
-                                                Read Full Article <OpenInNewIcon sx={{ fontSize: 16, ml: 0.5 }} />
-                                            </Link>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    )}
-                </CardContent>
-            </Card>
+  const handleImageError = (e: SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = DEFAULT_NEWS_IMAGE;
+  };
 
-            {/* Resource Cards Grid */}
-            <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Card className="resource-card">
-                        <CardContent>
-                            <Box className="card-header">
-                                <HospitalIcon className="card-icon hospital-icon" />
-                                <Typography variant="h5" className="card-title">
-                                    Medical Organizations
-                                </Typography>
-                            </Box>
-                            <List>
-                                {medicalResources.map((resource, index) => (
-                                    <ListItem key={index} className="resource-item">
-                                        <ListItemIcon>
-                                            <LinkIcon className="link-icon" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                <Link href={resource.url} target="_blank" rel="noopener noreferrer" className="resource-link">
-                                                    {resource.title}
-                                                </Link>
-                                            }
-                                            secondary={resource.description}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </CardContent>
-                    </Card>
-                </Grid>
+  return (
+    <div className="rs">
+      {/* ── Page heading ─────────────────────────────────────────────────── */}
+      <header className="rs-title">
+        <Typography variant="h2" component="h1" className="rs-title__h1">
+          Resources &amp; References
+        </Typography>
+        <Typography className="rs-title__sub">
+          The latest metabolic-health news and trusted sources to learn more.
+        </Typography>
+      </header>
 
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Card className="resource-card">
-                        <CardContent>
-                            <Box className="card-header">
-                                <ScienceIcon className="card-icon science-icon" />
-                                <Typography variant="h5" className="card-title">
-                                    Research & Studies
-                                </Typography>
-                            </Box>
-                            <List>
-                                {researchResources.map((resource, index) => (
-                                    <ListItem key={index} className="resource-item">
-                                        <ListItemIcon>
-                                            <LinkIcon className="link-icon" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                <Link href={resource.url} target="_blank" rel="noopener noreferrer" className="resource-link">
-                                                    {resource.title}
-                                                </Link>
-                                            }
-                                            secondary={resource.description}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </CardContent>
-                    </Card>
-                </Grid>
+      {/* ── News ─────────────────────────────────────────────────────────── */}
+      <section className="rs-section" aria-labelledby="rs-news-title" aria-busy={busy}>
+        <div className="rs-section__head">
+          <span className="rs-section__icon" aria-hidden>
+            <NewspaperRoundedIcon />
+          </span>
+          <div className="rs-section__titles">
+            <Typography id="rs-news-title" component="h2" className="rs-section__title">
+              Latest news
+            </Typography>
+            <p className="rs-section__sub">
+              Fresh stories on metabolic health from trusted outlets
+              {updatedAt && (
+                <span className="rs-updated" aria-live="polite">
+                  {' · '}
+                  {busy ? 'Updating…' : `Updated ${updatedAt.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`}
+                </span>
+              )}
+            </p>
+          </div>
+          <Button
+            onClick={handleRefresh}
+            disabled={busy}
+            startIcon={<RefreshRoundedIcon className={busy ? 'rs-spin' : undefined} />}
+            className="rs-refresh"
+          >
+            Refresh
+          </Button>
+        </div>
 
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Card className="resource-card">
-                        <CardContent>
-                            <Box className="card-header">
-                                <FitnessIcon className="card-icon fitness-icon" />
-                                <Typography variant="h5" className="card-title">
-                                    Lifestyle Management
-                                </Typography>
-                            </Box>
-                            <List>
-                                {lifestyleResources.map((resource, index) => (
-                                    <ListItem key={index} className="resource-item">
-                                        <ListItemIcon>
-                                            <LinkIcon className="link-icon" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                <Link href={resource.url} target="_blank" rel="noopener noreferrer" className="resource-link">
-                                                    {resource.title}
-                                                </Link>
-                                            }
-                                            secondary={resource.description}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </CardContent>
-                    </Card>
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Card className="resource-card">
-                        <CardContent>
-                            <Box className="card-header">
-                                <BookIcon className="card-icon book-icon" />
-                                <Typography variant="h5" className="card-title">
-                                    Monitoring Tools
-                                </Typography>
-                            </Box>
-                            <List>
-                                {monitoringResources.map((resource, index) => (
-                                    <ListItem key={index} className="resource-item">
-                                        <ListItemIcon>
-                                            <LinkIcon className="link-icon" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                <Link href={resource.url} target="_blank" rel="noopener noreferrer" className="resource-link">
-                                                    {resource.title}
-                                                </Link>
-                                            }
-                                            secondary={resource.description}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
-
-            {/* FAQ Section */}
-            <Card className="faq-card">
-                <CardContent>
-                    <Box className="card-header centered">
-                        <InfoIcon className="card-icon faq-icon" />
-                        <Typography variant="h5" className="card-title">
-                            Frequently Asked Questions
-                        </Typography>
-                    </Box>
-                    <Box className="faq-container">
-                        {faqs.map((faq, index) => (
-                            <Accordion key={index} className="faq-accordion">
-                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography className="faq-question">{faq.question}</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Typography className="faq-answer">{faq.answer}</Typography>
-                                </AccordionDetails>
-                            </Accordion>
-                        ))}
-                    </Box>
-                </CardContent>
-            </Card>
-
-            {/* Disclaimer */}
-            <Card className="disclaimer-card">
-                <CardContent>
-                    <Typography variant="h6" className="disclaimer-title">
-                        Disclaimer
+        {firstLoad ? (
+          <ul className="rs-news" aria-hidden>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <li key={i} className="rs-news__card">
+                <Skeleton variant="rectangular" className="rs-news__img" />
+                <div className="rs-news__body">
+                  <Skeleton width="45%" />
+                  <Skeleton width="95%" height={28} />
+                  <Skeleton width="80%" />
+                  <Skeleton width="60%" />
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : newsError && news.length === 0 ? (
+          <div className="rs-empty">
+            <NewspaperRoundedIcon aria-hidden />
+            <p>{newsError}</p>
+            <Button variant="outlined" startIcon={<RefreshRoundedIcon className={busy ? 'rs-spin' : undefined} />} onClick={handleRefresh} disabled={busy}>
+              Try again
+            </Button>
+          </div>
+        ) : news.length === 0 ? (
+          <div className="rs-empty">
+            <NewspaperRoundedIcon aria-hidden />
+            <p>No news right now — check back soon.</p>
+          </div>
+        ) : (
+          <ul className="rs-news">
+            {news.map((article, i) => (
+              <li key={article.url || i} className="rs-news__card">
+                <a href={article.url} target="_blank" rel="noopener noreferrer" className="rs-news__link">
+                  <img
+                    src={article.image || DEFAULT_NEWS_IMAGE}
+                    alt=""
+                    loading="lazy"
+                    className="rs-news__img"
+                    onError={handleImageError}
+                  />
+                  <div className="rs-news__body">
+                    <span className="rs-news__meta">
+                      <span className="rs-news__source">{article.source}</span>
+                      <span aria-hidden>·</span>
+                      <span>{getTimeAgo(article.publishedAt)}</span>
+                    </span>
+                    <Typography component="h3" className="rs-news__title">
+                      {article.title}
                     </Typography>
-                    <Typography variant="body2" className="disclaimer-text">
-                        This application is for informational and educational purposes only. It is not intended to
-                        replace professional medical advice, diagnosis, or treatment. Always consult with a qualified 
-                        healthcare provider for any health concerns.
-                    </Typography>
-                </CardContent>
-            </Card>
-        </Box>
-    );
+                    {article.description && <p className="rs-news__desc">{article.description}</p>}
+                    <span className="rs-news__read">
+                      Read article <OpenInNewRoundedIcon aria-hidden />
+                      <span className="visually-hidden"> (opens in a new tab)</span>
+                    </span>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* ── Trusted sources ──────────────────────────────────────────────── */}
+      <section aria-labelledby="rs-sources-title">
+        <div className="rs-sources__head">
+          <Typography id="rs-sources-title" component="h2" className="rs-h2">
+            Trusted sources
+          </Typography>
+          <p className="rs-section__sub">Hand-picked references if you want to go deeper.</p>
+        </div>
+        <div className="rs-groups">
+          {SOURCE_GROUPS.map((g) => (
+            <section key={g.title} className="rs-group" style={{ ['--t' as string]: g.tone }} aria-label={g.title}>
+              <header className="rs-group__head">
+                <span className="rs-group__icon" aria-hidden>
+                  {g.icon}
+                </span>
+                <div>
+                  <Typography component="h3" className="rs-group__title">
+                    {g.title}
+                  </Typography>
+                  <p className="rs-group__sub">{g.sub}</p>
+                </div>
+              </header>
+              <ul className="rs-links">
+                {g.items.map((s) => (
+                  <li key={s.url}>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="rs-link">
+                      <span className="rs-link__text">
+                        <span className="rs-link__title">{s.title}</span>
+                        <span className="rs-link__desc">{s.description}</span>
+                      </span>
+                      <OpenInNewRoundedIcon className="rs-link__icon" aria-hidden />
+                      <span className="visually-hidden"> (opens in a new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Disclaimer ───────────────────────────────────────────────────── */}
+      <aside className="rs-note">
+        <InfoOutlinedIcon aria-hidden />
+        <p>
+          <strong>For information only.</strong> MetS Health and the sources above don't replace professional medical
+          advice, diagnosis or treatment. Always talk to a qualified healthcare provider about your health.
+        </p>
+      </aside>
+    </div>
+  );
 };
 
 export default Resources;

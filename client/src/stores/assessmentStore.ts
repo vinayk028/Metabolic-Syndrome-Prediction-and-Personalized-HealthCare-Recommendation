@@ -3,6 +3,7 @@
  * Manages health assessment flow, form data, results & recommendations
  */
 
+import axios from 'axios';
 import { create } from 'zustand';
 import type {
     PatientInfo,
@@ -214,6 +215,11 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     },
 
     saveCurrentAssessment: async () => {
+        // Guests can run an assessment; only signed-in users have somewhere to save it.
+        // (The save endpoint is protected — calling it as a guest 401s and the API
+        // interceptor would redirect them to /login, throwing away their result.)
+        if (!localStorage.getItem('token')) return;
+
         const { patientInfo, additionalInfo, results, recommendations } = get();
         try {
             const inputParameters = buildInputParameters(patientInfo, additionalInfo, results.hasMetabolicSyndrome);
@@ -228,7 +234,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
         } catch (err) {
             console.error('Failed to save assessment:', err);
             // The API interceptor will handle 401 redirect to login
-            if ((err as any).response?.status !== 401) {
+            if (!axios.isAxiosError(err) || err.response?.status !== 401) {
                 set({ error: 'Failed to save assessment. Please try again.' });
             }
         }

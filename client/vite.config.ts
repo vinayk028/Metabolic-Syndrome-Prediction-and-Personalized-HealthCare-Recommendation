@@ -1,3 +1,5 @@
+/// <reference types="vitest/config" />
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -15,6 +17,15 @@ export default defineConfig({
   },
   preview: {
     host: true
+  },
+  test: {
+    include: ['tests/**/*.test.{ts,tsx}'],
+    environment: 'jsdom',
+    setupFiles: ['./tests/setup.ts'],
+    // Tests import app code as "@/..." (tests only; src keeps relative imports)
+    alias: [{ find: /^@\//, replacement: fileURLToPath(new URL('./src/', import.meta.url)).replace(/\\/g, '/') }],
+    css: false,
+    restoreMocks: true,
   },
   build: {
     rollupOptions: {

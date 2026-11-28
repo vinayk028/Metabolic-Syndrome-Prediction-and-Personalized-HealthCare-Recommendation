@@ -1,0 +1,1057 @@
+/* ==========================================================================
+   Landing — "Clinical premium"
+   Restrained palette (ink, teal, neutrals; status colours only where they
+   mean something), editorial type with a brand-colour accent, real product UI.
+   Fluid by construction: clamp()/min()/% sizing, auto-fit grids and
+   container queries — no device-specific layouts.
+   ========================================================================== */
+
+.lp {
+  /* One spacing system for the whole page:
+     --lp-gap      between any two blocks of content (sections, feature rows)
+     --lp-head-gap between a section heading and its content */
+  --lp-gap: var(--vb-space-section);
+  --lp-head-gap: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  overflow-x: clip;
+}
+
+/* ── Shared typography ─────────────────────────────────────────────────── */
+
+/* Emphasised words: same font as the heading, brand colour only */
+.lp-kicker {
+  display: inline-block;
+  margin-bottom: 0.9rem;
+  font-family: var(--vb-font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vb-primary);
+}
+
+.lp-h2.MuiTypography-root {
+  max-width: 20ch;
+  font-size: clamp(2rem, 1.35rem + 2.6vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--vb-text);
+}
+
+.lp-muted.MuiTypography-root,
+.lp-muted {
+  color: var(--vb-text-muted);
+}
+
+/* ── Section rhythm ────────────────────────────────────────────────────── */
+
+.lp-section {
+  position: relative;
+  /* half above + half below → neighbouring sections add up to one --lp-gap */
+  padding-block: calc(var(--lp-gap) / 2);
+}
+
+.lp-head-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem 2rem;
+  margin-bottom: var(--lp-head-gap);
+}
+
+/* Secondary button on the light hero */
+.lp-btn-ghost.MuiButton-root {
+  color: var(--vb-text);
+  border: 1px solid var(--vb-border);
+  background: var(--vb-paper);
+}
+
+.lp-btn-ghost.MuiButton-root:hover {
+  border-color: var(--vb-primary);
+  background: var(--vb-paper);
+}
+
+/* ── Hero (light, tinted) ──────────────────────────────────────────────── */
+
+.lp-hero {
+  position: relative;
+  isolation: isolate;
+  /* a stage of its own: inset from the page edges, clear of the navbar above
+     and the next section below */
+  margin: clamp(0.75rem, 0.5rem + 0.6vw, 1.25rem) clamp(0.5rem, 0.25rem + 1.5vw, 1.5rem) 0;
+  padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+}
+
+/* side by side: the stage fills the first screen (below the navbar) */
+@media (min-width: 62rem) {
+  .lp-hero {
+    display: flex;
+    align-items: center;
+    min-height: min(calc(100dvh - var(--vb-navbar-h) - var(--vb-safe-top) - 2.5rem), 60rem);
+  }
+
+  .lp-hero__inner.MuiContainer-root {
+    width: 100%;
+  }
+}
+
+.lp-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: clamp(1.25rem, 0.75rem + 2vw, 2.5rem);
+  border: 1px solid color-mix(in srgb, var(--vb-primary) 16%, var(--vb-border));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, var(--vb-shadow-sm);
+  background:
+    radial-gradient(55% 75% at 88% 50%, color-mix(in srgb, var(--vb-primary) 26%, transparent) 0%, transparent 72%),
+    radial-gradient(45% 60% at 0% 0%, color-mix(in srgb, #6366f1 11%, transparent) 0%, transparent 70%),
+    radial-gradient(40% 50% at 35% 105%, color-mix(in srgb, #ff5a5f 8%, transparent) 0%, transparent 70%),
+    linear-gradient(135deg, color-mix(in srgb, var(--vb-primary) 4%, var(--vb-paper)) 0%, color-mix(in srgb, var(--vb-primary) 12%, var(--vb-paper)) 100%);
+}
+
+/* fine engineering grid, fading toward the edges */
+.lp-hero__bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(80% 90% at 72% 50%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(80% 90% at 72% 50%, #000 0%, transparent 78%);
+}
+
+/* copy + visual: stacked, then side by side once there is room */
+.lp-hero__inner.MuiContainer-root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2.5rem, 1.5rem + 4vw, 4rem);
+}
+
+@media (min-width: 62rem) {
+  .lp-hero__inner.MuiContainer-root {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+}
+
+.lp-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.lp-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--vb-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vb-primary);
+  background: color-mix(in srgb, var(--vb-primary) 9%, var(--vb-paper));
+  border: 1px solid color-mix(in srgb, var(--vb-primary) 25%, transparent);
+}
+
+.lp-hero__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--vb-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--vb-primary) 20%, transparent);
+}
+
+.lp-hero__title.MuiTypography-root {
+  max-width: 100%;
+  margin-top: 0;
+  font-size: clamp(2.5rem, 1.6rem + 2.8vw, 4rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  color: var(--vb-text);
+}
+
+.lp-hero__lead.MuiTypography-root {
+  max-width: 34rem;
+  margin-inline: auto;
+  margin-top: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  color: var(--vb-text-muted);
+}
+
+.lp-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: clamp(1.75rem, 1.25rem + 1.5vw, 2.5rem);
+  width: 100%;
+}
+
+.lp-hero__actions > .MuiButton-root {
+  flex: 1 1 14rem;
+  max-width: 18rem;
+}
+
+/* ── Hero ring ─────────────────────────────────────────────────────────── */
+
+.lp-hero__visual {
+  display: flex;
+  justify-content: center;
+}
+
+.lp-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 28rem;
+}
+
+/* side by side: let the screen height cap the ring so the whole hero fits */
+@media (min-width: 62rem) {
+  .lp-ring__disc {
+    max-width: clamp(17rem, calc(100dvh - 18rem), 30rem);
+  }
+}
+
+.lp-ring__disc {
+  position: relative;
+  width: 100%;
+  padding: clamp(0.75rem, 0.5rem + 1.5vw, 1.5rem);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--vb-paper) 80%, transparent);
+  border: 1px solid var(--vb-border);
+  box-shadow: var(--vb-shadow-lg);
+  backdrop-filter: blur(6px);
+}
+
+/* slow dashed orbit around the disc */
+.lp-ring__disc::before {
+  content: '';
+  position: absolute;
+  inset: -5%;
+  z-index: -1;
+  border-radius: 50%;
+  border: 1.5px dashed color-mix(in srgb, var(--vb-primary) 45%, transparent);
+  animation: lp-orbit 90s linear infinite;
+}
+
+@keyframes lp-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lp-ring__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 78%;
+}
+
+.lp-ring__icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+}
+
+.lp-ring__icon .MuiSvgIcon-root {
+  font-size: 1.5rem;
+}
+
+.lp-ring__name.MuiTypography-root {
+  font-family: var(--vb-font-display);
+  font-size: clamp(1rem, 0.85rem + 0.7vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--vb-text);
+}
+
+.lp-ring__threshold {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--vb-text-muted);
+}
+
+.lp-ring__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.lp-ring__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.25rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--vb-border);
+  border-radius: var(--vb-radius-pill);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vb-text-muted);
+  background: var(--vb-paper);
+  cursor: pointer;
+  transition:
+    color var(--vb-dur-fast) var(--vb-ease),
+    border-color var(--vb-dur-fast) var(--vb-ease),
+    background-color var(--vb-dur-fast) var(--vb-ease);
+}
+
+.lp-ring__chip .MuiSvgIcon-root {
+  font-size: 1rem;
+  color: var(--chip);
+}
+
+.lp-ring__chip:hover,
+.lp-ring__chip.is-active {
+  color: var(--vb-text);
+  border-color: var(--chip);
+  background: color-mix(in srgb, var(--chip) 10%, var(--vb-paper));
+}
+
+.lp-ring__note {
+  max-width: 24rem;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--vb-text-muted);
+}
+
+.lp-ring__note strong {
+  color: var(--vb-text);
+}
+
+/* ── How it works: timeline ────────────────────────────────────────────── */
+
+/* 1 column → 3 columns (never 2+1); connectors only when side by side */
+.lp-timeline {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 1rem + 2vw, 3rem);
+  list-style: none;
+}
+
+.lp-timeline__item {
+  position: relative;
+  padding-top: 3.5rem;
+}
+
+/* connector line through the numbers */
+.lp-timeline__item::before {
+  content: '';
+  position: absolute;
+  top: 1.25rem;
+  left: 3rem;
+  right: calc(-1 * clamp(1.75rem, 1rem + 2vw, 3rem));
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--vb-text-faint) 0 6px, transparent 6px 12px);
+  opacity: 0.6;
+}
+
+.lp-timeline__item:last-child::before {
+  display: none;
+}
+
+@media (max-width: 55.99rem) {
+  .lp-timeline__item::before {
+    display: none;
+  }
+}
+
+@media (min-width: 56rem) {
+  .lp-timeline {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.lp-timeline__num {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-family: var(--vb-font-display);
+  font-weight: 700;
+  color: #fff;
+  background: var(--vb-ink);
+  box-shadow: 0 0 0 6px var(--vb-surface-sunken);
+}
+
+[data-theme='dark'] .lp-timeline__num {
+  color: var(--vb-ink);
+  background: #e2e8f0;
+}
+
+.lp-timeline__title.MuiTypography-root {
+  color: var(--vb-text);
+}
+
+.lp-timeline__text.MuiTypography-root {
+  margin-top: 0.5rem;
+  color: var(--vb-text-muted);
+  max-width: 32ch;
+}
+
+/* ── Feature rows ──────────────────────────────────────────────────────── */
+
+.lp-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lp-gap);
+}
+
+.lp-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  align-items: center;
+  gap: clamp(2rem, 1rem + 4vw, 5rem);
+}
+
+/* Flip order only when side-by-side (≥ 2 × 24rem + gap ≈ 52rem) */
+@media (min-width: 56rem) {
+  .lp-row.is-flipped .lp-row__copy {
+    order: 2;
+  }
+}
+
+.lp-row__text.MuiTypography-root {
+  margin-top: 1.25rem;
+  max-width: 34rem;
+}
+
+.lp-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1.5rem;
+  list-style: none;
+}
+
+.lp-checks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-weight: 500;
+  color: var(--vb-text);
+}
+
+.lp-checks .MuiSvgIcon-root {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  font-size: 1.1rem;
+  color: var(--vb-primary);
+}
+
+.lp-row__visual {
+  position: relative;
+  padding: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+  border-radius: var(--vb-radius-xl);
+  background:
+    radial-gradient(80% 80% at 100% 0%, rgba(15, 157, 143, 0.1) 0%, transparent 70%),
+    var(--vb-surface-sunken);
+  border: 1px solid var(--vb-border);
+}
+
+.lp-snippet {
+  border-radius: var(--vb-radius-lg);
+  background: var(--vb-paper);
+  border: 1px solid var(--vb-border);
+  box-shadow: var(--vb-shadow-md);
+  padding: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+}
+
+/* Pipeline */
+.lp-pipe {
+  display: flex;
+  flex-direction: column;
+}
+
+.lp-pipe__step {
+  position: relative;
+  display: flex;
+  gap: 0.85rem;
+  padding-bottom: 1rem;
+}
+
+.lp-pipe__step:last-child {
+  padding-bottom: 0;
+}
+
+.lp-pipe__dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--vb-primary);
+  background: var(--vb-paper);
+  border: 1.5px solid var(--vb-primary);
+}
+
+.lp-pipe__line {
+  position: absolute;
+  top: 1.75rem;
+  bottom: 0;
+  left: calc(0.875rem - 0.75px);
+  width: 1.5px;
+  background: rgba(var(--mui-palette-primary-mainChannel) / 0.3);
+}
+
+.lp-pipe__card {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--vb-radius-sm);
+  background: var(--vb-surface-sunken);
+  border: 1px solid var(--vb-border);
+}
+
+.lp-pipe__k {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--vb-text-muted);
+}
+
+.lp-pipe__v {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.1rem;
+  font-family: var(--vb-font-display);
+  font-weight: 700;
+  color: var(--vb-text);
+}
+
+/* Plan */
+.lp-plan__tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--vb-radius-pill);
+  background: var(--vb-surface-sunken);
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.lp-plan__tabs span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--vb-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vb-text-muted);
+  white-space: nowrap;
+}
+
+.lp-plan__tabs span.is-active {
+  color: var(--vb-text);
+  background: var(--vb-paper);
+  box-shadow: var(--vb-shadow-xs);
+}
+
+.lp-plan__tabs .MuiSvgIcon-root {
+  font-size: 1rem;
+}
+
+.lp-plan__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 1.1rem;
+  list-style: none;
+}
+
+.lp-plan__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+  color: var(--vb-text);
+}
+
+.lp-plan__list .MuiSvgIcon-root {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  font-size: 1rem;
+  color: var(--vb-risk-low);
+}
+
+.lp-plan__avoid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--vb-border);
+}
+
+.lp-plan__avoid-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-right: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--vb-risk-high);
+}
+
+.lp-plan__avoid-label .MuiSvgIcon-root {
+  font-size: 1rem;
+}
+
+.lp-plan__chip {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--vb-radius-pill);
+  font-size: 0.8125rem;
+  color: var(--vb-text-muted);
+  border: 1px solid var(--vb-border);
+}
+
+/* Trend */
+.lp-trend__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.lp-trend__label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vb-text-muted);
+}
+
+.lp-trend__value {
+  display: block;
+  font-family: var(--vb-font-display);
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--vb-text);
+}
+
+.lp-trend__delta {
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--vb-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--vb-risk-low);
+  background: var(--vb-risk-low-soft);
+}
+
+.lp-trend__chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: clamp(9rem, 7rem + 6vw, 12rem);
+  margin-top: 1.25rem;
+}
+
+.lp-trend__plot {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.lp-trend__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lp-trend__grid {
+  stroke: var(--vb-border);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.lp-trend__dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: var(--vb-paper);
+  border: 3px solid #0f9d8f;
+  box-shadow: 0 0 0 5px rgba(15, 157, 143, 0.15);
+}
+
+.lp-trend__x {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--vb-text-muted);
+}
+
+/* ── What we provide: 6 cards — 1 → 2 → 3 columns (always even rows) ───── */
+.lp-provide {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 0.75rem + 1vw, 1.5rem);
+  list-style: none;
+}
+
+@media (min-width: 36rem) {
+  .lp-provide {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 62rem) {
+  .lp-provide {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.lp-provide__item {
+  padding: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  border: 1px solid var(--vb-border);
+  border-radius: var(--vb-radius-lg);
+  background: var(--vb-paper);
+  transition: border-color var(--vb-dur-base) var(--vb-ease), box-shadow var(--vb-dur-base) var(--vb-ease);
+}
+
+.lp-provide__item:hover {
+  border-color: color-mix(in srgb, var(--ic1) 40%, transparent);
+  box-shadow: var(--vb-shadow-md);
+}
+
+.lp-provide__icon {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-bottom: 1.1rem;
+  border-radius: 1rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ic1), var(--ic2));
+  box-shadow:
+    0 10px 20px -8px color-mix(in srgb, var(--ic1) 70%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.lp-provide__icon .MuiSvgIcon-root {
+  font-size: 1.7rem;
+}
+
+.lp-provide__title.MuiTypography-root {
+  margin-bottom: 0.4rem;
+  font-family: var(--vb-font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--vb-text);
+}
+
+/* ── News carousel (streaming-app style row) ───────────────────────────── */
+
+.lp-news {
+  /* one card's width — also used to centre the arrows on the images */
+  --card-w: clamp(16.5rem, 21vw, 25rem);
+}
+
+.lp-news__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  margin-bottom: var(--lp-head-gap);
+}
+
+.lp-news__all.MuiButton-root {
+  font-weight: 700;
+}
+
+/* The rail bleeds to the screen edge so cards can scroll under the fades */
+.lp-news__rail {
+  position: relative;
+  margin-inline: calc(-1 * var(--vb-gutter));
+}
+
+.lp-news__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(82vw, var(--card-w));
+  gap: clamp(0.875rem, 0.5rem + 1vw, 1.25rem);
+  padding: 0.35rem var(--vb-gutter) 1rem;
+  scroll-padding-inline: var(--vb-gutter);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.lp-news__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Soft fades on whichever side has more cards */
+.lp-news__rail::before,
+.lp-news__rail::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 1rem;
+  z-index: 1;
+  width: clamp(1.5rem, 1rem + 3vw, 4.5rem);
+  pointer-events: none;
+  transition: opacity var(--vb-dur-base) var(--vb-ease);
+}
+
+.lp-news__rail::before {
+  left: 0;
+  background: linear-gradient(to right, var(--vb-bg), transparent);
+}
+
+.lp-news__rail::after {
+  right: 0;
+  background: linear-gradient(to left, var(--vb-bg), transparent);
+}
+
+.lp-news__rail.at-start::before,
+.lp-news__rail.at-end::after {
+  opacity: 0;
+}
+
+/* Round arrows centred on the images, at the left / right edges */
+.lp-news__arrow {
+  position: absolute;
+  z-index: 2;
+  top: calc(0.35rem + min(82vw, var(--card-w)) * 0.3125);
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1px solid color-mix(in srgb, var(--vb-text) 12%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--vb-paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--vb-shadow-lg);
+  color: var(--vb-text);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.92);
+  transition:
+    opacity var(--vb-dur-base) var(--vb-ease),
+    transform var(--vb-dur-base) var(--vb-ease),
+    background-color var(--vb-dur-fast) var(--vb-ease);
+}
+
+.lp-news__arrow .MuiSvgIcon-root {
+  font-size: 2rem;
+}
+
+.lp-news__arrow--prev {
+  left: calc(var(--vb-gutter) + 0.75rem);
+}
+
+.lp-news__arrow--next {
+  right: calc(var(--vb-gutter) + 0.75rem);
+}
+
+/* Appear when the row is hovered or an arrow has keyboard focus */
+.lp-news__rail:hover .lp-news__arrow,
+.lp-news__arrow:focus-visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.lp-news__arrow:hover {
+  background: var(--vb-paper);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.lp-news__arrow:focus-visible {
+  outline: 2px solid var(--vb-primary);
+  outline-offset: 2px;
+}
+
+/* Nothing further that way → no arrow */
+.lp-news__rail.at-start .lp-news__arrow--prev,
+.lp-news__rail.at-end .lp-news__arrow--next {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* Touch screens swipe instead */
+@media (hover: none) {
+  .lp-news__arrow {
+    display: none;
+  }
+}
+
+/* Cards */
+.lp-news__card {
+  scroll-snap-align: start;
+  display: flex;
+  border-radius: var(--vb-radius-lg);
+  background: var(--vb-paper);
+  border: 1px solid var(--vb-border);
+  overflow: hidden;
+  box-shadow: var(--vb-shadow-xs);
+  transition: border-color var(--vb-dur-base) var(--vb-ease), box-shadow var(--vb-dur-base) var(--vb-ease);
+}
+
+.lp-news__card:hover {
+  border-color: color-mix(in srgb, var(--vb-primary) 35%, var(--vb-border));
+  box-shadow: var(--vb-shadow-md);
+}
+
+.lp-news__card.is-loading {
+  flex-direction: column;
+}
+
+.lp-news__link {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: inherit;
+}
+
+.lp-news__link:focus-visible {
+  outline: 2px solid var(--vb-primary);
+  outline-offset: -2px;
+  border-radius: inherit;
+}
+
+.lp-news__media {
+  display: block;
+  overflow: hidden;
+}
+
+.lp-news__img,
+.lp-news__card .MuiSkeleton-root.lp-news__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--vb-surface-sunken);
+  transition: transform 500ms var(--vb-ease);
+}
+
+.lp-news__card:hover .lp-news__img {
+  transform: scale(1.04);
+}
+
+.lp-news__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.45rem;
+  padding: 0.9rem 1.1rem 1.1rem;
+}
+
+.lp-news__meta {
+  font-size: 0.75rem;
+  color: var(--vb-text-muted);
+}
+
+.lp-news__source {
+  font-weight: 700;
+  color: var(--vb-primary);
+}
+
+.lp-news__title.MuiTypography-root {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-family: var(--vb-font-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--vb-text);
+}
+
+.lp-news__read {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--vb-primary);
+}
+
+.lp-news__read .MuiSvgIcon-root {
+  font-size: 1rem;
+}
+
+/* Last card: link to all news & resources */
+.lp-news__card--more {
+  border-color: color-mix(in srgb, var(--vb-primary) 25%, var(--vb-border));
+  background:
+    radial-gradient(80% 80% at 100% 100%, color-mix(in srgb, var(--vb-primary) 22%, transparent) 0%, transparent 70%),
+    color-mix(in srgb, var(--vb-primary) 6%, var(--vb-paper));
+}
+
+.lp-news__more {
+  justify-content: space-between;
+  min-height: 16rem;
+  padding: 1.5rem;
+}
+
+.lp-news__more-title {
+  font-family: var(--vb-font-display);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--vb-text);
+}
+
+.lp-news__more-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--vb-primary);
+}
+
+/* Hero → first section: the hero panel has no padding below, so it brings
+   the other half of the gap itself */
+.lp-hero {
+  margin-bottom: calc(var(--lp-gap) / 2);
+}
+
+/* Welcome badge (signed-in users): centred just above the headline */
+.lp-hero__welcome {
+  margin-bottom: clamp(1rem, 0.85rem + 0.5vw, 1.35rem);
+}
