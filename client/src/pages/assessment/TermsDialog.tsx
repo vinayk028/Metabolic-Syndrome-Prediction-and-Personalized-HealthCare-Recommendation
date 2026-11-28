@@ -25,6 +25,7 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import GppMaybeRoundedIcon from '@mui/icons-material/GppMaybeRounded';
 import FactCheckRoundedIcon from '@mui/icons-material/FactCheckRounded';
 import EmergencyRoundedIcon from '@mui/icons-material/EmergencyRounded';
+import './TermsDialog.css';
 
 interface TermsDialogProps {
   open: boolean;

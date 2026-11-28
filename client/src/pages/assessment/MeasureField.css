@@ -1,0 +1,36 @@
+/* MeasureField — one marker input on the assessment form.
+   The bold label above uses the shared .as-label style from Assessment.css. */
+
+/* Measurement field: marker icon at the start, unit at the end */
+.as-measure__icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--vb-radius-xs);
+  color: var(--f);
+  background: color-mix(in srgb, var(--f) 12%, var(--vb-paper));
+}
+
+.as-measure__icon .MuiSvgIcon-root {
+  font-size: 1.15rem;
+}
+
+/* Field values a touch larger so numbers read clearly */
+.as-measure .MuiInputBase-input {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hide number spinners — the field is typed, units sit at the end */
+.as-measure input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.as-measure input[type='number']::-webkit-outer-spin-button,
+.as-measure input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

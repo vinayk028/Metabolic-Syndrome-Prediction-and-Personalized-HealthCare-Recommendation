@@ -12,12 +12,10 @@ import {
   Alert,
   Button,
   CircularProgress,
-  InputAdornment,
   Slider,
   Switch,
   Tab,
   Tabs,
-  TextField,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -40,8 +38,8 @@ import { useAssessmentStore, useAuthStore } from '../../stores';
 import { RangeBar, RiskBadge, RiskGauge } from '../../components/ui';
 import { FACTORS, toRiskKey } from '../../theme/factors';
 import { factorVar } from '../../theme/cssVars';
-import type { FactorKey } from '../../theme/tokens';
 import { STATUS_LABEL, buildMarkerRows } from '../../theme/markers';
+import MeasureField from './MeasureField';
 import TermsDialog from './TermsDialog';
 import './Assessment.css';
 
@@ -80,63 +78,6 @@ const Section = ({ icon, title, hint, children }: { icon: ReactNode; title: stri
     {children}
   </section>
 );
-
-interface MeasureFieldProps {
-  factor: FactorKey;
-  label: string;
-  unit: string;
-  value: number;
-  min: number;
-  max: number;
-  onChange: (v: number) => void;
-}
-
-/** Keys that would let a non-integer into a number field (e, +, -, .) */
-const BLOCKED_KEYS = new Set(['e', 'E', '+', '-', '.', ',']);
-
-/**
- * Whole-number field restricted to [min, max]: only digits can be typed,
- * length is capped to max's digit count, and the value is clamped on blur.
- */
-const MeasureField = ({ factor, label, unit, value, min, max, onChange }: MeasureFieldProps) => {
-  const Icon = FACTORS[factor].icon;
-  const maxDigits = String(max).length;
-  const id = `as-field-${label.toLowerCase().replace(/[^a-z]+/g, '-')}`;
-  return (
-    <div className="as-measure" style={{ ['--f' as string]: factorVar(factor) }}>
-      <label htmlFor={id} className="as-label as-measure__label">
-        {label}
-      </label>
-      <TextField
-        fullWidth
-        id={id}
-        type="number"
-        value={Number.isFinite(value) ? value : ''}
-        onKeyDown={(e) => {
-          if (BLOCKED_KEYS.has(e.key)) e.preventDefault();
-        }}
-        onChange={(e) => onChange(parseInt(e.target.value.replace(/\D/g, '').slice(0, maxDigits)))}
-        onBlur={() => {
-          if (Number.isFinite(value)) onChange(Math.min(max, Math.max(min, value)));
-        }}
-        helperText={`Value range: ${min}–${max} ${unit}`}
-        slotProps={{
-          htmlInput: { min, max, step: 1, inputMode: 'numeric', pattern: '[0-9]*' },
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <span className="as-measure__icon" aria-hidden>
-                  <Icon />
-                </span>
-              </InputAdornment>
-            ),
-            endAdornment: <InputAdornment position="end">{unit}</InputAdornment>,
-          },
-        }}
-      />
-    </div>
-  );
-};
 
 const DiagnosisToggle = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) => (
   <label className={`as-toggle${checked ? ' is-on' : ''}`}>
